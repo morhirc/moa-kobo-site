@@ -1,0 +1,24 @@
+MOA工房 Site Builder v0.85 JSON → HTML 生成テスト
+
+入力:
+  site-builder.html: ユーザー提供の morhirc Site Builder v0.85
+  site-project.json: ユーザー提供の site-project (15).json
+  siteUrl: https://www.moa-kobo.com/
+  ページ数: 5
+
+ローカル Chromium（Playwright）で8ファイル生成成功:
+  index.html
+  page.html
+  page-2.html
+  q-a.html
+  page-3.html
+  sitemap.html
+  sitemap.xml
+  robots.txt
+
+Python Playwright による既存生成関数呼び出しと、Node.js 用GitHub Actions生成スクリプトの出力が
+全8ファイルでバイト単位完全一致。
+
+index.html、robots.txt、sitemap.xmlの公開URLは www.moa-kobo.com を参照。
+
+注記: GitHub Actionsの実環境でのデプロイ検証は未実施。
