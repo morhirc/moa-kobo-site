@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.moa-kobo.com/sitemap.xml
