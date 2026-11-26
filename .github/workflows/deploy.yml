@@ -1,3 +1,4 @@
+
 name: Site Builder JSON → GitHub Pages
 
 on:
@@ -8,6 +9,7 @@ on:
       - site-builder.html
       - scripts/build-site.mjs
       - package.json
+      - font-width-test.html
       - .github/workflows/deploy.yml
   workflow_dispatch:
 
@@ -37,7 +39,6 @@ jobs:
 
       - name: Install browser
         run: |
-          # Microsoftの外部APTリポジトリによる403エラーを回避
           for file in /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do
             [ -f "$file" ] || continue
             if grep -qi 'packages.microsoft.com' "$file"; then
@@ -48,6 +49,9 @@ jobs:
 
       - name: Generate static site from JSON
         run: npm run build
+
+      - name: Include font diagnostic
+        run: cp font-width-test.html dist/
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
