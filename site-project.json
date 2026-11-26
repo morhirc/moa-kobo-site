@@ -1751,9 +1751,9 @@
             },
             "tablet": {
               "x": 40,
-              "y": 2508,
+              "y": 2505,
               "w": 195,
-              "h": 235
+              "h": 210
             },
             "tabletLandscape": {
               "x": 185,
@@ -1766,7 +1766,7 @@
           "boldMarks": [],
           "deviceStyles": {
             "tablet": {
-              "fontSize": 21,
+              "fontSize": 20,
               "fontFamily": "system",
               "color": "#334155",
               "background": "transparent",
@@ -1811,7 +1811,8 @@
           "autoTextSizeByDevice": {
             "mobile": false,
             "desktop": false,
-            "tabletLandscape": false
+            "tabletLandscape": false,
+            "tablet": false
           },
           "hiddenDevices": [],
           "deviceTexts": {
@@ -3976,9 +3977,9 @@
           "layouts": {
             "tablet": {
               "x": 240,
-              "y": 2508,
+              "y": 2505,
               "w": 120,
-              "h": 205
+              "h": 185
             },
             "mobile": {
               "x": 255,
@@ -3997,111 +3998,7 @@
           "boldMarks": [],
           "deviceStyles": {
             "tablet": {
-              "fontSize": 21,
-              "fontFamily": "system",
-              "color": "#334155",
-              "background": "transparent",
-              "align": "left",
-              "radius": 0,
-              "bold": false,
-              "colorMarks": [],
-              "sizeMarks": [],
-              "fontMarks": [],
-              "underlineMarks": [],
-              "boldMarks": []
-            },
-            "mobile": {
-              "fontSize": 16.8,
-              "fontFamily": "system",
-              "color": "#334155",
-              "background": "transparent",
-              "align": "left",
-              "radius": 0,
-              "bold": false,
-              "colorMarks": [],
-              "sizeMarks": [],
-              "fontMarks": [],
-              "underlineMarks": [],
-              "boldMarks": []
-            },
-            "tabletLandscape": {
-              "fontSize": 17.2,
-              "fontFamily": "system",
-              "color": "#334155",
-              "background": "transparent",
-              "align": "left",
-              "radius": 0,
-              "bold": false,
-              "colorMarks": [],
-              "sizeMarks": [],
-              "fontMarks": [],
-              "underlineMarks": [],
-              "boldMarks": []
-            }
-          },
-          "autoTextSizeByDevice": {
-            "mobile": false
-          },
-          "hiddenDevices": [],
-          "deviceTexts": {
-            "tablet": "5,000円～\n\n2,000円～\n\n5,000円～\n",
-            "tabletLandscape": "5,000円～\n\n2,000円～\n\n5,000円～\n",
-            "mobile": "5,000円～\n\n2,000円～\n\n5,000円～\n"
-          }
-        },
-        {
-          "id": "e92la3qa6",
-          "type": "text",
-          "x": 520,
-          "y": 1780,
-          "w": 180,
-          "h": 115,
-          "fontSize": 14,
-          "color": "#334155",
-          "background": "transparent",
-          "radius": 0,
-          "bold": false,
-          "align": "left",
-          "text": "プリンター設定\n\nWi-Fi・ネット接続設定\n\nデータ移行",
-          "colorMarks": [],
-          "sizeMarks": [],
-          "fontMarks": [],
-          "fontFamily": "system",
-          "src": "",
-          "href": "",
-          "linkType": "none",
-          "linkPageId": "",
-          "newTab": false,
-          "hoverText": "",
-          "hoverLift": false,
-          "videoUrl": "",
-          "embedUrl": "",
-          "printHide": false,
-          "layouts": {
-            "tablet": {
-              "x": 385,
-              "y": 2508,
-              "w": 195,
-              "h": 205
-            },
-            "mobile": {
-              "x": 40,
-              "y": 3300,
-              "w": 190,
-              "h": 140
-            },
-            "tabletLandscape": {
-              "x": 515,
-              "y": 2190,
-              "w": 220,
-              "h": 140
-            }
-          },
-          "underlineMarks": [],
-          "boldMarks": [],
-          "deviceStyles": {
-            "tablet": {
-              "fontSize": 21,
+              "fontSize": 20,
               "fontFamily": "system",
               "color": "#334155",
               "background": "transparent",
@@ -4145,7 +4042,113 @@
           },
           "autoTextSizeByDevice": {
             "mobile": false,
-            "desktop": false
+            "tablet": false
+          },
+          "hiddenDevices": [],
+          "deviceTexts": {
+            "tablet": "5,000円～\n\n2,000円～\n\n5,000円～\n",
+            "tabletLandscape": "5,000円～\n\n2,000円～\n\n5,000円～\n",
+            "mobile": "5,000円～\n\n2,000円～\n\n5,000円～\n"
+          }
+        },
+        {
+          "id": "e92la3qa6",
+          "type": "text",
+          "x": 520,
+          "y": 1780,
+          "w": 180,
+          "h": 115,
+          "fontSize": 14,
+          "color": "#334155",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "プリンター設定\n\nWi-Fi・ネット接続設定\n\nデータ移行",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "layouts": {
+            "tablet": {
+              "x": 360,
+              "y": 2505,
+              "w": 225,
+              "h": 195
+            },
+            "mobile": {
+              "x": 40,
+              "y": 3300,
+              "w": 190,
+              "h": 140
+            },
+            "tabletLandscape": {
+              "x": 515,
+              "y": 2190,
+              "w": 220,
+              "h": 140
+            }
+          },
+          "underlineMarks": [],
+          "boldMarks": [],
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 20,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": []
+            },
+            "mobile": {
+              "fontSize": 16.8,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": []
+            },
+            "tabletLandscape": {
+              "fontSize": 17.2,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": []
+            }
+          },
+          "autoTextSizeByDevice": {
+            "mobile": false,
+            "desktop": false,
+            "tablet": false
           },
           "hiddenDevices": [],
           "deviceTexts": {
@@ -4185,7 +4188,7 @@
           "layouts": {
             "tablet": {
               "x": 590,
-              "y": 2508,
+              "y": 2505,
               "w": 120,
               "h": 205
             },
@@ -4206,7 +4209,7 @@
           "boldMarks": [],
           "deviceStyles": {
             "tablet": {
-              "fontSize": 21,
+              "fontSize": 20,
               "fontFamily": "system",
               "color": "#334155",
               "background": "transparent",
