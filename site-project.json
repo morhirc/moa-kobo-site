@@ -17926,12 +17926,17 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "PC基本セットアップ\n初期設定各種設定ソフト導入など\n5,000円～",
+          "text": "PC基本セットアップ\n初期設定各種設定\nソフト導入など\n5,000円～",
           "colorMarks": [],
           "sizeMarks": [
             {
               "start": 11,
-              "end": 26,
+              "end": 19,
+              "fontSize": 11
+            },
+            {
+              "start": 20,
+              "end": 27,
               "fontSize": 11
             }
           ],
@@ -18239,12 +18244,17 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "プリンタ設定\n無線・有線の接続設定複数台対応など\n2,000円～",
+          "text": "プリンタ設定\n無線・有線の接続設定\n複数台対応など\n2,000円～",
           "colorMarks": [],
           "sizeMarks": [
             {
               "start": 7,
-              "end": 24,
+              "end": 17,
+              "fontSize": 11
+            },
+            {
+              "start": 18,
+              "end": 25,
               "fontSize": 11
             }
           ],
@@ -18551,12 +18561,17 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "Wi-Fi・ネット接続設定\nWi-Fi接続・各端末の接続設定など\n3,000円～",
+          "text": "Wi-Fi・ネット接続設定\nWi-Fi接続・各端末の\n接続設定など\n3,000円～",
           "colorMarks": [],
           "sizeMarks": [
             {
               "start": 14,
-              "end": 32,
+              "end": 26,
+              "fontSize": 11
+            },
+            {
+              "start": 27,
+              "end": 33,
               "fontSize": 11
             }
           ],
@@ -18707,12 +18722,17 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "ルーター設定\n新規設定・買い替え時の設定など\n3,000円～",
+          "text": "ルーター設定\n新規設定・買い替え時の\n設定など\n3,000円～",
           "colorMarks": [],
           "sizeMarks": [
             {
               "start": 7,
-              "end": 22,
+              "end": 18,
+              "fontSize": 11
+            },
+            {
+              "start": 19,
+              "end": 23,
               "fontSize": 11
             }
           ],
@@ -19018,12 +19038,17 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "共有・NAS設定\nファイル共有・NAS接続設定など\n3,000円～",
+          "text": "共有・NAS設定\nファイル共有・\nNAS接続設定など\n3,000円～",
           "colorMarks": [],
           "sizeMarks": [
             {
               "start": 9,
-              "end": 25,
+              "end": 16,
+              "fontSize": 11
+            },
+            {
+              "start": 17,
+              "end": 26,
               "fontSize": 11
             }
           ],
@@ -19322,7 +19347,7 @@
           "type": "text",
           "x": 645,
           "y": 1115,
-          "w": 130,
+          "w": 125,
           "h": 85,
           "fontSize": 12,
           "color": "#334155",
@@ -19478,7 +19503,7 @@
           "type": "text",
           "x": 345,
           "y": 1235,
-          "w": 150,
+          "w": 120,
           "h": 85,
           "fontSize": 12,
           "color": "#334155",
@@ -19634,7 +19659,7 @@
           "type": "text",
           "x": 345,
           "y": 1435,
-          "w": 140,
+          "w": 120,
           "h": 85,
           "fontSize": 12,
           "color": "#334155",
@@ -19798,12 +19823,17 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "起動しない・エラーが出る\n起動トラブルの診断・復旧作業など\n3,000円～",
+          "text": "起動しない・エラーが出る\n起動トラブルの診断・\n復旧作業など\n3,000円～",
           "colorMarks": [],
           "sizeMarks": [
             {
               "start": 13,
-              "end": 29,
+              "end": 23,
+              "fontSize": 11
+            },
+            {
+              "start": 24,
+              "end": 30,
               "fontSize": 11
             }
           ],
@@ -19946,7 +19976,7 @@
           "type": "text",
           "x": 345,
           "y": 1555,
-          "w": 145,
+          "w": 120,
           "h": 85,
           "fontSize": 12,
           "color": "#334155",
@@ -19954,12 +19984,17 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "その他のトラブル\n状況確認の上、料金をご案内します\n3,000円～",
+          "text": "その他のトラブル\n状況確認の上、\n料金をご案内します\n3,000円～",
           "colorMarks": [],
           "sizeMarks": [
             {
               "start": 9,
-              "end": 26,
+              "end": 16,
+              "fontSize": 11
+            },
+            {
+              "start": 17,
+              "end": 27,
               "fontSize": 11
             }
           ],
@@ -20110,12 +20145,17 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "業務PCの初期設定\nキッティング各種設定ソフト導入など \n5,000円～",
+          "text": "業務PCの初期設定\nキッティング各種設定\nソフト導入など \n5,000円～",
           "colorMarks": [],
           "sizeMarks": [
             {
               "start": 10,
-              "end": 28,
+              "end": 20,
+              "fontSize": 11
+            },
+            {
+              "start": 21,
+              "end": 29,
               "fontSize": 11
             }
           ],
@@ -20266,12 +20306,17 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "ネットワーク構築・改善\nオフィス店舗のWi-Fi・ネットワーク設定など  \n5,000円～",
+          "text": "ネットワーク構築・改善\nオフィス店舗のWi-Fi・\nネットワーク設定など  \n5,000円～",
           "colorMarks": [],
           "sizeMarks": [
             {
               "start": 12,
-              "end": 35,
+              "end": 25,
+              "fontSize": 11
+            },
+            {
+              "start": 26,
+              "end": 36,
               "fontSize": 11
             }
           ],
@@ -20598,17 +20643,17 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "ホームページ制作\n新規サイト作成、御希望の構成で作成\nお見積もり",
+          "text": "ホームページ制作\n新規サイト作成、\n御希望の構成で作成\nお見積もり",
           "colorMarks": [],
           "sizeMarks": [
             {
-              "start": 26,
-              "end": 27,
+              "start": 27,
+              "end": 28,
               "fontSize": 11
             },
             {
-              "start": 27,
-              "end": 32,
+              "start": 28,
+              "end": 33,
               "fontSize": 11
             }
           ],
@@ -20774,12 +20819,17 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "スマホ操作・アプリ設定\nアプリの導入・各種設定・操作説明など\n3,000円～",
+          "text": "スマホ操作・アプリ設定\nアプリの導入・各種設定・\n操作説明など\n3,000円～",
           "colorMarks": [],
           "sizeMarks": [
             {
               "start": 12,
-              "end": 31,
+              "end": 24,
+              "fontSize": 11
+            },
+            {
+              "start": 25,
+              "end": 32,
               "fontSize": 11
             }
           ],
@@ -21078,7 +21128,7 @@
           "type": "text",
           "x": 345,
           "y": 2195,
-          "w": 155,
+          "w": 135,
           "h": 85,
           "fontSize": 12,
           "color": "#334155",
@@ -21086,7 +21136,7 @@
           "radius": 0,
           "bold": false,
           "align": "left",
-          "text": "データ移行\n写真・連絡先などのデータ移行をサポート\n3,000円～",
+          "text": "データ移行\n写真・連絡先などの\nデータ移行をサポート\n3,000円～",
           "colorMarks": [],
           "sizeMarks": [
             {
@@ -21096,7 +21146,12 @@
             },
             {
               "start": 6,
-              "end": 25,
+              "end": 15,
+              "fontSize": 11
+            },
+            {
+              "start": 16,
+              "end": 26,
               "fontSize": 11
             }
           ],
