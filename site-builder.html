@@ -5183,12 +5183,20 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
   const known=['desktop','tablet','tabletLandscape','mobile'];
   const forced=root.getAttribute('data-msb-preview-device');
   function landscape(){
+    // iPad Safari can retain a stale screen.orientation.type after rotation.
+    // Prefer the physical screen dimensions / iOS legacy angle over the webpage
+    // viewport, which changes when Safari's sidebar or tabs are displayed.
+    const legacy=typeof window.orientation==='number'?Math.abs(window.orientation)%180:null;
+    const sw=Number(window.screen?.width)||0,sh=Number(window.screen?.height)||0;
+    const physical=sw>0&&sh>0&&Math.abs(sw-sh)>32?sw>sh:null;
+    if(legacy===90)return true;
+    if(physical!==null)return physical;
+    if(legacy===0)return false;
+    const angle=window.screen?.orientation?.angle;
+    if(typeof angle==='number')return Math.abs(angle)%180===90;
     const type=window.screen?.orientation?.type||'';
     if(type.indexOf('landscape')===0)return true;
     if(type.indexOf('portrait')===0)return false;
-    if(typeof window.orientation==='number')return Math.abs(window.orientation)===90;
-    if(window.screen?.width&&window.screen?.height&&window.screen.width!==window.screen.height)
-      return window.screen.width>window.screen.height;
     return innerWidth>innerHeight;
   }
   function mode(){
@@ -5523,7 +5531,7 @@ body:has(.msb-menu.mode-edge.edge-push.side-left .msb-menu-drawer:focus-within) 
 .item.menu-part.msb-sidebar-fixed .fx-motion-enter,.item.menu-part.msb-sidebar-fixed .fx-motion-loop,.item.menu-part.msb-sidebar-fixed .item-body{transform:none!important;filter:none!important;animation:none!important;perspective:none!important}
 .item.menu-part.msb-sidebar-fixed .msb-menu.mode-edge .msb-menu-drawer{pointer-events:auto}
 
-${stretchOnExport?`main{width:1000px!important;max-width:none!important}html[data-msb-active="tablet"] main{width:720px!important}html[data-msb-active="tabletLandscape"] main{width:1024px!important}html[data-msb-active="mobile"] main{width:390px!important}@media print{main{width:1000px!important;zoom:1!important}}`:""}
+${stretchOnExport?`main{width:1000px!important;max-width:none!important}html[data-msb-active="tablet"] main{width:720px!important}html[data-msb-active="tabletLandscape"] main{width:1024px!important}html[data-msb-active="mobile"] main{width:390px!important}@media print{main{width:1000px!important;zoom:1!important;transform:none!important;margin:0 auto!important}}`:""}
 ${stretchOnExport?`/* 背景セクションは全画面幅、パーツは編集キャンバスの配置を維持 */
 body{position:relative;min-height:100vh;background-color:${attr(endBackground)};overflow-x:clip}
 .site-bleed{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;background-color:${attr(endBackground)};${bgCSS}}
@@ -5565,7 +5573,7 @@ ${bleedBackgroundCSS('desktop')}
    // dimensions for descendants of an element with CSS zoom. Use their
    // logical offsets and the *explicit* canvas zoom, so background bands
    // stay aligned with items on Safari and Chromium alike.
-   const zoom=Math.max(.1,parseFloat(site.style.zoom)||1);
+    const zoom=Math.max(.1,parseFloat(site.dataset.msbScale)||1);
    const pageTop=site.getBoundingClientRect().top+scroll;
    const top=Math.floor(pageTop+band.offsetTop*zoom);
    const following=nextVisible.get(band);
@@ -5573,7 +5581,23 @@ ${bleedBackgroundCSS('desktop')}
    target.style.top=top+'px';
    target.style.height=Math.max(0,end-top)+'px';
  });
-}function fit(){const w=Math.max(240,(document.querySelector('.msb-region-main')?.clientWidth||document.querySelector('.msb-site-scrollport')?.clientWidth||document.documentElement.clientWidth)-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--msb-column-left'))||0)-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--msb-column-right'))||0));const active=document.documentElement.dataset.msbActive||'desktop';const base=({desktop:1000,tablet:720,tabletLandscape:1024,mobile:390})[active]||1000;/* CSS pixels, not DPR: identical layout scale at the same viewport width. */const ratio=Math.max(.1,w/base);site.style.setProperty('--msb-embedded-inv-zoom',String(1/ratio));site.style.zoom=String(ratio);placeBackdropBands()}window.addEventListener('resize',fit,{passive:true});window.addEventListener('msb:layoutchange',placeBackdropBands);window.addEventListener('load',fit,{once:true});document.fonts?.ready?.then(fit).catch(()=>{});fit()})();<\/script>`:''}<script>${FX_PUBLIC_SCRIPT}<\/script><script>(function(){document.addEventListener('click',function(ev){const trigger=ev.target.closest('.msb-menu-trigger');if(trigger){const root=trigger.closest('[data-msb-menu]');const open=!root.classList.contains('open');document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')});root.classList.toggle('open',open);trigger.setAttribute('aria-expanded',String(open));return;}if(!ev.target.closest('[data-msb-menu]'))document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')});});document.addEventListener('keydown',ev=>{if(ev.key==='Escape')document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')})});})();<\/script>${hdr.script}<script>(function(){function pinRails(){document.querySelectorAll('.item.menu-part .msb-menu.mode-edge:not(.sidebar-scroll-away)').forEach(function(menu){const part=menu.closest('.item.menu-part');if(part&&part.parentElement!==document.body){document.body.appendChild(part);part.classList.add('msb-sidebar-fixed')}})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pinRails);else pinRails()})()<\/script><script>(function(){
+}function fit(){
+  const w=Math.max(240,(document.querySelector('.msb-region-main')?.clientWidth||document.querySelector('.msb-site-scrollport')?.clientWidth||document.documentElement.clientWidth)-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--msb-column-left'))||0)-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--msb-column-right'))||0));
+  const active=document.documentElement.dataset.msbActive||'desktop';
+  const base=({desktop:1000,tablet:720,tabletLandscape:1024,mobile:390})[active]||1000;
+  const ratio=Math.max(.1,w/base);
+  // A CSS zoom reflows text differently in Safari/WebKit and Chromium.
+  // Transform scales the *painted* canvas but preserves the authored CSS
+  // widths and therefore its line breaks. Reserve the scaled flow height.
+  site.style.zoom='1';
+  site.style.marginLeft='0';site.style.marginRight='0';
+  site.style.transformOrigin='top left';
+  site.style.transform='scale('+ratio+')';
+  site.dataset.msbScale=String(ratio);
+  site.style.setProperty('--msb-embedded-inv-zoom','1');
+  site.style.marginBottom=((ratio-1)*site.offsetHeight)+'px';
+  placeBackdropBands();
+}window.addEventListener('resize',fit,{passive:true});window.addEventListener('msb:profilechange',fit);window.addEventListener('msb:layoutchange',fit);window.addEventListener('load',fit,{once:true});document.fonts?.ready?.then(fit).catch(()=>{});fit()})();<\/script>`:''}<script>${FX_PUBLIC_SCRIPT}<\/script><script>(function(){document.addEventListener('click',function(ev){const trigger=ev.target.closest('.msb-menu-trigger');if(trigger){const root=trigger.closest('[data-msb-menu]');const open=!root.classList.contains('open');document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')});root.classList.toggle('open',open);trigger.setAttribute('aria-expanded',String(open));return;}if(!ev.target.closest('[data-msb-menu]'))document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')});});document.addEventListener('keydown',ev=>{if(ev.key==='Escape')document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')})});})();<\/script>${hdr.script}<script>(function(){function pinRails(){document.querySelectorAll('.item.menu-part .msb-menu.mode-edge:not(.sidebar-scroll-away)').forEach(function(menu){const part=menu.closest('.item.menu-part');if(part&&part.parentElement!==document.body){document.body.appendChild(part);part.classList.add('msb-sidebar-fixed')}})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pinRails);else pinRails()})()<\/script><script>(function(){
  function setupOutside(){
   const rails=[...document.querySelectorAll('body>.item.menu-part:has(.msb-menu.edge-outside)')];
   if(!rails.length||document.querySelector('.msb-site-scrollport'))return;
