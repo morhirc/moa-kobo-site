@@ -11312,7 +11312,7 @@
         "tabletLandscape": "manual"
       },
       "seoDescription": "仙台を中心に、パソコン、ITの訪問サポート、初期設定、トラブル対応、Wi-Fi・ネットワーク環境の改善を行うMOA工房。個人のお客様から小規模事業者まで、PC・ITのお困りごとをサポートします。",
-      "seoTitle": "仙台｜パソコン・IT訪問サポート・PC設定｜MOA工房",
+      "seoTitle": "仙台のパソコン・IT訪問サポート・PC設定｜MOA工房",
       "seoCanonical": "https://www.moa-kobo.com/",
       "responsiveManualSaved": {
         "tablet": true,
@@ -11423,13 +11423,12 @@
           "backgroundSize": "auto",
           "backgroundPosition": "top"
         }
-      },
-      "legacyUrl": "https://www.moa-kobo.com/index.html"
+      }
     },
     {
       "id": "efbmyvk1e",
       "title": "詳しい料金表",
-      "slug": "page",
+      "slug": "pricing",
       "background": "#ffffff",
       "backgroundImage": "",
       "backgroundSize": "cover",
@@ -28232,13 +28231,12 @@
           "backgroundSize": "cover",
           "backgroundPosition": "center"
         }
-      },
-      "legacyUrl": "https://www.moa-kobo.com/page.html"
+      }
     },
     {
       "id": "eqhkgjni1",
       "title": "お問い合わせ・ご相談",
-      "slug": "page-2",
+      "slug": "contact",
       "background": "#ffffff",
       "backgroundImage": "",
       "backgroundSize": "cover",
@@ -35425,9 +35423,8 @@
           "backgroundPosition": "center"
         }
       },
-      "seoTitle": "お問い合わせ・ご相談｜パソコン・ネットワークのMOA工房",
-      "seoDescription": "パソコンの設定やトラブル、Wi-Fi・ネットワーク環境、オフィスのITサポートなど、お困りごとはMOA工房へ。仙台周辺の個人・小規模事業者からのご相談を受け付けています。",
-      "legacyUrl": "https://www.moa-kobo.com/page-2.html"
+      "seoDescription": "パソコンの設定やトラブル、Wi-Fi・ネットワーク環境、オフィスのITサポートなど、お困りごとはMOA工房へ。仙台市周辺の個人・小規模事業者からのご相談を受け付けています。",
+      "seoTitle": "お問い合わせ・ご相談｜パソコン・ネットワークのMOA工房"
     },
     {
       "id": "e1v7yorom",
@@ -44148,13 +44145,12 @@
         }
       },
       "seoTitle": "よくあるご質問（Q＆A）｜訪問サポート・料金｜MOA工房",
-      "seoDescription": "MOA工房のパソコン訪問サポートについて、対応内容、料金、訪問エリア、お問い合わせから作業までの流れなど、よくあるご質問をご案内します。ご依頼前の確認にご利用ください。\n",
-      "legacyUrl": "https://www.moa-kobo.com/q-a.html"
+      "seoDescription": "MOA工房のパソコン訪問サポートについて、対応内容、料金、訪問エリア、お問い合わせから作業までの流れなど、よくあるご質問をご案内します。ご依頼前の確認にご利用ください。"
     },
     {
       "id": "exzxplgjn",
       "title": "訪問サポートについて",
-      "slug": "page-3",
+      "slug": "onsite-support",
       "background": "#ffffff",
       "backgroundImage": "",
       "backgroundSize": "cover",
@@ -55815,9 +55811,8 @@
           "backgroundPosition": "center"
         }
       },
-      "seoTitle": "パソコン訪問サポート・Wi-Fi設定｜仙台｜MOA工房",
-      "seoDescription": "仙台周辺で、パソコンの初期設定やトラブル対応、Wi-Fi・ネットワーク環境の改善を現地でサポートします。個人のお客様から小規模オフィス・店舗まで、状況に応じて対応します。",
-      "legacyUrl": "https://www.moa-kobo.com/page-3.html"
+      "seoTitle": "パソコン訪問サポート・Wi-Fi設定｜仙台のMOA工房",
+      "seoDescription": "仙台市周辺で、パソコンの初期設定やトラブル対応、Wi-Fi・ネットワーク環境の改善を現地でサポートします。個人のお客様から小規模オフィス・店舗まで、状況に応じて対応します。"
     }
   ],
   "header": {
