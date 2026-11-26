@@ -5053,6 +5053,17 @@ body.site-nav-menu-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.site-nav-links{transition:none!important}}
 @media print{.site-nav-header{display:none!important}}
 `;
+   // v1.22 layout sync: the shared responsive decision chooses the header mode.
+   // Safari's tabs/sidebar may make the viewport portrait even while the iPad is landscape.
+   const compactHeaderMedia='@media (max-width:820px) and (orientation:portrait), (max-width:600px) and (orientation:landscape), (min-width:821px) and (max-width:1100px) and (orientation:portrait) and (pointer:coarse){';
+   const compactStart=css.indexOf(compactHeaderMedia);
+   const compactEnd=compactStart<0?-1:css.indexOf('\n}\n@media(prefers-reduced-motion',compactStart);
+   const scopedHeaderCss=(compactStart>=0&&compactEnd>=0)?(()=>{
+     const inner=css.slice(compactStart+compactHeaderMedia.length,compactEnd);
+     const rules=inner.replace(/^\s*([^{}\n]+)\{([^{}\n]*)\}\s*$/gm,(_line,selectors,body)=>
+       selectors.split(',').map(selector=>'html[data-msb-header="compact"] '+selector.trim()).join(',')+'{'+body+'}');
+     return css.slice(0,compactStart)+rules+css.slice(compactEnd+2);
+   })():css;
    const script=`<script>(function(){
  const header=document.getElementById('site-top-navigation');if(!header)return;
  const nav=header.querySelector('.site-nav-links'),menuButton=header.querySelector('.site-nav-toggle'),backdrop=header.querySelector('.site-nav-backdrop'),drawerClose=header.querySelector('.site-nav-drawer-close');
@@ -5075,11 +5086,11 @@ body.site-nav-menu-open{overflow:hidden}
  searchInput?.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();results.querySelector('a')?.click()}});
  document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){closeNav();closeSearch()}});
  document.addEventListener('pointerdown',ev=>{if(!header.contains(ev.target)){closeNav();closeSearch()}});
- window.addEventListener('resize',()=>{if(!matchMedia('(max-width:820px) and (orientation:portrait), (max-width:600px) and (orientation:landscape), (min-width:821px) and (max-width:1100px) and (orientation:portrait) and (pointer:coarse)').matches)closeNav()},{passive:true});
+ window.addEventListener('resize',()=>{if(document.documentElement.dataset.msbHeader!=='compact')closeNav()},{passive:true});
  function updateReveal(){if(!header.classList.contains('is-overlay-scroll'))return;const show=(window.scrollY||document.documentElement.scrollTop||0)>=8;const was=header.classList.contains('is-scrolled');header.classList.toggle('is-scrolled',show);if(was&&!show){closeNav();closeSearch()}}
  window.addEventListener('scroll',updateReveal,{passive:true});updateReveal();
 })();<\/script>`;
-   return {html,css,script};
+   return {html,css:scopedHeaderCss,script};
  }
 
  const MENU_V57_CSS="\n/* v0.57: shared rail layout in editor and exported pages */\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer{\n box-sizing:border-box!important;\n width:var(--msb-collapsed-width,60px);\n transition:width .22s ease,padding .22s ease;\n}\n.item.menu-part .msb-menu.mode-edge.side-right .msb-menu-drawer,\n#editorRailLayer .editor-sidebar-rail.side-right .msb-menu.mode-edge .msb-menu-drawer{\n left:auto!important;right:0!important;\n}\n.item.menu-part .msb-menu.mode-edge.side-left .msb-menu-drawer,\n#editorRailLayer .editor-sidebar-rail.side-left .msb-menu.mode-edge .msb-menu-drawer{\n left:0!important;right:auto!important;\n}\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer::before,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer::before{\n position:absolute!important;top:var(--msb-rail-label-top,18px)!important;\n left:0!important;width:var(--msb-collapsed-width,60px)!important;\n padding:0!important;margin:0!important;text-align:center!important;\n line-height:1.2!important;box-sizing:border-box!important;\n pointer-events:none!important;\n}\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:hover::before,\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:focus-within::before,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer:hover::before,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer:focus-within::before{\n opacity:0!important;visibility:hidden!important;\n}\n/* Opening shows the independent drawer heading rather than the collapsed marker. */\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:hover,\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:focus-within,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer:hover,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer:focus-within{\n width:var(--msb-drawer-width,280px)!important;\n padding:var(--msb-drawer-pad,12px)!important;\n}\n";
@@ -5164,6 +5175,117 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(show,250),{once:true});else setTimeout(show,250);
 }
 })();`;
+
+ const MSB_PUBLIC_PROFILE_BOOT=`<script>(function(){
+  'use strict';
+  const root=document.documentElement;
+  const known=['desktop','tablet','tabletLandscape','mobile'];
+  const forced=root.getAttribute('data-msb-preview-device');
+  function landscape(){
+    const type=window.screen?.orientation?.type||'';
+    if(type.indexOf('landscape')===0)return true;
+    if(type.indexOf('portrait')===0)return false;
+    if(typeof window.orientation==='number')return Math.abs(window.orientation)===90;
+    if(window.screen?.width&&window.screen?.height&&window.screen.width!==window.screen.height)
+      return window.screen.width>window.screen.height;
+    return innerWidth>innerHeight;
+  }
+  function mode(){
+    if(known.includes(forced))return forced;
+    const w=Math.max(0,document.documentElement.clientWidth||innerWidth);
+    if(w<=520)return 'mobile';
+    const touch=matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>1;
+    // Keep tablet orientation stable when Safari temporarily narrows its viewport.
+    if(touch&&w<=1366)return landscape()?'tabletLandscape':'tablet';
+    return w<=800?'tablet':'desktop';
+  }
+  function apply(){
+    const m=mode(),w=Math.max(0,document.documentElement.clientWidth||innerWidth);
+    const header=(m==='tablet'||m==='mobile'||w<870)?'compact':'wide';
+    const changed=root.dataset.msbActive!==m||root.dataset.msbHeader!==header;
+    root.dataset.msbActive=m;
+    root.dataset.msbHeader=header;
+    // Device styles are explicitly enabled rather than relying on viewport
+    // aspect ratio, which differs on iPad Safari when its sidebar is open.
+    document.querySelectorAll('style[data-msb-profile]').forEach(tag=>{
+      tag.media=tag.dataset.msbProfile===m?'all':'not all';
+    });
+    if(changed)window.dispatchEvent(new Event('msb:profilechange'));
+  }
+  window.__msbApplyProfile=apply;
+  window.__msbActiveMode=mode;
+  apply();
+  window.addEventListener('resize',apply,{passive:true});
+  window.addEventListener('orientationchange',()=>requestAnimationFrame(apply),{passive:true});
+  document.addEventListener('DOMContentLoaded',apply,{once:true});
+})();<\/script>`;
+
+ const MSB_PUBLIC_TEXT_GUARD=`<script>(function(){
+  'use strict';
+  // Preserve the editor's authored heights. Extend a text component only
+  // when real font rendering needs more vertical space; never auto-shrink.
+  const main=()=>document.getElementById('page-top');
+  let pending=0;
+  function run(){
+    pending=0;
+    const canvas=main();if(!canvas)return;
+    const elements=[...canvas.querySelectorAll(':scope > .item')];
+    const bands=[...canvas.querySelectorAll(':scope > .bg-band')];
+    for(const item of elements){item.style.removeProperty('top');item.style.removeProperty('height');}
+    for(const band of bands){band.style.removeProperty('top');band.style.removeProperty('height');}
+    canvas.style.removeProperty('min-height');
+    const baseline=elements.map(item=>({item,top:item.offsetTop,height:item.offsetHeight,grown:false}));
+    const sectionBaseline=bands.filter(b=>getComputedStyle(b).display!=='none')
+      .map(b=>({band:b,top:b.offsetTop,height:b.offsetHeight})).sort((a,b)=>a.top-b.top);
+    for(const entry of baseline){
+      const item=entry.item;
+      if(getComputedStyle(item).display==='none')continue;
+      if(!['text','heading'].includes(item.getAttribute('aria-label')||''))continue;
+      const text=[...item.querySelectorAll('.txt')].find(el=>getComputedStyle(el).display!=='none');
+      if(!text)continue;
+      const probe=text.cloneNode(true);
+      probe.style.cssText+=';position:absolute!important;left:0!important;top:0!important;'+
+        'height:auto!important;max-height:none!important;min-height:0!important;'+
+        'width:100%!important;visibility:hidden!important;pointer-events:none!important;';
+      text.parentElement.appendChild(probe);
+      const natural=probe.offsetHeight;
+      probe.remove();
+      if(natural>entry.height+2){
+        item.style.height=Math.ceil(natural+2)+'px';
+        entry.height=Math.ceil(natural+2);
+        entry.grown=true;
+      }
+    }
+    let total=0;
+    for(const section of sectionBaseline){
+      const start=section.top,finish=start+section.height;
+      let needed=finish;
+      for(const entry of baseline){
+        if(entry.top>=start&&entry.top<finish){
+          entry.item.style.top=(entry.top+total)+'px';
+          if(entry.grown)needed=Math.max(needed,entry.top+entry.height+10);
+        }
+      }
+      const delta=Math.max(0,Math.ceil(needed-finish));
+      section.band.style.top=(start+total)+'px';
+      if(delta)section.band.style.height=(section.height+delta)+'px';
+      total+=delta;
+    }
+    for(const entry of baseline){
+      const covered=sectionBaseline.some(s=>entry.top>=s.top&&entry.top<s.top+s.height);
+      if(!covered&&total&&entry.top>=sectionBaseline.at(-1)?.top+sectionBaseline.at(-1)?.height)
+        entry.item.style.top=(entry.top+total)+'px';
+    }
+    if(total)canvas.style.setProperty('min-height',(canvas.offsetHeight+total)+'px','important');
+    window.dispatchEvent(new Event('msb:layoutchange'));
+  }
+  function schedule(){if(!pending)pending=requestAnimationFrame(run);}
+  window.addEventListener('resize',schedule,{passive:true});
+  window.addEventListener('msb:profilechange',schedule);
+  window.addEventListener('orientationchange',schedule,{passive:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',schedule,{once:true});else schedule();
+  document.fonts?.ready?.then(schedule).catch(()=>{});
+})();<\/script>`;
 
  function renderExportPage(p){
    const siteTitle=project.title||'サイト',h=htmlEscape;
@@ -5256,7 +5378,27 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
    };
    const H=codePage?hybridHeight(p,'desktop'):pageHeight('desktop',p),T=codePage?hybridHeight(p,'tablet'):pageHeight('tablet',p),L=codePage?hybridHeight(p,'tabletLandscape'):pageHeight('tabletLandscape',p),M=codePage?hybridHeight(p,'mobile'):pageHeight('mobile',p);
    const googleFonts=getGoogleFontUrl([{...p,elements:[...p.elements,...REGION_KEYS.flatMap(key=>regionPartList(p,key))]}]);
-   return `<!doctype html>\n<html lang="ja">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>${h(seoPageTitle(p))}</title>\n${seoPageDescription(p)?`<meta name="description" content="${attr(seoPageDescription(p))}">\n`:''}${seoCanonical(p)?`<link rel="canonical" href="${attr(seoCanonical(p))}">\n`:''}${faviconLink()}\n${googleFonts?`<link rel="stylesheet" href="${attr(googleFonts)}">\n`:''}<style>\n*{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}#page-top,.item[id^="anchor-part-"],.bg-band[id^="anchor-section-"]{scroll-margin-top:${showHeader&&hd.sticky!==false?clamp(num(hd.height,62),36,160)+12:12}px}body{margin:0;background:#e9eef4;font-family:${unifiedTextFont()?'"Noto Sans JP",Meiryo,sans-serif':'-apple-system,BlinkMacSystemFont,"Segoe UI",Meiryo,sans-serif'};color:#202936}main{width:100%;max-width:1000px;min-height:${H}px;position:relative;background-color:${attr(p.background||'#ffffff')};${bgCSS}margin:0 auto;overflow:hidden}.bg-band{position:absolute;left:0;width:100%;z-index:0;pointer-events:none}${bandStyles}.item{position:absolute;z-index:2;overflow:visible;overflow-wrap:anywhere}.item-body{display:block;width:100%;height:100%;overflow:hidden;text-decoration:none;color:inherit;transition:transform .18s ease,box-shadow .18s ease}.linked{cursor:pointer}.linked:focus-visible{outline:3px solid #2679dc;outline-offset:2px}.txt{display:block;width:100%;height:100%;white-space:pre-wrap;overflow-wrap:anywhere;-webkit-text-size-adjust:100%;text-size-adjust:100%}.view-tablet,.view-tabletLandscape,.view-mobile{display:none!important}.btn{display:flex;align-items:center;justify-content:center;padding:6px 12px;text-align:center}.shape{display:block;width:100%;height:100%}.shape.has-caption{display:flex;flex-direction:column;justify-content:center;white-space:pre-wrap;overflow-wrap:anywhere}.shape.has-caption>.shape-caption{display:block;width:100%;min-width:0}.line{display:block;border-top:2px solid;margin-top:7px} .item img,.item iframe,.item video{display:block;width:100%;height:100%;object-fit:cover;border:0} .item iframe[title="HTML埋め込み"]{zoom:var(--msb-embedded-inv-zoom,1)}.embed-wrap{display:flex;flex-direction:column;width:100%;height:100%;background:#fff;overflow:hidden}.embed-wrap iframe{display:block;width:100%;min-height:0;flex:1;border:0}.embed-open{display:block;flex:none;text-align:center;font-size:13px;line-height:1.4;padding:9px 5px;color:#125db1;background:#eef5fd;text-decoration:underline;word-break:break-word}.embed-open:focus-visible{outline:2px solid #2679dc;outline-offset:-2px}.embed-missing{height:100%;display:flex;align-items:center;justify-content:center;color:#697b92;background:#eff3f9;border:2px dashed #bbc9d9;font-size:14px}.video-empty{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#fff;background:#19283e}.lift:hover .item-body{transform:translateY(-5px);box-shadow:0 12px 26px #152b463d}.hover-bubble{position:absolute;z-index:50;left:50%;top:calc(100% + 9px);transform:translateX(-50%);width:max-content;max-width:260px;min-width:100px;background:#223249;color:#fff;padding:9px 12px;font-size:12px;line-height:1.55;border-radius:7px;box-shadow:0 6px 16px #101a2b3d;white-space:pre-wrap;overflow-wrap:anywhere;pointer-events:none;opacity:0;transition:opacity .15s ease}.item:hover .hover-bubble,.item:focus-within .hover-bubble{opacity:1}\n${devBandCSS('desktop')}\n${devCSS('desktop')}\n/* タブレット縦・横・スマホはPC基準の独立レイアウト */\n@media (min-width:521px) and (max-width:800px), (min-width:801px) and (max-width:1100px) and (orientation:portrait) and (pointer:coarse){.view-desktop{display:none!important}.view-tablet{display:block!important}.view-tablet.btn{display:flex!important}main{max-width:720px;min-height:${T}px}\n${devBandCSS('tablet')}\n${bandEndCSS('tablet')}\n${devicePageBgCSS('tablet')}\n${devCSS('tablet')}\n}\n@media (min-width:700px) and (max-width:1366px) and (orientation:landscape) and (pointer:coarse){.view-desktop,.view-tablet{display:none!important}.view-tabletLandscape{display:block!important}.view-tabletLandscape.btn{display:flex!important}main{max-width:1024px;min-height:${L}px}\n${devBandCSS('tabletLandscape')}\n${bandEndCSS('tabletLandscape')}\n${devicePageBgCSS('tabletLandscape')}\n${devCSS('tabletLandscape')}\n}\n@media(max-width:520px){.view-desktop,.view-tablet,.view-tabletLandscape{display:none!important}.view-mobile{display:block!important}.view-mobile.btn{display:flex!important}main{max-width:390px;min-height:${M}px}\n${devBandCSS('mobile')}\n${bandEndCSS('mobile')}\n${devicePageBgCSS('mobile')}\n${devCSS('mobile')}\n}\n@media print{@page{size:A4;margin:12mm}body{background:#fff}main{box-shadow:none;max-width:100%;break-inside:avoid}.no-print{display:none!important}.hover-bubble{display:none!important}.lift .item-body{transform:none!important;box-shadow:none!important}}\n${codePage?`main#page-top{width:100%;max-width:none!important;min-height:0!important;zoom:1!important}.msb-code-host{width:100%;height:${H}px}.msb-code-host>iframe{display:block;width:100%;height:100%;border:0;background:#fff}@media (min-width:521px) and (max-width:800px), (min-width:801px) and (max-width:1100px) and (orientation:portrait) and (pointer:coarse){.msb-code-host{height:${T}px}}@media (min-width:700px) and (max-width:1366px) and (orientation:landscape) and (pointer:coarse){.msb-code-host{height:${L}px}}@media(max-width:520px){.msb-code-host{height:${M}px}}`:''}
+   return `<!doctype html>\n<html lang="ja">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n${MSB_PUBLIC_PROFILE_BOOT}\n<title>${h(seoPageTitle(p))}</title>\n${seoPageDescription(p)?`<meta name="description" content="${attr(seoPageDescription(p))}">\n`:''}${seoCanonical(p)?`<link rel="canonical" href="${attr(seoCanonical(p))}">\n`:''}${faviconLink()}\n${googleFonts?`<link rel="stylesheet" href="${attr(googleFonts)}">\n`:''}<style>\n*{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}#page-top,.item[id^="anchor-part-"],.bg-band[id^="anchor-section-"]{scroll-margin-top:${showHeader&&hd.sticky!==false?clamp(num(hd.height,62),36,160)+12:12}px}body{margin:0;background:#e9eef4;font-family:${unifiedTextFont()?'"Noto Sans JP",Meiryo,sans-serif':'-apple-system,BlinkMacSystemFont,"Segoe UI",Meiryo,sans-serif'};color:#202936}main{width:100%;max-width:1000px;min-height:${H}px;position:relative;background-color:${attr(p.background||'#ffffff')};${bgCSS}margin:0 auto;overflow:hidden}.bg-band{position:absolute;left:0;width:100%;z-index:0;pointer-events:none}${bandStyles}.item{position:absolute;z-index:2;overflow:visible;overflow-wrap:anywhere}.item-body{display:block;width:100%;height:100%;overflow:hidden;text-decoration:none;color:inherit;transition:transform .18s ease,box-shadow .18s ease}.linked{cursor:pointer}.linked:focus-visible{outline:3px solid #2679dc;outline-offset:2px}.txt{display:block;width:100%;height:100%;white-space:pre-wrap;overflow-wrap:anywhere;-webkit-text-size-adjust:100%;text-size-adjust:100%}.view-tablet,.view-tabletLandscape,.view-mobile{display:none!important}.btn{display:flex;align-items:center;justify-content:center;padding:6px 12px;text-align:center}.shape{display:block;width:100%;height:100%}.shape.has-caption{display:flex;flex-direction:column;justify-content:center;white-space:pre-wrap;overflow-wrap:anywhere}.shape.has-caption>.shape-caption{display:block;width:100%;min-width:0}.line{display:block;border-top:2px solid;margin-top:7px} .item img,.item iframe,.item video{display:block;width:100%;height:100%;object-fit:cover;border:0} .item iframe[title="HTML埋め込み"]{zoom:var(--msb-embedded-inv-zoom,1)}.embed-wrap{display:flex;flex-direction:column;width:100%;height:100%;background:#fff;overflow:hidden}.embed-wrap iframe{display:block;width:100%;min-height:0;flex:1;border:0}.embed-open{display:block;flex:none;text-align:center;font-size:13px;line-height:1.4;padding:9px 5px;color:#125db1;background:#eef5fd;text-decoration:underline;word-break:break-word}.embed-open:focus-visible{outline:2px solid #2679dc;outline-offset:-2px}.embed-missing{height:100%;display:flex;align-items:center;justify-content:center;color:#697b92;background:#eff3f9;border:2px dashed #bbc9d9;font-size:14px}.video-empty{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#fff;background:#19283e}.lift:hover .item-body{transform:translateY(-5px);box-shadow:0 12px 26px #152b463d}.hover-bubble{position:absolute;z-index:50;left:50%;top:calc(100% + 9px);transform:translateX(-50%);width:max-content;max-width:260px;min-width:100px;background:#223249;color:#fff;padding:9px 12px;font-size:12px;line-height:1.55;border-radius:7px;box-shadow:0 6px 16px #101a2b3d;white-space:pre-wrap;overflow-wrap:anywhere;pointer-events:none;opacity:0;transition:opacity .15s ease}.item:hover .hover-bubble,.item:focus-within .hover-bubble{opacity:1}\n${devBandCSS('desktop')}\n${devCSS('desktop')}\n/* v1.22: device profiles follow the orientation chosen by the shared resolver. */
+</style><style data-msb-profile="tablet" media="not all">
+.view-desktop{display:none!important}.view-tablet{display:block!important}.view-tablet.btn{display:flex!important}main{max-width:720px;min-height:${T}px}
+${devBandCSS('tablet')}
+${bandEndCSS('tablet')}
+${devicePageBgCSS('tablet')}
+${devCSS('tablet')}
+</style><style data-msb-profile="tabletLandscape" media="not all">
+.view-desktop,.view-tablet{display:none!important}.view-tabletLandscape{display:block!important}.view-tabletLandscape.btn{display:flex!important}main{max-width:1024px;min-height:${L}px}
+${devBandCSS('tabletLandscape')}
+${bandEndCSS('tabletLandscape')}
+${devicePageBgCSS('tabletLandscape')}
+${devCSS('tabletLandscape')}
+</style><style data-msb-profile="mobile" media="not all">
+.view-desktop,.view-tablet,.view-tabletLandscape{display:none!important}.view-mobile{display:block!important}.view-mobile.btn{display:flex!important}main{max-width:390px;min-height:${M}px}
+${devBandCSS('mobile')}
+${bandEndCSS('mobile')}
+${devicePageBgCSS('mobile')}
+${devCSS('mobile')}
+</style><style>
+@media print{@page{size:A4;margin:12mm}body{background:#fff}main{box-shadow:none;max-width:100%;break-inside:avoid}.no-print{display:none!important}.hover-bubble{display:none!important}.lift .item-body{transform:none!important;box-shadow:none!important}}\n${codePage?`main#page-top{width:100%;max-width:none!important;min-height:0!important;zoom:1!important}.msb-code-host{width:100%;height:${H}px}.msb-code-host>iframe{display:block;width:100%;height:100%;border:0;background:#fff}html[data-msb-active="tablet"] .msb-code-host{height:${T}px}html[data-msb-active="tabletLandscape"] .msb-code-host{height:${L}px}html[data-msb-active="mobile"] .msb-code-host{height:${M}px}`:''}
 ${headerCSS}
 ${FX_PUBLIC_CSS}
 ${MSB_PUBLIC_CSS}
@@ -5352,7 +5494,7 @@ body:has(.msb-menu.mode-edge.edge-push.side-left .msb-menu-drawer:focus-within) 
 .item.menu-part.msb-sidebar-fixed .fx-motion-enter,.item.menu-part.msb-sidebar-fixed .fx-motion-loop,.item.menu-part.msb-sidebar-fixed .item-body{transform:none!important;filter:none!important;animation:none!important;perspective:none!important}
 .item.menu-part.msb-sidebar-fixed .msb-menu.mode-edge .msb-menu-drawer{pointer-events:auto}
 
-${stretchOnExport?`main{width:1000px!important;max-width:none!important}@media (min-width:521px) and (max-width:800px), (min-width:801px) and (max-width:1100px) and (orientation:portrait) and (pointer:coarse){main{width:720px!important}}@media (min-width:700px) and (max-width:1366px) and (orientation:landscape) and (pointer:coarse){main{width:1024px!important}}@media(max-width:520px){main{width:390px!important}}@media print{main{width:1000px!important;zoom:1!important}}`:""}
+${stretchOnExport?`main{width:1000px!important;max-width:none!important}html[data-msb-active="tablet"] main{width:720px!important}html[data-msb-active="tabletLandscape"] main{width:1024px!important}html[data-msb-active="mobile"] main{width:390px!important}@media print{main{width:1000px!important;zoom:1!important}}`:""}
 ${stretchOnExport?`/* 背景セクションは全画面幅、パーツは編集キャンバスの配置を維持 */
 body{position:relative;min-height:100vh;background-color:${attr(endBackground)};overflow-x:clip}
 .site-bleed{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;background-color:${attr(endBackground)};${bgCSS}}
@@ -5369,9 +5511,9 @@ main#page-top{background:transparent!important;background-image:none!important}
 @media print{.site-bleed{display:none!important}main{overflow:hidden!important;background-color:${attr(p.background||'#ffffff')}!important}}`:''}
 /* Preserve the background image layout of each device after full-bleed sizing rules. */
 ${bleedBackgroundCSS('desktop')}
-@media (min-width:521px) and (max-width:800px), (min-width:801px) and (max-width:1100px) and (orientation:portrait) and (pointer:coarse){${bleedBackgroundCSS('tablet')}}
-@media (min-width:700px) and (max-width:1366px) and (orientation:landscape) and (pointer:coarse){${bleedBackgroundCSS('tabletLandscape')}}
-@media(max-width:520px){${bleedBackgroundCSS('mobile')}}
+</style><style data-msb-profile="tablet" media="not all">${bleedBackgroundCSS('tablet')}</style>
+<style data-msb-profile="tabletLandscape" media="not all">${bleedBackgroundCSS('tabletLandscape')}</style>
+<style data-msb-profile="mobile" media="not all">${bleedBackgroundCSS('mobile')}
 </style>\n</head>\n<body>${screen.start}${screen.css?'':headerHTML}${stretchOnExport?`<div class="site-bleed" aria-hidden="true">${bands}</div>`:''}<main id="page-top">\n${anchoredBands}\n${blocks}\n</main>${screen.end}${stretchOnExport?`<script>(function(){const site=document.querySelector('main'),backdrop=document.querySelector('.site-bleed');function placeBackdropBands(){
  if(!backdrop)return;
  const inside=[...site.querySelectorAll('.bg-band')],outside=[...backdrop.querySelectorAll('.bg-band')];
@@ -5402,7 +5544,7 @@ ${bleedBackgroundCSS('desktop')}
    target.style.top=top+'px';
    target.style.height=Math.max(0,end-top)+'px';
  });
-}function fit(){const w=Math.max(240,(document.querySelector('.msb-region-main')?.clientWidth||document.querySelector('.msb-site-scrollport')?.clientWidth||document.documentElement.clientWidth)-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--msb-column-left'))||0)-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--msb-column-right'))||0));const portrait=matchMedia('(orientation:portrait) and (pointer:coarse)').matches,landscape=matchMedia('(orientation:landscape) and (pointer:coarse)').matches;const base=w<=520?390:(landscape&&w>=700&&w<=1366)?1024:(w<=800||portrait&&w<=1100)?720:1000;/* CSS pixels, not DPR: identical layout scale at the same viewport width. */const ratio=Math.max(.1,w/base);site.style.setProperty('--msb-embedded-inv-zoom',String(1/ratio));site.style.zoom=String(ratio);placeBackdropBands()}window.addEventListener('resize',fit,{passive:true});window.addEventListener('msb:layoutchange',placeBackdropBands);window.addEventListener('load',fit,{once:true});document.fonts?.ready?.then(fit).catch(()=>{});fit()})();<\/script>`:''}<script>${FX_PUBLIC_SCRIPT}<\/script><script>(function(){document.addEventListener('click',function(ev){const trigger=ev.target.closest('.msb-menu-trigger');if(trigger){const root=trigger.closest('[data-msb-menu]');const open=!root.classList.contains('open');document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')});root.classList.toggle('open',open);trigger.setAttribute('aria-expanded',String(open));return;}if(!ev.target.closest('[data-msb-menu]'))document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')});});document.addEventListener('keydown',ev=>{if(ev.key==='Escape')document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')})});})();<\/script>${hdr.script}<script>(function(){function pinRails(){document.querySelectorAll('.item.menu-part .msb-menu.mode-edge:not(.sidebar-scroll-away)').forEach(function(menu){const part=menu.closest('.item.menu-part');if(part&&part.parentElement!==document.body){document.body.appendChild(part);part.classList.add('msb-sidebar-fixed')}})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pinRails);else pinRails()})()<\/script><script>(function(){
+}function fit(){const w=Math.max(240,(document.querySelector('.msb-region-main')?.clientWidth||document.querySelector('.msb-site-scrollport')?.clientWidth||document.documentElement.clientWidth)-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--msb-column-left'))||0)-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--msb-column-right'))||0));const active=document.documentElement.dataset.msbActive||'desktop';const base=({desktop:1000,tablet:720,tabletLandscape:1024,mobile:390})[active]||1000;/* CSS pixels, not DPR: identical layout scale at the same viewport width. */const ratio=Math.max(.1,w/base);site.style.setProperty('--msb-embedded-inv-zoom',String(1/ratio));site.style.zoom=String(ratio);placeBackdropBands()}window.addEventListener('resize',fit,{passive:true});window.addEventListener('msb:layoutchange',placeBackdropBands);window.addEventListener('load',fit,{once:true});document.fonts?.ready?.then(fit).catch(()=>{});fit()})();<\/script>`:''}<script>${FX_PUBLIC_SCRIPT}<\/script><script>(function(){document.addEventListener('click',function(ev){const trigger=ev.target.closest('.msb-menu-trigger');if(trigger){const root=trigger.closest('[data-msb-menu]');const open=!root.classList.contains('open');document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')});root.classList.toggle('open',open);trigger.setAttribute('aria-expanded',String(open));return;}if(!ev.target.closest('[data-msb-menu]'))document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')});});document.addEventListener('keydown',ev=>{if(ev.key==='Escape')document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')})});})();<\/script>${hdr.script}<script>(function(){function pinRails(){document.querySelectorAll('.item.menu-part .msb-menu.mode-edge:not(.sidebar-scroll-away)').forEach(function(menu){const part=menu.closest('.item.menu-part');if(part&&part.parentElement!==document.body){document.body.appendChild(part);part.classList.add('msb-sidebar-fixed')}})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pinRails);else pinRails()})()<\/script><script>(function(){
  function setupOutside(){
   const rails=[...document.querySelectorAll('body>.item.menu-part:has(.msb-menu.edge-outside)')];
   if(!rails.length||document.querySelector('.msb-site-scrollport'))return;
@@ -5416,7 +5558,7 @@ ${bleedBackgroundCSS('desktop')}
   window.dispatchEvent(new Event('resize'));
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupOutside);else setupOutside();
-})()<\/script><script>${MSB_ACTION_SCRIPT}<\/script><script>${MSB_LAYOUT_DIAGNOSTIC_JS}<\/script></body>\n</html>`;
+})()<\/script><script>${MSB_ACTION_SCRIPT}<\/script><script>${MSB_LAYOUT_DIAGNOSTIC_JS}<\/script>${MSB_PUBLIC_TEXT_GUARD}</body>\n</html>`;
  }
  function buildSitePreview(){
    // Build preview pages with the EXACT same renderExportPage() as ZIP/GitHub.
@@ -5435,6 +5577,8 @@ ${bleedBackgroundCSS('desktop')}
 .viewport{height:calc(100dvh - 52px);overflow:auto;padding:0;display:flex;align-items:flex-start;justify-content:safe center}
 #site{display:block;flex:none;width:100%;height:100%;min-height:450px;border:0;background:white;box-shadow:0 4px 22px #172b4140}
 .viewport.is-fixed{padding:8px}.viewport.is-fixed #site{height:calc(100dvh - 68px);min-height:450px;border:1px solid #b1c4dc;border-radius:4px}
+/* The portrait iframe stays portrait even on a short desktop monitor. */
+.viewport[data-device="tablet"] #site{height:max(960px,calc(100dvh - 68px))!important}
 /* Tablet landscape needs a landscape-shaped iframe even on tall desktop monitors. */
 .viewport[data-device="tabletLandscape"] #site{height:min(760px,calc(100dvh - 68px))!important;min-height:450px}
 @media(max-width:800px){.bar{gap:6px}.bar>strong{display:none}#tabs{order:3;flex-basis:100%}.viewport{height:calc(100dvh - 95px)}.viewport.is-fixed #site{height:calc(100dvh - 112px)}}
@@ -5445,20 +5589,9 @@ const frame=document.getElementById('site'),tabs=document.getElementById('tabs')
 let activeFile=initialPage;
 const widths={desktop:'100%',tablet:'768px',tabletLandscape:'1024px',mobile:'390px'};
 function emulatedHTML(p){
-  // On desktop Chrome, the nested iframe has pointer:fine even at a tablet width.
-  // The public landscape rules are unchanged; preview only emulates the missing
-  // coarse-pointer media condition so the same tablet-specific rules run.
-  if(choice.value==='tabletLandscape')return p.html.replaceAll('(orientation:landscape) and (pointer:coarse)','(orientation:landscape) and (min-width:0px)');
-  if(choice.value==='tablet'){
-    // v1.19: a desktop iframe has a fine pointer and may be shorter than
-    // an actual iPad. Force tablet-portrait branching only in the preview.
-    // The exported/public HTML is NOT modified.
-    return p.html
-      .replaceAll('(min-width:801px) and (max-width:1100px) and (orientation:portrait) and (pointer:coarse)', '(min-width:801px) and (max-width:1100px)')
-      .replaceAll('(min-width:700px) and (max-width:1366px) and (orientation:landscape) and (pointer:coarse)', '(min-width:700px) and (max-width:1366px) and (max-width:0px)')
-      .replace("const portrait=matchMedia('(orientation:portrait) and (pointer:coarse)').matches,landscape=matchMedia('(orientation:landscape) and (pointer:coarse)').matches;", 'const portrait=true,landscape=false;');
-  }
-  return p.html;
+  // Device profile is selected by the same shared public resolver; the
+  // preview only forces the chosen profile (desktop browsers have fine pointers).
+  return p.html.replace('<html lang="ja">','<html lang="ja" data-msb-preview-device="'+choice.value+'">');
 }
 function show(file,hash=''){
   const p=pages.find(p=>p.file===file)||pages[0];if(!p)return;activeFile=p.file;
@@ -5470,6 +5603,16 @@ function setView(next){
   if(!Object.hasOwn(widths,next))next='desktop';choice.value=next;
   const isDesktop=next==='desktop';viewport.classList.toggle('is-fixed',!isDesktop);viewport.dataset.device=next;
   frame.style.width=next==='tablet'?tabletWidth.value+'px':widths[next];
+  // A 768px-wide iframe inside a short desktop window can be shorter than
+  // 768px and report landscape orientation. Give portrait preview an actual
+  // portrait-shaped viewport, matching the public iPad media-query branch.
+  // This affects only the preview iframe, never exported pages or project data.
+  if(next==='tablet'){
+    const cssWidth=Number(tabletWidth.value)||768;
+    frame.style.height=Math.max(Math.ceil(cssWidth*4/3),cssWidth+1)+'px';
+  }else{
+    frame.style.height='';
+  }
   tabletWidthBox.style.display=next==='tablet'?'inline-flex':'none';
   note.textContent=isDesktop?'ブラウザ幅':(next==='tablet'?tabletWidth.value+'px':next==='tabletLandscape'?'1024px':'390px');
   show(activeFile);
