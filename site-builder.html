@@ -5568,7 +5568,14 @@ main{position:relative;z-index:1;background:none!important;overflow:visible!impo
 /* v1.16: Page-background overrides use main#page-top specificity on tablet/mobile.
    Keep the foreground transparent so the full-width section background remains visible. */
 main#page-top{background:transparent!important;background-image:none!important}
-@media screen{main>.bg-band{background:none!important}}
+/* v1.22 tablet fix: Keep each tablet/mobile background band on the SAME
+   transformed canvas as the text. External bleed bands are a second coordinate
+   system, and become misaligned on iPadOS. Desktop retains full bleed. */
+@media screen{
+ html:not([data-msb-active="tablet"]):not([data-msb-active="tabletLandscape"]) main>.bg-band{background:none!important}
+ html[data-msb-active="tablet"] .site-bleed,
+ html[data-msb-active="tabletLandscape"] .site-bleed{display:none!important}
+}
 @media print{.site-bleed{display:none!important}main{overflow:hidden!important;background-color:${attr(p.background||'#ffffff')}!important}}`:''}
 /* Preserve the background image layout of each device after full-bleed sizing rules. */
 ${bleedBackgroundCSS('desktop')}
