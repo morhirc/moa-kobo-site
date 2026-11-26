@@ -1,3 +1,4 @@
+
 name: Site Builder JSON → GitHub Pages
 
 on:
@@ -26,18 +27,32 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
       - name: Install generator
         run: npm install --no-audit --no-fund --ignore-scripts
+
       - name: Install browser
-        run: npx playwright install --with-deps chromium
+        run: |
+          # Microsoftの外部APTリポジトリによる403エラーを回避
+          for file in /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do
+            [ -f "$file" ] || continue
+            if grep -qi 'packages.microsoft.com' "$file"; then
+              sudo mv "$file" "$file.disabled"
+            fi
+          done
+          npx playwright install --with-deps chromium
+
       - name: Generate static site from JSON
         run: npm run build
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+
       - name: Upload site files
         uses: actions/upload-pages-artifact@v4
         with:
