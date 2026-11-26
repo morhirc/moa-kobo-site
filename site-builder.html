@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>morhirc Site Builder v1.22</title>
+<!-- 2026-11-27: fixes landscape text overlap after automatic text height adjustment -->
 <style>
   :root {font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN",Meiryo,sans-serif; color:#202936; background:#eef1f5; font-size:14px}
   * {box-sizing:border-box}
@@ -5193,15 +5194,20 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
   function mode(){
     if(known.includes(forced))return forced;
     const w=Math.max(0,document.documentElement.clientWidth||innerWidth);
-    if(w<=520)return 'mobile';
     const touch=matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>1;
+    const screenW=Number(window.screen?.width)||0,screenH=Number(window.screen?.height)||0;
+    // In iPad Safari split view the available webpage may become narrower than
+    // a phone without the physical device changing orientation.
+    const fullTablet=touch&&Math.min(screenW,screenH)>=700;
+    if(w<=520&&!fullTablet)return 'mobile';
     // Keep tablet orientation stable when Safari temporarily narrows its viewport.
-    if(touch&&w<=1366)return landscape()?'tabletLandscape':'tablet';
+    if(fullTablet||touch&&w<=1366)return landscape()?'tabletLandscape':'tablet';
     return w<=800?'tablet':'desktop';
   }
   function apply(){
     const m=mode(),w=Math.max(0,document.documentElement.clientWidth||innerWidth);
-    const header=(m==='tablet'||m==='mobile'||w<870)?'compact':'wide';
+    // Header uses the same selected profile as all page elements.
+    const header=(m==='tablet'||m==='mobile')?'compact':'wide';
     const changed=root.dataset.msbActive!==m||root.dataset.msbHeader!==header;
     root.dataset.msbActive=m;
     root.dataset.msbHeader=header;
@@ -5222,64 +5228,87 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
 
  const MSB_PUBLIC_TEXT_GUARD=`<script>(function(){
   'use strict';
-  // Preserve the editor's authored heights. Extend a text component only
-  // when real font rendering needs more vertical space; never auto-shrink.
+  // Keep the authored device layout as the starting point. In particular,
+  // elements and section boundaries must both move when text needs more lines.
   const main=()=>document.getElementById('page-top');
-  let pending=0;
+  let queued=0;
   function run(){
-    pending=0;
+    queued=0;
     const canvas=main();if(!canvas)return;
-    const elements=[...canvas.querySelectorAll(':scope > .item')];
+    const items=[...canvas.querySelectorAll(':scope > .item')];
     const bands=[...canvas.querySelectorAll(':scope > .bg-band')];
-    for(const item of elements){item.style.removeProperty('top');item.style.removeProperty('height');}
-    for(const band of bands){band.style.removeProperty('top');band.style.removeProperty('height');}
+    // Recalculate from the original device profile on every resize/rotation.
+    for(const el of items){el.style.removeProperty('top');el.style.removeProperty('height')}
+    for(const band of bands){band.style.removeProperty('top');band.style.removeProperty('height')}
     canvas.style.removeProperty('min-height');
-    const baseline=elements.map(item=>({item,top:item.offsetTop,height:item.offsetHeight,grown:false}));
-    const sectionBaseline=bands.filter(b=>getComputedStyle(b).display!=='none')
-      .map(b=>({band:b,top:b.offsetTop,height:b.offsetHeight})).sort((a,b)=>a.top-b.top);
-    for(const entry of baseline){
-      const item=entry.item;
-      if(getComputedStyle(item).display==='none')continue;
-      if(!['text','heading'].includes(item.getAttribute('aria-label')||''))continue;
-      const text=[...item.querySelectorAll('.txt')].find(el=>getComputedStyle(el).display!=='none');
+    const initialHeight=canvas.offsetHeight;
+    const entries=items.map(item=>({
+      item,top:item.offsetTop,left:item.offsetLeft,width:item.offsetWidth,
+      oldHeight:item.offsetHeight,height:item.offsetHeight,shift:0,
+      visible:getComputedStyle(item).display!=='none',grown:false,section:null
+    }));
+    const sections=bands.filter(b=>getComputedStyle(b).display!=='none')
+      .map(b=>({band:b,top:b.offsetTop,height:b.offsetHeight,delta:0,offset:0}))
+      .sort((a,b)=>a.top-b.top);
+    // A text item is an absolute-positioned rectangle, so increasing only its
+    // height causes overlapping text. Preserve the original gaps as well.
+    for(const e of entries){
+      if(!e.visible||!['text','heading'].includes(e.item.getAttribute('aria-label')||''))continue;
+      const text=[...e.item.querySelectorAll('.txt')]
+        .find(el=>getComputedStyle(el).display!=='none'&&el.getClientRects().length);
       if(!text)continue;
       const probe=text.cloneNode(true);
       probe.style.cssText+=';position:absolute!important;left:0!important;top:0!important;'+
-        'height:auto!important;max-height:none!important;min-height:0!important;'+
+        'height:auto!important;min-height:0!important;max-height:none!important;'+
         'width:100%!important;visibility:hidden!important;pointer-events:none!important;';
       text.parentElement.appendChild(probe);
-      const natural=probe.offsetHeight;
+      const natural=Math.ceil(Math.max(probe.scrollHeight,probe.offsetHeight));
       probe.remove();
-      if(natural>entry.height+2){
-        item.style.height=Math.ceil(natural+2)+'px';
-        entry.height=Math.ceil(natural+2);
-        entry.grown=true;
-      }
+      if(natural>e.oldHeight+2){e.height=natural+2;e.grown=true}
     }
-    let total=0;
-    for(const section of sectionBaseline){
-      const start=section.top,finish=start+section.height;
-      let needed=finish;
-      for(const entry of baseline){
-        if(entry.top>=start&&entry.top<finish){
-          entry.item.style.top=(entry.top+total)+'px';
-          if(entry.grown)needed=Math.max(needed,entry.top+entry.height+10);
+    let pushed=0;
+    const overlapX=(a,b)=>Math.min(a.left+a.width,b.left+b.width)-Math.max(a.left,b.left)>2;
+    for(const s of sections){
+      s.offset=pushed;
+      const group=entries.filter(e=>e.visible&&e.top>=s.top&&e.top<s.top+s.height)
+        .sort((a,b)=>a.top-b.top||a.left-b.left);
+      for(const e of group){
+        e.section=s;
+        let displacement=0;
+        for(const previous of group){
+          if(previous===e)break;
+          // Do not rearrange parts deliberately sharing/overlapping a row.
+          if(previous.top+previous.oldHeight>e.top+1||!overlapX(previous,e))continue;
+          const authoredGap=e.top-(previous.top+previous.oldHeight);
+          const wanted=previous.top+previous.shift+previous.height+authoredGap;
+          displacement=Math.max(displacement,wanted-e.top);
         }
+        e.shift=Math.max(0,Math.ceil(displacement));
       }
-      const delta=Math.max(0,Math.ceil(needed-finish));
-      section.band.style.top=(start+total)+'px';
-      if(delta)section.band.style.height=(section.height+delta)+'px';
-      total+=delta;
+      // Expand a section only when the adjusted content would cross its edge.
+      // Never shrink user-authored sections or change deliberate empty space.
+      const changed=group.filter(e=>e.grown||e.shift>0);
+      if(changed.length){
+        const required=Math.max(...changed.map(e=>e.top+e.shift+e.height+8));
+        s.delta=Math.max(0,Math.ceil(required-(s.top+s.height)));
+      }
+      pushed+=s.delta;
     }
-    for(const entry of baseline){
-      const covered=sectionBaseline.some(s=>entry.top>=s.top&&entry.top<s.top+s.height);
-      if(!covered&&total&&entry.top>=sectionBaseline.at(-1)?.top+sectionBaseline.at(-1)?.height)
-        entry.item.style.top=(entry.top+total)+'px';
+    for(const e of entries){
+      if(!e.visible)continue;
+      const offset=e.section?e.section.offset:sections.reduce((sum,s)=>sum+(s.top+s.height<=e.top?s.delta:0),0);
+      const moved=e.top+offset+e.shift;
+      if(moved!==e.top)e.item.style.top=moved+'px';
+      if(e.grown)e.item.style.height=e.height+'px';
     }
-    if(total)canvas.style.setProperty('min-height',(canvas.offsetHeight+total)+'px','important');
+    for(const s of sections){
+      if(s.offset)s.band.style.top=(s.top+s.offset)+'px';
+      if(s.delta)s.band.style.height=(s.height+s.delta)+'px';
+    }
+    if(pushed)canvas.style.setProperty('min-height',(initialHeight+pushed)+'px','important');
     window.dispatchEvent(new Event('msb:layoutchange'));
   }
-  function schedule(){if(!pending)pending=requestAnimationFrame(run);}
+  function schedule(){if(!queued)queued=requestAnimationFrame(run)}
   window.addEventListener('resize',schedule,{passive:true});
   window.addEventListener('msb:profilechange',schedule);
   window.addEventListener('orientationchange',schedule,{passive:true});
