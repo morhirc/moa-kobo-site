@@ -5342,7 +5342,8 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
   function schedule(){if(!queued)queued=requestAnimationFrame(run)}
   window.addEventListener('resize',schedule,{passive:true});
   window.addEventListener('msb:profilechange',schedule);
-  window.addEventListener('orientationchange',schedule,{passive:true});
+  window.addEventListener('orientationchange',()=>{schedule();setTimeout(schedule,300)},{passive:true});
+  window.addEventListener('pageshow',schedule,{passive:true});
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',schedule,{once:true});else schedule();
   document.fonts?.ready?.then(schedule).catch(()=>{});
 })();<\/script>`;
@@ -5577,9 +5578,15 @@ ${bleedBackgroundCSS('desktop')}
 </style>\n</head>\n<body>${screen.start}${screen.css?'':headerHTML}${stretchOnExport?`<div class="site-bleed" aria-hidden="true">${bands}</div>`:''}<main id="page-top">\n${anchoredBands}\n${blocks}\n</main>${screen.end}${stretchOnExport?`<script>(function(){const site=document.querySelector('main'),backdrop=document.querySelector('.site-bleed');function placeBackdropBands(){
  if(!backdrop)return;
  const inside=[...site.querySelectorAll('.bg-band')],outside=[...backdrop.querySelectorAll('.bg-band')];
- const scroll=window.scrollY||document.documentElement.scrollTop||0;
- // 端数pxの境界を揃える。次のセクションを基準に高さを合わせ、
- // 1pxだけ重ねてブラウザの縮小/拡大時の背景の継ぎ目を消す。
+ // Align the full-bleed background with the *painted* foreground.
+ // Safari's visual viewport can have a different CSS scale than the logical
+ // canvas. Subtracting two DOMRects eliminates scroll, DPI and transform
+ // origin ambiguities; unlike offsetTop * a guessed zoom, the result is in
+ // exactly the same coordinate system as the backdrop.
+ const backdropTop=backdrop.getBoundingClientRect().top;
+ const visibleTop=el=>el.getBoundingClientRect().top-backdropTop;
+ const visibleBottom=el=>el.getBoundingClientRect().bottom-backdropTop;
+ // 次のセクションを基準に境界を一致させ、境界の隙間だけ1px重ねます。
  // Only visible sections participate in the flow. Device-specific deleted
  // sections remain in the JSON and DOM, but must not collapse the prior
  // visible band's height (nor affect the following band).
@@ -5592,15 +5599,11 @@ ${bleedBackgroundCSS('desktop')}
      target.style.height='0px';
      return;
    }
-   // v1.18: Safari/iPadOS may return unzoomed getBoundingClientRect()
-   // dimensions for descendants of an element with CSS zoom. Use their
-   // logical offsets and the *explicit* canvas zoom, so background bands
-   // stay aligned with items on Safari and Chromium alike.
-    const zoom=Math.max(.1,parseFloat(site.dataset.msbScale)||1);
-   const pageTop=site.getBoundingClientRect().top+scroll;
-   const top=Math.floor(pageTop+band.offsetTop*zoom);
+   // v1.22.2: Under transform:scale(), DOMRect is the authoritative painted
+   // geometry. Do not reuse the old CSS-zoom offsetTop conversion here.
+   const top=Math.floor(visibleTop(band));
    const following=nextVisible.get(band);
-   const end=Math.ceil(pageTop+(following?following.offsetTop:band.offsetTop+band.offsetHeight)*zoom)+(following?1:0);
+   const end=Math.ceil(following?visibleTop(following):visibleBottom(band))+(following?1:0);
    target.style.top=top+'px';
    target.style.height=Math.max(0,end-top)+'px';
  });
