@@ -1,5 +1,5 @@
 /**
- * MOA工房 / morhirc Site Builder v1.17 JSON -> GitHub Pages
+ * MOA工房 / morhirc Site Builder v1.18 JSON -> GitHub Pages
  * Site Builder本体の buildExportFiles() を呼び出すことで生成ロジックを一本化します。
  */
 import fs from 'node:fs/promises';
@@ -12,7 +12,7 @@ const inputPath = path.join(root, 'site-project.json');
 const editorPath = path.join(root, 'site-builder.html');
 const outputDir = path.join(root, 'dist');
 const expectedWebsite = 'https://www.moa-kobo.com/';
-const requiredVersion = 'v1.17';
+const requiredVersion = 'v1.18';
 
 function validateProject(project) {
   if (!project || !Array.isArray(project.pages) || !project.pages.length ||
