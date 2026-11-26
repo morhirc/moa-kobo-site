@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>morhirc Site Builder v1.22</title>
+<title>morhirc Site Builder v1.22.3</title>
 <!-- 2026-11-27: fixes landscape text overlap after automatic text height adjustment -->
 <style>
   :root {font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN",Meiryo,sans-serif; color:#202936; background:#eef1f5; font-size:14px}
@@ -1155,7 +1155,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-full">morhirc Site Builder</span><span class="brand-short" aria-hidden="true">m</span><span class="version">v1.22 - Hybrid</span></div>
+  <div class="brand"><span class="brand-full">morhirc Site Builder</span><span class="brand-short" aria-hidden="true">m</span><span class="version">v1.22.3 - Hybrid</span></div>
   <input id="projectName" class="project-name" value="新しいサイト" title="サイト名" aria-label="サイト名">
   <button id="newBtn" class="hide-narrow" title="新しい白紙サイト">新規</button>
   <button id="undoBtn" title="元に戻す Ctrl+Z">↶</button>
@@ -1286,11 +1286,11 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
 </div>
 <input type="file" accept="application/json,.json" id="openFile" class="hidden">
 <input type="file" accept="text/html,.html,.htm" id="hybridHtmlFile" class="hidden">
-<input type="file" accept="image/*" id="imageFile" class="hidden">
-<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" id="hoverSwapImageFile" class="hidden">
-<input type="file" id="headerLogoFile" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
-<input type="file" id="faviconFile" accept=".ico,image/x-icon,image/vnd.microsoft.icon,image/png,image/jpeg,image/webp,image/gif" hidden>
-  <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" id="pageBgFile" class="hidden">
+<input type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" id="imageFile" class="hidden">
+<input type="file" accept="image/png,image/jpeg,image/webp" id="hoverSwapImageFile" class="hidden">
+<input type="file" id="headerLogoFile" accept="image/png,image/jpeg,image/webp" hidden>
+<input type="file" id="faviconFile" accept=".ico,image/x-icon,image/vnd.microsoft.icon,image/png,image/jpeg,image/webp" hidden>
+  <input type="file" accept="image/png,image/jpeg,image/webp" id="pageBgFile" class="hidden">
 <div id="quickTextToolbar" class="quick-text-toolbar msb-compact-toolbar hidden" role="toolbar" aria-label="文字の編集">
   <button type="button" id="quickToolbarDrag" class="quick-drag-handle" title="バーを移動（ダブルクリックで位置を戻す）" aria-label="ツールバーの移動">⠿</button>
   <span class="quick-label" id="quickToolbarMode">文字</span>
@@ -1680,7 +1680,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
  function updateEditorFavicon(){let node=document.getElementById('siteBuilderSiteFavicon');const src=safeFavicon(project.favicon);if(!src){node?.remove();return}if(!node){node=document.createElement('link');node.id='siteBuilderSiteFavicon';node.rel='icon';document.head.append(node)}node.type=faviconMime(src);node.href=src}
  async function readFavicon(file){
    const ext=String(file.name||'').split('.').pop().toLowerCase();
-   if(!['ico','png','jpg','jpeg','webp','gif'].includes(ext))return notify('PNG・ICO・JPEG・WebP・GIFを選んでください。');
+   if(ext!=='ico'&&!(await supportedImageFile(file)))return unsupportedImageNotice();
    if(file.size>4*1024*1024)return notify('ファビコン画像は4MB以下にしてください。');
    try{
      const raw=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||''));reader.onerror=reject;reader.readAsDataURL(file)});
@@ -4951,8 +4951,29 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
 
  $('regionFocusBack').onclick=()=>focusLayoutRegion('main');
  function renderAll(){document.body.classList.toggle('msb-code-page',hybridCodePage(originalPage())&&activeLayoutRegion==='main');const savedViewport=captureEditorScroll();updateEditorFavicon();responsiveCache=new WeakMap();if(!project.pages.some(p=>p.id===pageId))pageId=project.pages[0].id;if(expandedPageId!==null&&!project.pages.some(p=>p.id===expandedPageId))expandedPageId=pageId;if(activeLayoutRegion!=='main'&&!layoutSlots(regionLayout(originalPage())).some(([k,on])=>k===activeLayoutRegion&&on))activeLayoutRegion='main';if(selectedSectionId&&!selectedSection())selectedSectionId=null;ensureInitialResponsive();$('projectName').value=project.title;renderPages();renderLayoutStudio();renderCanvas(savedViewport);renderInspector();renderSections();renderLayoutPanel();renderSiteSettingsPanel();refreshHistory();document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===(device==='tabletLandscape'?'tablet':device)));$('tabletOrientationPicker').classList.toggle('hidden',device!=='tablet'&&device!=='tabletLandscape');document.querySelectorAll('[data-orientation]').forEach(b=>b.classList.toggle('active',b.dataset.orientation===device));const isPc=device==='desktop';$('independentModeCaption').classList.toggle('hidden',isPc);$('pcImportBtn').classList.toggle('hidden',isPc);const hiddenCount=hiddenDeviceParts(page(),device).length;const hiddenButton=$('hiddenPartsBtn');hiddenButton.classList.toggle('hidden',!hiddenCount);hiddenButton.textContent='非表示 '+hiddenCount;restoreEditorScroll(savedViewport,true)}
- async function readImage(file,coords){if(!file||!file.type.startsWith('image/'))return notify('画像ファイルを選択してください。');if(file.size>12*1024*1024)return notify('画像は12MB以下にしてください。');const src=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)});mutate(()=>{let e=selected();if(!e||e.type!=='image'){e=createElement('image',coords);if(coords&&device!=='desktop')e.layouts[device]={x:coords.x,y:coords.y,w:coords.w,h:coords.h};initializeNewPartVisibility(e,page());page().elements.push(e);selectedId=e.id}e.src=src;e.text=file.name})}
- async function readBackground(file){if(!file||!['image/png','image/jpeg','image/webp','image/gif'].includes(file.type))return notify('背景画像はPNG・JPEG・WebP・GIFを選択してください。');if(file.size>12*1024*1024)return notify('背景画像は12MB以下にしてください。');
+  // v1.22: Restrict newly selected images to broad cross-device formats.
+  // Older project images are left intact, including legacy GIF/AVIF data.
+  const IMAGE_FORMAT_NOTICE='JPEG・PNG・WebP形式の画像を選択してください。';
+  const IMAGE_CONVERTER_URL='https://morhirc.github.io/image-converter/';
+  function unsupportedImageNotice(){
+    openModal('<h2>非対応の画像形式です</h2><p>'+IMAGE_FORMAT_NOTICE+'</p><p>その他の形式は、<a href="'+IMAGE_CONVERTER_URL+'" target="_blank" rel="noopener noreferrer">morhirc 画像変換ツール</a>で変換できます。</p>');
+  }
+  async function supportedImageFile(file){
+    if(!file)return false;
+    const ext=String(file.name||'').split('.').pop().toLowerCase();
+    const expected=({jpg:'jpeg',jpeg:'jpeg',jpe:'jpeg',png:'png',webp:'webp'})[ext];
+    if(!expected||file.type&&!['image/jpeg','image/png','image/webp'].includes(file.type))return false;
+    if(file.type&&file.type!=='image/'+expected)return false;
+    // Validate signature as well as extension/MIME: renaming AVIF to .jpg
+    // must not let an incompatible format slip into the published JSON.
+    let bytes;
+    try{bytes=new Uint8Array(await file.slice(0,12).arrayBuffer());}catch{return false;}
+    if(expected==='jpeg')return bytes.length>=3&&bytes[0]===0xff&&bytes[1]===0xd8&&bytes[2]===0xff;
+    if(expected==='png')return bytes.length>=8&&[137,80,78,71,13,10,26,10].every((n,i)=>bytes[i]===n);
+    return bytes.length>=12&&String.fromCharCode(...bytes.slice(0,4))==='RIFF'&&String.fromCharCode(...bytes.slice(8,12))==='WEBP';
+  }
+  async function readImage(file,coords){if(!file)return;if(!(await supportedImageFile(file)))return unsupportedImageNotice();if(file.size>12*1024*1024)return notify('画像は12MB以下にしてください。');const src=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)});mutate(()=>{let e=selected();if(!e||e.type!=='image'){e=createElement('image',coords);if(coords&&device!=='desktop')e.layouts[device]={x:coords.x,y:coords.y,w:coords.w,h:coords.h};initializeNewPartVisibility(e,page());page().elements.push(e);selectedId=e.id}e.src=src;e.text=file.name})}
+ async function readBackground(file){if(!file)return;if(!(await supportedImageFile(file)))return unsupportedImageNotice();if(file.size>12*1024*1024)return notify('背景画像は12MB以下にしてください。');
    const src=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)});
    if(!safeBackgroundImage(src))return notify('背景画像を認識できませんでした。');
    const p=project.pages.find(p=>p.id===bgTarget?.pageId);if(!p)return notify('対象のページがありません。');
@@ -5240,47 +5261,6 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
   // elements and section boundaries must both move when text needs more lines.
   const main=()=>document.getElementById('page-top');
   let queued=0;
-  // v1.22.3: Bring near-fitting *authored* lines onto the same line in
-  // WebKit and Chromium.  Do not change the stored width, font-size, or JSON.
-  // This is deliberately limited to a line short by <= 5.5% / 22 CSS px;
-  // text deliberately spanning several lines keeps its original wrapping.
-  function settleNearFitLines(text){
-    const raw=text.textContent||'';
-    if(raw.length<5||raw.length>500||!raw.trim())return;
-    const available=text.clientWidth;
-    if(available<70)return;
-    // white-space:pre preserves user-entered line breaks but disables only the
-    // additional automatic wrap.  Rich-text spans keep their own font sizes.
-    const probe=text.cloneNode(true);
-    probe.removeAttribute('id');
-    probe.style.cssText+=';position:absolute!important;left:0!important;top:0!important;'+
-      'display:block!important;width:max-content!important;max-width:none!important;'+
-      'height:auto!important;max-height:none!important;min-height:0!important;'+
-      'white-space:pre!important;overflow:visible!important;visibility:hidden!important;'+
-      'pointer-events:none!important;transform:none!important;';
-    text.parentElement.appendChild(probe);
-    const over=probe.scrollWidth-available;
-    const allowable=Math.min(22,available*.055);
-    if(over>.15&&over<=allowable){
-      const original=Number.parseFloat(getComputedStyle(text).fontSize)||16;
-      // Maximal adjustment is less than one CSS pixel per character; unlike
-      // scaling an entire box it cannot displace neighboring components.
-      const maxTightening=Math.min(1,original*.055);
-      probe.style.letterSpacing=(-maxTightening)+'px';
-      if(probe.scrollWidth<=available){
-        let lo=0,hi=maxTightening;
-        for(let i=0;i<7;i++){
-          const mid=(lo+hi)/2;
-          probe.style.letterSpacing=(-mid)+'px';
-          if(probe.scrollWidth<=available)hi=mid;else lo=mid;
-        }
-        const adjustment=Math.min(maxTightening,hi+.035);
-        text.style.letterSpacing=(-adjustment).toFixed(3)+'px';
-        text.dataset.msbWrapAdjusted='true';
-      }
-    }
-    probe.remove();
-  }
   function run(){
     queued=0;
     const canvas=main();if(!canvas)return;
@@ -5313,9 +5293,6 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
       const baseSize=Number(text.dataset[baseKey])||parseFloat(getComputedStyle(text).fontSize)||16;
       text.dataset[baseKey]=String(baseSize);
       text.style.fontSize=baseSize+'px';
-      // Restore the authored spacing before measuring after a device change.
-      text.style.removeProperty('letter-spacing');
-      delete text.dataset.msbWrapAdjusted;
       const raw=text.textContent.trim();
       if(!text.children.length&&raw.length>1&&!raw.includes(String.fromCharCode(10))&&
           e.oldHeight<=baseSize*1.55&&baseSize>=30&&e.width>=baseSize*3){
@@ -5332,7 +5309,6 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
         const fit=(e.width-4)/Math.max(naturalWidth,1);
         if(fit<1&&fit>=.75)text.style.fontSize=(baseSize*fit-.25).toFixed(2)+'px';
       }
-      settleNearFitLines(text);
       const probe=text.cloneNode(true);
       probe.style.cssText+=';position:absolute!important;left:0!important;top:0!important;'+
         'height:auto!important;min-height:0!important;max-height:none!important;'+
@@ -5674,7 +5650,16 @@ ${bleedBackgroundCSS('desktop')}
   site.dataset.msbScale=String(ratio);
   site.style.setProperty('--msb-embedded-inv-zoom','1');
   site.style.marginBottom=((ratio-1)*site.offsetHeight)+'px';
-  placeBackdropBands();
+   // The absolute background used to end at body's unscaled layout height.
+   // Transform enlarges the painted main without enlarging that background.
+   // Size the background to the same painted bottom before positioning bands.
+   if(backdrop){
+     const backdropTop=backdrop.getBoundingClientRect().top;
+     const contentBottom=site.getBoundingClientRect().bottom;
+     backdrop.style.bottom='auto';
+     backdrop.style.height=Math.max(1,Math.ceil(contentBottom-backdropTop))+'px';
+   }
+   placeBackdropBands();
 }window.addEventListener('resize',fit,{passive:true});window.addEventListener('msb:profilechange',fit);window.addEventListener('msb:layoutchange',fit);window.addEventListener('load',fit,{once:true});document.fonts?.ready?.then(fit).catch(()=>{});fit()})();<\/script>`:''}<script>${FX_PUBLIC_SCRIPT}<\/script><script>(function(){document.addEventListener('click',function(ev){const trigger=ev.target.closest('.msb-menu-trigger');if(trigger){const root=trigger.closest('[data-msb-menu]');const open=!root.classList.contains('open');document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')});root.classList.toggle('open',open);trigger.setAttribute('aria-expanded',String(open));return;}if(!ev.target.closest('[data-msb-menu]'))document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')});});document.addEventListener('keydown',ev=>{if(ev.key==='Escape')document.querySelectorAll('[data-msb-menu].open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')})});})();<\/script>${hdr.script}<script>(function(){function pinRails(){document.querySelectorAll('.item.menu-part .msb-menu.mode-edge:not(.sidebar-scroll-away)').forEach(function(menu){const part=menu.closest('.item.menu-part');if(part&&part.parentElement!==document.body){document.body.appendChild(part);part.classList.add('msb-sidebar-fixed')}})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pinRails);else pinRails()})()<\/script><script>(function(){
  function setupOutside(){
   const rails=[...document.querySelectorAll('body>.item.menu-part:has(.msb-menu.edge-outside)')];
@@ -6118,7 +6103,7 @@ setView(initialView);
  $('hoverSwapImageFile').onchange=async ev=>{
    const f=ev.target.files?.[0];ev.target.value='';if(!f)return;
    const e=selected();if(!e||e.type!=='image')return notify('画像パーツを選択してください。');
-   if(!['image/png','image/jpeg','image/webp','image/gif'].includes(f.type))return notify('PNG・JPEG・WebP・GIFを選択してください。');
+   if(!(await supportedImageFile(f)))return unsupportedImageNotice();
    if(f.size>12*1024*1024)return notify('画像は12MB以下にしてください。');
    try{const src=await new Promise((ok,fail)=>{const reader=new FileReader();reader.onload=()=>ok(String(reader.result||''));reader.onerror=fail;reader.readAsDataURL(f)});
      if(!safeBackgroundImage(src))throw Error('invalid image');
@@ -6129,7 +6114,7 @@ setView(initialView);
 
  $('headerLogoFile').onchange=async ev=>{
    const file=ev.target.files[0];ev.target.value='';if(!file)return;
-   if(!['image/png','image/jpeg','image/webp','image/gif'].includes(file.type))return notify('ロゴはPNG・JPEG・WebP・GIFを選んでください。');
+   if(!(await supportedImageFile(file)))return unsupportedImageNotice();
    if(file.size>1024*1024)return notify('ロゴ画像は1MB以下を推奨します。ファイルを小さくしてください。');
    try{const src=await new Promise((ok,fail)=>{const reader=new FileReader();reader.onload=()=>ok(reader.result);reader.onerror=fail;reader.readAsDataURL(file)});
      if(!safeBackgroundImage(src))return notify('画像形式を確認してください。');
@@ -6139,7 +6124,7 @@ setView(initialView);
  $('faviconFile').onchange=async ev=>{const f=ev.target.files?.[0];ev.target.value='';if(f)await readFavicon(f)};
  $('pageBgFile').onchange=async ev=>{const f=ev.target.files[0];if(f)try{await readBackground(f)}catch{notify('背景画像を読み込めませんでした。')}ev.target.value=''};
  $('paper').addEventListener('dragover',ev=>ev.preventDefault());
- $('paper').addEventListener('drop',async ev=>{ev.preventDefault();const f=[...ev.dataTransfer.files].find(f=>f.type.startsWith('image/'));if(!f)return notify('画像ファイルをドロップしてください。');const r=$('paper').getBoundingClientRect();const at=normalizedPlacement('image',(ev.clientX-r.left)/editorZoom,(ev.clientY-r.top)/editorZoom);cancelPlacement();selectedId=null;await readImage(f,at)});
+ $('paper').addEventListener('drop',async ev=>{ev.preventDefault();const f=[...ev.dataTransfer.files].find(f=>f.type.startsWith('image/')||/\.(?:jpe?g|jpe|png|webp|gif|avif|heic|heif|svg)$/i.test(f.name));if(!f)return notify('画像ファイルをドロップしてください。');const r=$('paper').getBoundingClientRect();const at=normalizedPlacement('image',(ev.clientX-r.left)/editorZoom,(ev.clientY-r.top)/editorZoom);cancelPlacement();selectedId=null;await readImage(f,at)});
 
  $('exportBtn').onclick=()=>{finishInlineEdit();if(!confirmPublication())return;const files=buildExportFiles();download(zipFiles(files),validSlug(project.title)+'.zip');notify('HTML一式をZIPで書き出しました。')};
  $('previewBtn').onclick=()=>{finishInlineEdit();const f=new Blob([buildSitePreview()],{type:'text/html;charset=utf-8'});const u=URL.createObjectURL(f);const w=window.open(u,'_blank');if(!w)notify('ポップアップを許可してください。');setTimeout(()=>URL.revokeObjectURL(u),60000)};
