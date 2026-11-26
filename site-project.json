@@ -262,10 +262,10 @@
               "h": 60
             },
             "tabletLandscape": {
-              "x": 254,
-              "y": 799,
-              "w": 516,
-              "h": 49
+              "x": 255,
+              "y": 800,
+              "w": 525,
+              "h": 50
             }
           },
           "deviceStyles": {
@@ -304,7 +304,8 @@
           "autoTextSizeByDevice": {
             "desktop": false,
             "mobile": false,
-            "tablet": false
+            "tablet": false,
+            "tabletLandscape": false
           },
           "hiddenDevices": [],
           "deviceTexts": {
