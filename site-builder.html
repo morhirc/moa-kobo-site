@@ -1151,6 +1151,21 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
 .msb-settings-panel .msb-migrate-actions button{flex:1;min-width:108px;border:1px solid #b8cce7;background:#fff;border-radius:7px;padding:9px 6px;color:#235c9b;font-size:12px;cursor:pointer}
 .msb-settings-panel input:disabled{background:#edf1f6;color:#76859a}
 
+
+/* Editor viewport: prevent the browser scrollbar from competing with the canvas.
+   Keep scrolling inside the workspace and its editing panes. */
+html,body{height:100%;min-height:0;overflow:hidden}
+.shell{min-height:0;height:calc(100dvh - 54px)}
+.workarea,.layout-studio.is-active>.workarea{
+  min-height:0;
+  overflow-y:auto;
+  scrollbar-gutter:stable;
+  overscroll-behavior:contain;
+}
+.editor-dock>.sidebar,.editor-dock>.inspector{
+  scrollbar-gutter:stable;
+  overscroll-behavior:contain;
+}
 </style>
 </head>
 <body>
@@ -1294,8 +1309,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
 <div id="quickTextToolbar" class="quick-text-toolbar msb-compact-toolbar hidden" role="toolbar" aria-label="文字の編集">
   <button type="button" id="quickToolbarDrag" class="quick-drag-handle" title="バーを移動（ダブルクリックで位置を戻す）" aria-label="ツールバーの移動">⠿</button>
   <span class="quick-label" id="quickToolbarMode">文字</span>
-  <button type="button" class="qb-secondary msb-text-action" data-quick-action="editText" title="文字を直接編集" aria-label="文字を編集">✎ <span id="msbTextActionLabel">編集</span></button>
-  <button type="button" class="qb-secondary qb-strong" data-quick-action="details" title="文字・色・書式などの詳細設定" aria-label="詳細設定を開く">⚙ <span>詳細</span></button>
+  <button type="button" class="qb-secondary qb-strong" data-quick-action="details" title="文字・色・書式などを編集" aria-label="文字と書式を編集">✎ <span>編集</span></button>
   <!-- Core formatting controls remain available to the editor script. The visible controls live in 詳細. -->
   <div class="msb-toolbar-internals" aria-hidden="true">
     <label for="quickFontFamily">フォント</label><select id="quickFontFamily" aria-label="フォント"></select>
@@ -1520,6 +1534,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
  const num=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
  const clamp=(n,min,max)=>Math.min(max,Math.max(min,n));
  const validColor=c=>/^#[0-9a-f]{6}$/i.test(String(c||''))?c:'#202936';
+ const hexToRgba=(hex,alpha=1)=>{const c=validColor(hex).replace('#','');const r=parseInt(c.slice(0,2),16),g=parseInt(c.slice(2,4),16),b=parseInt(c.slice(4,6),16);const a=Math.max(0,Math.min(1,Number(alpha)));return `rgba(${r},${g},${b},${a})`;};
  // Standard RGB colors for unambiguous primary-color choices.
  const BASIC_COLORS=[
   ['#FFFFFF','白'],['#E0E0E0','薄いグレー'],['#808080','グレー'],['#000000','黒'],['#800000','暗い赤'],['#804000','茶'],['#008000','暗い緑'],['#000080','紺'],
@@ -2607,7 +2622,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
  }
  // 位置・サイズだけでなく書式も端末別に保持します。旧JSONはPCの書式として扱います。
  const GRADIENT_STYLE_KEYS=['gradientMode','gradientColor1','gradientColor2','gradientAngle','gradientDuration'];
- const DEVICE_STYLE_KEYS=['fontSize','fontFamily','color','background','align','radius','bold','boxTextVertical','shadow','borderWidth','borderColor','insetPadding','opacity','imageFit','lineWidth','colorMarks','sizeMarks','fontMarks','underlineMarks','boldMarks',...GRADIENT_STYLE_KEYS];
+ const DEVICE_STYLE_KEYS=['fontSize','fontFamily','color','background','align','radius','bold','boxTextVertical','shadow','textShadowLevel','textShadowColor','textOutlineWidth','textOutlineColor','borderWidth','borderColor','insetPadding','opacity','imageFit','lineWidth','colorMarks','sizeMarks','fontMarks','underlineMarks','boldMarks',...GRADIENT_STYLE_KEYS];
  const STYLE_MARK_KEYS=['colorMarks','sizeMarks','fontMarks','underlineMarks','boldMarks'];
  function cloneDeviceStyle(e){
    const copy={};for(const k of DEVICE_STYLE_KEYS){
@@ -2628,11 +2643,20 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    for(const dev of ['tablet','tabletLandscape','mobile'])
      if(!Object.prototype.hasOwnProperty.call(e.deviceTexts,dev))e.deviceTexts[dev]=String(e.text??'');
  }
+ // Newly added text effects must not fall back to PC values on independently edited
+ // tablets/phones. Existing JSON does not have these keys in deviceStyles, so an
+ // ordinary {...e,...deviceStyles} merge would otherwise leak PC changes.
+ // A deliberate "PCから取得" still copies the current PC look via freezeDeviceLayout.
+ const TEXT_EFFECT_DEFAULTS=Object.freeze({
+   textOutlineWidth:0,textOutlineColor:'#1f2937',
+   textShadowLevel:0,textShadowColor:'#000000'
+ });
  function styleSource(e,dev=device,p=page()){
    if(dev==='desktop')return e;
-   // Text and typography of boxes must match their selected device.
-   const styles=isAutoMode(p,dev)?{}:(e.deviceStyles?.[dev]||{});
-   return {...e,...styles,text:partText(e,dev)};
+   // The legacy automatic responsive mode intentionally follows PC styling.
+   if(isAutoMode(p,dev))return {...e,text:partText(e,dev)};
+   // Manual device styles are independent, even when older JSON has no text effect keys.
+   return {...e,...TEXT_EFFECT_DEFAULTS,...(e.deviceStyles?.[dev]||{}),text:partText(e,dev)};
  }
  function editableDeviceStyle(e,dev=device){
    if(dev==='desktop')return e;
@@ -2640,7 +2664,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    if(!e.deviceStyles[dev])e.deviceStyles[dev]=cloneDeviceStyle(styleSource(e,dev));
    return e.deviceStyles[dev];
  }
- function typography(e,dev=device,p=page()){const t=styleSource(e,dev,p),fontScale=autoScale(p,dev);return {fontSize:Math.max(8,Math.round(num(t.fontSize,18)*fontScale*10)/10),fontFamily:fontStack(t.fontFamily),color:t.color||'#202936',background:t.background||'transparent',align:t.align||'left',radius:num(t.radius,0),bold:!!t.bold,shadow:num(t.shadow,0),borderWidth:num(t.borderWidth,0),borderColor:t.borderColor||'#cbd5e1',insetPadding:num(t.insetPadding,0),opacity:clamp(num(t.opacity,100),0,100),imageFit:t.imageFit==='contain'?'contain':'cover',lineWidth:clamp(num(t.lineWidth,2),1,20)}}
+ function typography(e,dev=device,p=page()){const t=styleSource(e,dev,p),fontScale=autoScale(p,dev);return {fontSize:Math.max(8,Math.round(num(t.fontSize,18)*fontScale*10)/10),fontFamily:fontStack(t.fontFamily),color:t.color||'#202936',background:t.background||'transparent',align:t.align||'left',radius:num(t.radius,0),bold:!!t.bold,shadow:num(t.shadow,0),textShadowLevel:clamp(num(t.textShadowLevel,0),0,3),textShadowColor:t.textShadowColor||'#000000',textOutlineWidth:clamp(num(t.textOutlineWidth,0),0,10),textOutlineColor:t.textOutlineColor||'#1f2937',borderWidth:num(t.borderWidth,0),borderColor:t.borderColor||'#cbd5e1',insetPadding:num(t.insetPadding,0),opacity:clamp(num(t.opacity,100),0,100),imageFit:t.imageFit==='contain'?'contain':'cover',lineWidth:clamp(num(t.lineWidth,2),1,20)}}
  function writeDeviceMark(e,key,start,end,value,dev=device){
    if(dev==='desktop'){paintMark(e,key,start,end,value);return}
    const target=editableDeviceStyle(e,dev),copy={...e,...target,text:partText(e,dev)};
@@ -2663,7 +2687,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    const maxWidth=Math.max(60,Math.min(740,WIDTH[dev]-Math.max(0,r.x)-8));
    const probe=document.createElement('div');
    probe.style.cssText='position:fixed;top:-20000px;left:-20000px;visibility:hidden;pointer-events:none;z-index:-1;display:inline-block;width:max-content;box-sizing:border-box;white-space:pre-wrap;overflow-wrap:anywhere;line-height:normal;padding:2px 4px;';
-   probe.style.padding=Math.max(2,t.insetPadding)+'px '+Math.max(4,t.insetPadding)+'px';probe.style.maxWidth=maxWidth+'px';probe.style.fontSize=t.fontSize+'px';probe.style.fontFamily=t.fontFamily;probe.style.fontWeight=t.bold?'700':'400';
+   probe.style.padding=Math.max(2,t.insetPadding)+'px '+Math.max(4,t.insetPadding)+'px';probe.style.maxWidth=maxWidth+'px';probe.style.fontSize=t.fontSize+'px';probe.style.fontFamily=t.fontFamily;probe.style.fontWeight=t.bold?'700':'400';probe.style.webkitTextStroke=num(t.textOutlineWidth,0)>0?`${num(t.textOutlineWidth,0)}px ${validColor(t.textOutlineColor||'#1f2937')}`:'';probe.style.paintOrder=num(t.textOutlineWidth,0)>0?'stroke fill':'';probe.style.textShadow=textShadowStyle(t.textShadowLevel,t.textShadowColor);
    if(String(value??'')===partText(e,dev)){
      for(const part of richParts(styleSource(e,dev))){
        const el=document.createElement('span');el.textContent=part.text;
@@ -3014,7 +3038,8 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    $('pagesPanel').scrollTop=scroll;
  }
  const shadowStyle=level=>({0:'none',1:'0 2px 8px rgba(21,39,62,.12)',2:'0 6px 18px rgba(21,39,62,.17)',3:'0 12px 28px rgba(21,39,62,.23)'})[Math.max(0,Math.min(3,num(level,0)))]||'none';
- function applyStyles(el,e){const s=typography(e,device);el.style.color=s.color;el.style.background=s.background;el.style.fontSize=s.fontSize+'px';el.style.fontFamily=s.fontFamily;el.style.fontWeight=s.bold?'700':'400';el.style.textAlign=s.align;el.style.borderRadius=s.radius+'px';el.style.border=num(s.borderWidth,0)>0?`${num(s.borderWidth,0)}px solid ${validColor(s.borderColor||'#cbd5e1')}`:'none';el.style.boxShadow=shadowStyle(s.shadow);if(e.type==='image'){el.style.opacity=String(s.opacity/100);el.style.overflow='hidden'}if(['text','heading','box'].includes(e.type))el.style.padding=num(s.insetPadding,0)+'px';if(e.type==='box')el.style.justifyContent=({top:'flex-start',middle:'center',bottom:'flex-end'})[styleSource(e,device).boxTextVertical]||'center'}
+ const textShadowStyle=(level,color='#000000')=>({0:'none',1:`0 1px 2px ${hexToRgba(validColor(color),'0.35')}`,2:`0 2px 4px ${hexToRgba(validColor(color),'0.45')}`,3:`0 3px 8px ${hexToRgba(validColor(color),'0.6')}`})[Math.max(0,Math.min(3,num(level,0)))]||'none';
+ function applyStyles(el,e){const s=typography(e,device);el.style.color=s.color;el.style.background=s.background;el.style.fontSize=s.fontSize+'px';el.style.fontFamily=s.fontFamily;el.style.fontWeight=s.bold?'700':'400';el.style.textAlign=s.align;el.style.borderRadius=s.radius+'px';el.style.border=num(s.borderWidth,0)>0?`${num(s.borderWidth,0)}px solid ${validColor(s.borderColor||'#cbd5e1')}`:'none';el.style.boxShadow=shadowStyle(s.shadow);if(['heading','text','button','box'].includes(e.type)){el.style.webkitTextStroke=num(s.textOutlineWidth,0)>0?`${num(s.textOutlineWidth,0)}px ${validColor(s.textOutlineColor||'#1f2937')}`:'';el.style.paintOrder=num(s.textOutlineWidth,0)>0?'stroke fill':'';el.style.textShadow=textShadowStyle(s.textShadowLevel,s.textShadowColor);}if(e.type==='image'){el.style.opacity=String(s.opacity/100);el.style.overflow='hidden'}if(['text','heading','box'].includes(e.type))el.style.padding=num(s.insetPadding,0)+'px';if(e.type==='box')el.style.justifyContent=({top:'flex-start',middle:'center',bottom:'flex-end'})[styleSource(e,device).boxTextVertical]||'center'}
  // Selected text formatting is stored as UTF-16 offsets, preserving v0.5 colorMarks.
  function validatedMarks(e,key){const source=String(e.text??''),raw=Array.isArray(e[key])?e[key]:[];
    return raw.filter(m=>Number.isInteger(m.start)&&Number.isInteger(m.end)&&m.end>m.start&&m.start>=0&&m.start<source.length&&
@@ -3224,9 +3249,6 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    const colorMark=isPartial?validatedMarks(st,'colorMarks').findLast(m=>m.start<=at&&m.end>at):null;
    const fontMark=isPartial?validatedMarks(st,'fontMarks').findLast(m=>m.start<=at&&m.end>at):null;
    $('quickToolbarMode').textContent=isPartial?'選択文字':partLabel(e);
-   const editBtn=bar.querySelector('.msb-text-action'),editText=$('msbTextActionLabel');
-   if(editBtn){editBtn.dataset.quickAction=editingId===e.id?'doneText':'editText';editBtn.title=editingId===e.id?'文字編集を終了':'文字を直接編集';}
-   if(editText)editText.textContent=editingId===e.id?'完了':'編集';
    $('quickToolbarHint').textContent=isPartial?'選択部分のみ変更':'パーツ全体の文字を変更';$('quickTextBg').value=validColor(st.background==='transparent'?'#ffffff':(st.background||'#ffffff'));
    $('quickUnderline').setAttribute('aria-pressed',String(isPartial?isRangeUnderlined(st,textSelection.start,textSelection.end):!!st.text&&isRangeUnderlined(st,0,partText(e,device).length)));
    $('quickBold').setAttribute('aria-pressed',String(isPartial?isRangeBold(st,textSelection.start,textSelection.end):!!st.bold));
@@ -3404,12 +3426,12 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    const btn=(title,action,icon,primary=false)=>`<button type="button" class="${primary?'qb-strong':''}" data-quick-action="${action}" title="${title}" aria-label="${title}">${icon} ${title}</button>`;
    let actions='';
    if(e.type==='image')actions=btn('画像変更','changeImage','▧');
-   else if(['button','box'].includes(e.type))actions=btn('文字編集','editText','✎');
+   else if(['button','box'].includes(e.type))actions='';
    else if(['video','pdf','form'].includes(e.type))actions=btn('URL設定','media','↗');
    else if(e.type==='line')actions='';
    else if(['menu','sidebar'].includes(e.type))actions='';
    bar.classList.add('msb-object-compact');
-   bar.innerHTML=`${partDragGrip()}<strong>${partLabel(e)}</strong>${actions}${['button','box','image'].includes(e.type)?btn('動作','clickAction','⇄'):''}${btn('効果','effects','✦')}${btn('詳細','details','⚙',true)}`;
+   bar.innerHTML=`${partDragGrip()}<strong>${partLabel(e)}</strong>${actions}${['button','box','image'].includes(e.type)?btn('動作','clickAction','⇄'):''}${btn('効果','effects','✦')}${btn(['button','box'].includes(e.type)?'編集':'詳細','details',['button','box'].includes(e.type)?'✎':'⚙',true)}`;
    bar.classList.remove('hidden');positionPartToolbar();requestAnimationFrame(positionPartToolbar);
  }
  // 詳細設定は右固定ではなく移動できるフローティングウィンドウです。
@@ -3452,6 +3474,13 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    $('editorDock').append($('inspector')); // The original live settings panel keeps all its event handlers.
    if(selected()){showQuickToolbar();showPartToolbar();}
  }
+ function syncPartDetailTitle(){
+   if(!partDetailOpen)return;
+   const e=selected(),target=$('partDetailTitle');
+   if(!target||!e)return;
+   const label=partDetailFocus==='effects'?'動き・効果':partDetailFocus==='link'?'リンク設定':partDetailFocus==='media'?'URL設定':partDetailFocus==='decoration'?'装飾設定':partDetailFocus==='gradient'?'文字グラデーション':partDetailFocus==='hoverContent'?'ホバー切り替え':partDetailFocus==='clickAction'?'クリック動作':['heading','text','button','box'].includes(e.type)?'文字・書式編集':'詳細設定';
+   target.textContent=groupParts().length>1?groupParts().length+'件 ｜ 一括編集':partLabel(e)+' ｜ '+label;
+ }
  function openPartDetails(focus='all'){
    if(!selected())return;
    detailRichSelection=activeRichSelection(selectedId);
@@ -3460,7 +3489,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    hidePartToolbar();hideQuickToolbar();
    $('partDetailWindow').classList.remove('hidden');
    $('partDetailMount').append($('inspector'));
-   $('partDetailTitle').textContent=(groupParts().length>1?groupParts().length+'件 ｜ 一括編集':partLabel(selected())+' ｜ '+(focus==='effects'?'動き・効果':focus==='link'?'リンク設定':focus==='media'?'URL設定':focus==='decoration'?'装飾設定':focus==='gradient'?'文字グラデーション':focus==='hoverContent'?'ホバー切り替え':focus==='clickAction'?'クリック動作':'詳細設定'));
+   syncPartDetailTitle();
    if(focus==='effects'){fxPanelOpen=true;fxActiveCategory='hover'}
    renderInspector();
    positionPartDetails();
@@ -3789,12 +3818,28 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    $('stageNote').textContent=device==='desktop'?'PC：自由に配置できます。':device==='mobile'?'スマホ：個別編集です。必要なときだけPCから取得できます。':device==='tablet'?'タブレット縦：個別編集です。必要なときだけPCから取得できます。':'タブレット横：個別編集です。必要なときだけPCから取得できます。';
  }
  function startDrag(ev,id,resizing){
-   if(ev.button!==0||editingId===id)return;
+   if(ev.button!==0)return;
+   // Switch directly to another part even while a text-edit mode or floating details panel is active.
+   // The first click deliberately selects rather than drags: completing the previous edit
+   // re-renders the artboard, invalidating this pointer event's original DOM target.
+   if(id!==selectedId&&(editingId||partDetailOpen)){
+     ev.preventDefault();ev.stopPropagation();
+     const active=document.activeElement;
+     if(partDetailOpen&&active?.closest?.('#inspector'))active.blur(); // commit pending change input before rebuilding the inspector
+     if(editingId)finishInlineEdit();
+     if(!page().elements.some(e=>e.id===id))return;
+     clearMultiSelection();selectedId=id;selectedSectionId=null;headerSelected=false;
+     detailRichSelection=null;textSelection=null;
+     renderCanvas();renderInspector();renderSections();
+     return;
+   }
+   if(editingId===id)return;
    // Ctrl+click only changes the selection. It never starts a drag.
    if(ev.ctrlKey||ev.metaKey){ev.preventDefault();ev.stopPropagation();if(partDetailOpen)closePartDetails();toggleMultiPart(id);return}
    ev.preventDefault();const e=page().elements.find(x=>x.id===id);if(!e)return;
    // Clicking a selected member preserves the group so it can be moved together.
    const existing=groupParts();if(!existing.some(p=>p.id===id))clearMultiSelection();
+   if(selectedId!==id){detailRichSelection=null;textSelection=null;}
    selectedId=id;selectedSectionId=null;headerSelected=false;renderSections();const r=rect(e);
    const members=groupParts();
    const groupRects=members.length>1&&!resizing?members.map(part=>[part.id,{...rect(part)}]):null;
@@ -3963,7 +4008,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
      mutate(()=>{const s=selectedSection();if(s)changeSectionHeight(page(),s,st.liveHeight)});
    }else {renderCanvas();renderInspector()}
  }
- function enableInlineEdit(id,restore=null){if(editingId)return;if(quickToolbarAnchor?.id!==id)quickToolbarAnchor=null;selectedId=id;selectedSectionId=null;headerSelected=false;textSelection=null;hideQuickToolbar();renderCanvas();renderInspector();
+ function enableInlineEdit(id,restore=null){if(editingId&&editingId!==id)finishInlineEdit();if(editingId)return;if(quickToolbarAnchor?.id!==id)quickToolbarAnchor=null;selectedId=id;selectedSectionId=null;headerSelected=false;textSelection=null;hideQuickToolbar();renderCanvas();renderInspector();
    const el=Array.from(document.querySelectorAll('.element')).find(x=>x.dataset.id===id);if(!el)return;const root=el.querySelector('.content');let c=root;if(selected()?.type==='box'){c=root.querySelector('.shape-caption');if(!c){c=document.createElement('span');c.className='shape-caption';root.append(c)}}editingId=id;
    el.classList.add('is-editing');hidePartToolbar();c.setAttribute('contenteditable','true');c.focus();showQuickToolbar();
    const sel=document.getSelection();if(restore){restoreTextSelection(c,restore.start,restore.end)}else{sel?.selectAllChildren(c);sel?.collapseToEnd()}
@@ -3978,7 +4023,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    else if(type==='select')input=`<select id="${id}">${options.map(o=>`<option value="${attr(o)}" ${String(o)===String(value)?'selected':''}>${htmlEscape(o)}</option>`).join('')}</select>`;
    else if(type==='checkbox')input=`<input id="${id}" type="checkbox" ${value?'checked':''} style="width:auto">`;
    else if(type==='color')input=colorPickerHtml(id,value);
-   else input=`<input id="${id}" type="${type}" value="${attr(value)}" ${type==='number'?'step="'+(key==='menuLineHeight'?'0.1':'1')+'"':''} class="${type==='color'?'color':''}">`;
+   else input=`<input id="${id}" type="${type}" value="${attr(value)}" ${type==='number'?'step="'+(['menuLineHeight','textOutlineWidth'].includes(key)?'0.1':'1')+'"':''} class="${type==='color'?'color':''}">`;
    return `<div class="field"><label for="${type==='color'?id+'-trigger':id}">${htmlEscape(title)}</label>${input}</div>`
  }
  function handleField(key,fn,evt='change'){$('field-'+key)?.addEventListener(evt,ev=>{
@@ -4372,7 +4417,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    }
    panel.scrollTop=snapshot.scrollTop;
  }
- function renderInspector(){const panel=$('inspector'),p=page(),e=selected(),s=selectedSection();if(partDetailOpen&&!e)closePartDetails();
+ function renderInspector(){const panel=$('inspector'),p=page(),e=selected(),s=selectedSection();if(partDetailOpen&&!e)closePartDetails();if(partDetailOpen&&e)syncPartDetailTitle();
    const multi=groupParts();if(multi.length>1){delete panel.dataset.msbDisclosureScope;renderMultiInspector(panel,multi);return}
    delete panel.dataset.msbMultiSignature;
 
@@ -4469,7 +4514,7 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    const alignSection=['heading','text','button','box'].includes(e.type)?field('文字揃え',st.align||(e.type==='box'?'center':'left'),'align','select',['left','center','right'])+(e.type==='box'?field('文字の縦位置',st.boxTextVertical||'middle','boxTextVertical','select',['top','middle','bottom']):''):'';
    const radiusSection=['box','button'].includes(e.type)?field('角丸（px）',st.radius||0,'radius','number'):'';
    const boldSection=['heading','text','button','box'].includes(e.type)?field('太字',st.bold,'bold','checkbox')+field('下線',isRangeUnderlined(st,0,partText(e,device).length),'underline','checkbox'):'';
-   const decorativeSection=['box','text','heading','button'].includes(e.type)?`<details class="decoration-settings"${num(st.shadow,0)||num(st.borderWidth,0)||num(st.insetPadding,0)?' open':''}><summary>装飾（影・枠線・余白）</summary><div class="decoration-fields"><div class="field"><label for="field-shadow">影</label><select id="field-shadow"><option value="0"${num(st.shadow,0)===0?' selected':''}>なし</option><option value="1"${num(st.shadow,0)===1?' selected':''}>弱</option><option value="2"${num(st.shadow,0)===2?' selected':''}>中</option><option value="3"${num(st.shadow,0)===3?' selected':''}>強</option></select></div>${field('枠線の太さ（px）',num(st.borderWidth,0),'borderWidth','number')}${field('枠線の色',st.borderColor||'#cbd5e1','borderColor','color')}${['text','heading','box'].includes(e.type)?field('内側の余白（px）',num(st.insetPadding,0),'insetPadding','number'):''}</div></details>`:'';
+   const decorativeSection=['box','text','heading','button'].includes(e.type)?`<details class="decoration-settings"${num(st.shadow,0)||num(st.textShadowLevel,0)||num(st.textOutlineWidth,0)||num(st.borderWidth,0)||num(st.insetPadding,0)?' open':''}><summary>装飾（影・縁取り・枠線・余白）</summary><div class="decoration-fields"><div class="field"><label for="field-shadow">パーツの影</label><select id="field-shadow"><option value="0"${num(st.shadow,0)===0?' selected':''}>なし</option><option value="1"${num(st.shadow,0)===1?' selected':''}>弱</option><option value="2"${num(st.shadow,0)===2?' selected':''}>中</option><option value="3"${num(st.shadow,0)===3?' selected':''}>強</option></select></div><div class="field"><label for="field-textShadowLevel">文字の影</label><select id="field-textShadowLevel"><option value="0"${num(st.textShadowLevel,0)===0?' selected':''}>なし</option><option value="1"${num(st.textShadowLevel,0)===1?' selected':''}>弱</option><option value="2"${num(st.textShadowLevel,0)===2?' selected':''}>中</option><option value="3"${num(st.textShadowLevel,0)===3?' selected':''}>強</option></select></div>${field('文字影の色',st.textShadowColor||'#000000','textShadowColor','color')}${field('縁取りの太さ（px）',num(st.textOutlineWidth,0),'textOutlineWidth','number')}${field('縁取りの色',st.textOutlineColor||'#1f2937','textOutlineColor','color')}${field('枠線の太さ（px）',num(st.borderWidth,0),'borderWidth','number')}${field('枠線の色',st.borderColor||'#cbd5e1','borderColor','color')}${['text','heading','box'].includes(e.type)?field('内側の余白（px）',num(st.insetPadding,0),'insetPadding','number'):''}</div><p class="note">画像や濃淡のある背景に文字を置くときは、文字影または縁取りを使うと読みやすくなります。</p></details>`:'';
    const gradientSection=['text','heading','button','box'].includes(e.type)?`<details class="style-feature" id="gradientSettings"${gradientMode(st)!=='none'||partDetailOpen&&partDetailFocus==='gradient'?' open':''}><summary>文字のグラデーション</summary><div class="style-fields"><div class="field"><label for="field-gradientMode">表示方法</label><select id="field-gradientMode"><option value="none"${gradientMode(st)==='none'?' selected':''}>単色</option><option value="static"${gradientMode(st)==='static'?' selected':''}>グラデーション</option><option value="animated"${gradientMode(st)==='animated'?' selected':''}>流れるグラデーション</option></select></div>${field('最初の色',st.gradientColor1||'#1d70d5','gradientColor1','color')}${field('次の色',st.gradientColor2||'#bc39b6','gradientColor2','color')}<div class="field"><label for="field-gradientAngle">方向</label><select id="field-gradientAngle"><option value="horizontal"${(st.gradientAngle||'horizontal')==='horizontal'?' selected':''}>横</option><option value="vertical"${st.gradientAngle==='vertical'?' selected':''}>縦</option><option value="diagonal"${st.gradientAngle==='diagonal'?' selected':''}>斜め</option></select></div>${field('動く速さ（秒）',gradientSeconds(st),'gradientDuration','number')}</div></details>`:'';
    const hoverSection=['image','text','heading','button','box'].includes(e.type)?`<details class="style-feature" id="hoverContentSettings"${e.hoverSwapEnabled||partDetailOpen&&partDetailFocus==='hoverContent'?' open':''}><summary>ホバー時の内容切り替え</summary><div class="style-fields">${field('カーソルを重ねると切り替える',!!e.hoverSwapEnabled,'hoverSwapEnabled','checkbox')}${e.type==='image'?`<button type="button" class="small-btn fullbtn" id="chooseHoverImage">切り替え後の画像を選択</button>${safeBackgroundImage(e.hoverAltImage)?`<img class="style-image-thumb" src="${attr(e.hoverAltImage)}" alt="切り替え後の画像"><button class="small-btn fullbtn" type="button" id="clearHoverImage">切り替え画像を削除</button>`:'<span class="style-image-note">画像を選ぶと切り替え表示を試せます。</span>'}`:e.type==='box'?field('ホバー時の色',e.hoverAltBg||'#8ebbef','hoverAltBg','color'):field('ホバー時に表示する文章',e.hoverAltText||'','hoverAltText','textarea')}</div></details>`:'';
    const deviceLabel={desktop:'PC',tablet:'タブレット縦',tabletLandscape:'タブレット横',mobile:'スマホ'}[device];
@@ -4514,16 +4559,21 @@ body.msb-code-page #gridOverlayBtn{opacity:.5}
    if($('chooseHoverImage'))$('chooseHoverImage').onclick=()=>$('hoverSwapImageFile').click();
    if($('clearHoverImage'))$('clearHoverImage').onclick=()=>mutate(()=>{e.hoverAltImage=''});
    for(const k of ['x','y','w','h'])handleField(k,v=>{const n=Math.max(k==='w'?32:k==='h'?16:0,num(v));if(['text','heading'].includes(e.type)&&['w','h'].includes(k))setAutoTextSize(e,false);if(device==='desktop')e[k]=n;else{const current=rect(e);freezeDeviceLayout(p,device);e.layouts=e.layouts||{};e.layouts[device]={...current,[k]:n}};/* v1.00: moving X/Y must never silently auto-resize the part */});
-   for(const k of ['text','href','alt','videoUrl','embedUrl','fontSize','fontFamily','color','align','radius','bold','printHide','bg','shadow','borderWidth','borderColor','insetPadding','opacity','imageFit','lineWidth'])handleField(k,v=>{
+   for(const k of ['text','href','alt','videoUrl','embedUrl','fontSize','fontFamily','color','align','radius','bold','printHide','bg','shadow','textShadowLevel','textShadowColor','textOutlineWidth','textOutlineColor','borderWidth','borderColor','insetPadding','opacity','imageFit','lineWidth'])handleField(k,v=>{
      if(k==='text'){detailRichSelection=null;updateText(e,v);if(['text','heading'].includes(e.type))fitTextBoxOnOtherDevices(e);}
      else if(k==='alt')e.text=v;
-     else if(['fontSize','fontFamily','color','align','radius','bold','bg','shadow','borderWidth','borderColor','insetPadding','opacity','imageFit','lineWidth'].includes(k)){
+     else if(['fontSize','fontFamily','color','align','radius','bold','bg','shadow','textShadowLevel','textShadowColor','textOutlineWidth','textOutlineColor','borderWidth','borderColor','insetPadding','opacity','imageFit','lineWidth'].includes(k)){
        freezeDeviceLayout(p,device);
        const target=editableDeviceStyle(e,device),prop=k==='bg'?'background':k;
-       target[prop]=k==='fontSize'?clamp(num(v,18),8,144):k==='fontFamily'?validFont(v):['radius','shadow','borderWidth','insetPadding','lineWidth','opacity'].includes(k)?Math.max(0,num(v)):k==='borderColor'?validColor(v):v;
+       target[prop]=k==='fontSize'?clamp(num(v,18),8,144)
+         :k==='fontFamily'?validFont(v)
+         :['radius','shadow','textShadowLevel','borderWidth','insetPadding','lineWidth','opacity'].includes(k)?Math.max(0,num(v))
+         :k==='textOutlineWidth'?clamp(num(v,0),0,10)
+         :['borderColor','textShadowColor','textOutlineColor'].includes(k)?validColor(v)
+         :v;
        // 全体サイズを変更したときは、以前の部分サイズ指定が残って変更を妨げないようにします。
        if(k==='fontSize')target.sizeMarks=[];
-       if(['text','heading'].includes(e.type)&&['fontSize','fontFamily','bold'].includes(k))fitTextBox(e,device);
+       if(['text','heading'].includes(e.type)&&['fontSize','fontFamily','bold','textOutlineWidth','textShadowLevel'].includes(k))fitTextBox(e,device);
      } else e[k]=v;
    });
    if(e.type==='box')handleField('boxTextVertical',v=>{editableDeviceStyle(e,device).boxTextVertical=['top','middle','bottom'].includes(v)?v:'middle'});
@@ -5376,7 +5426,7 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
    const hdr=exportHeaderForPage(p),showHeader=siteHeader().enabled===true,hd=siteHeader();
    const headerHTML=hdr.html,headerCSS=hdr.css;
    const exportBlocks=(items)=>items.map(e=>{
-     const styled=dev=>{const t=typography(e,dev,p);return `font-size:${t.fontSize}px;font-family:${t.fontFamily};color:${t.color};background:${t.background};text-align:${t.align};font-weight:${t.bold?'700':'400'};border-radius:${t.radius}px;border:${t.borderWidth>0?t.borderWidth+'px solid '+validColor(t.borderColor):'none'};box-shadow:${shadowStyle(t.shadow)};${['text','heading','box'].includes(e.type)?'padding:'+t.insetPadding+'px;':''}`};
+     const styled=dev=>{const t=typography(e,dev,p);return `font-size:${t.fontSize}px;font-family:${t.fontFamily};color:${t.color};background:${t.background};text-align:${t.align};font-weight:${t.bold?'700':'400'};border-radius:${t.radius}px;border:${t.borderWidth>0?t.borderWidth+'px solid '+validColor(t.borderColor):'none'};box-shadow:${shadowStyle(t.shadow)};${['heading','text','button','box'].includes(e.type)?`-webkit-text-stroke:${t.textOutlineWidth>0?`${t.textOutlineWidth}px ${validColor(t.textOutlineColor)}`:'0px transparent'};paint-order:${t.textOutlineWidth>0?'stroke fill':'normal'};text-shadow:${textShadowStyle(t.textShadowLevel,t.textShadowColor)};`:''}${['text','heading','box'].includes(e.type)?'padding:'+t.insetPadding+'px;':''}`};
      const variants=render=>['desktop','tablet','tabletLandscape','mobile'].map(render).join('');
      const id=attr(e.id);let body='';
      if(['menu','sidebar'].includes(e.type))body=menuMarkup(e);
