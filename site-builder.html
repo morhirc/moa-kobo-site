@@ -1173,6 +1173,35 @@ html,body{height:100%;min-height:0;overflow:hidden}
   scrollbar-gutter:stable;
   overscroll-behavior:contain;
 }
+/* 横スライド：編集画面のプレビューにも公開時と同じ見た目を適用 */
+
+.msb-carousel{--msb-car-visible:var(--msb-car-desktop,3);position:relative;width:100%;height:100%;overflow:hidden;background:transparent;font-family:system-ui,-apple-system,sans-serif}
+html[data-msb-active="tablet"] .msb-carousel,html[data-msb-active="tabletLandscape"] .msb-carousel{--msb-car-visible:var(--msb-car-tablet,2)}
+html[data-msb-active="mobile"] .msb-carousel{--msb-car-visible:var(--msb-car-mobile,1)}
+.msb-carousel-window{width:100%;height:100%;overflow:hidden}
+.msb-carousel-track{display:flex;width:100%;height:100%;transition:transform .4s ease;will-change:transform}
+.msb-carousel .msb-slide{box-sizing:border-box;flex:0 0 calc(100% / var(--msb-car-visible));height:100%;min-width:0;padding:0 7px}
+.msb-slide-card,.msb-slide>a{display:flex;flex-direction:column;width:100%;height:100%;min-width:0;color:#27354a;text-decoration:none}
+.msb-slide-card{border-radius:8px;overflow:hidden;background:#fff}
+.msb-slide-image{height:65%;flex:none;overflow:hidden;background:#eef3f9;display:flex;align-items:center;justify-content:center}
+.msb-carousel .msb-slide-image img{width:100%;height:100%;object-fit:cover;display:block}
+.msb-slide-placeholder,.msb-slide-empty{color:#69809b;font-size:13px;text-align:center}
+.msb-slide-caption{padding:7px 7px 12px;overflow:hidden;flex:1;font-size:clamp(11px,1.15vw,16px);line-height:1.4;text-align:center;overflow-wrap:anywhere}
+.msb-slide-caption strong{display:block;font-size:1.05em}
+.msb-slide-caption p{margin:3px 0 0;white-space:pre-wrap;font-size:.93em}
+.msb-carousel-prev,.msb-carousel-next{position:absolute;top:40%;transform:translateY(-50%);z-index:5;border:0;border-radius:50%;background:#15253bbf;color:#fff;cursor:pointer;width:33px;height:33px;font-size:27px;line-height:1}
+.msb-carousel-prev{left:5px}.msb-carousel-next{right:5px}
+.msb-carousel-prev:disabled,.msb-carousel-next:disabled{opacity:.25;cursor:default}
+.msb-carousel-dots{position:absolute;display:flex;gap:6px;justify-content:center;align-items:center;bottom:2px;left:12px;right:12px;z-index:6;min-height:10px}
+.msb-carousel-dots button{width:7px;height:7px;min-width:7px;min-height:7px;border:0;padding:0;border-radius:50%;background:#9aaac0;cursor:pointer}
+.msb-carousel-dots button[aria-current="true"]{background:#2563a7;transform:scale(1.2)}
+.msb-carousel button:focus-visible,.msb-carousel a:focus-visible{outline:3px solid #3885df;outline-offset:-2px}
+.element .msb-carousel,.element .msb-carousel *{pointer-events:none}
+@media(prefers-reduced-motion:reduce){.msb-carousel-track{transition:none}}
+@media print{.msb-carousel-track{transform:none!important}}
+
+.msb-slide-preview{height:105px;display:flex;justify-content:center;align-items:center;background:#eff4fa;border:1px solid #d3e0ed;border-radius:6px;overflow:hidden;margin:6px 0 12px;font-size:12px;color:#70829a}
+.msb-slide-preview img{height:100%;max-width:100%;object-fit:contain}
 </style>
 </head>
 <body>
@@ -1270,6 +1299,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
         <button class="catalog-pick" data-add="menu" title="クリック・ホバーで展開するボタンメニュー"><span class="catalog-icon">☰</span>ボタンメニュー</button>
         <button class="catalog-pick" data-add="sidebar" title="細いバーから横に広がる独立したサイドバー"><span class="catalog-icon">▤</span>画面端サイドバー</button>
         <button class="catalog-pick" data-add="html" title="完成済みHTMLの一部分またはページを配置"><span class="catalog-icon">&lt;/&gt;</span>HTML埋め込み</button>
+        <button class="catalog-pick" data-add="carousel" title="画像・文章・リンクを横方向へ自動スライド"><span class="catalog-icon">▣</span>横スライド（カルーセル）</button>
         <button class="catalog-pick" data-add="preset-card" title="文章を編集できるカードを配置"><span class="catalog-icon">▤</span>カード</button>
         <button class="catalog-pick" data-add="preset-frame" title="透明な囲み枠を配置"><span class="catalog-icon">▢</span>囲み枠</button>
         <button class="catalog-pick" data-add="preset-callout" title="背景付きの説明ボックスを配置"><span class="catalog-icon">▣</span>案内ボックス</button>
@@ -1321,6 +1351,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
 <input type="file" accept="text/html,.html,.htm" id="hybridHtmlFile" class="hidden">
 <input type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" id="imageFile" class="hidden">
 <input type="file" accept="image/png,image/jpeg,image/webp" id="hoverSwapImageFile" class="hidden">
+<input type="file" id="carouselImageFile" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" hidden>
 <input type="file" id="headerLogoFile" accept="image/png,image/jpeg,image/webp" hidden>
 <input type="file" id="faviconFile" accept=".ico,image/x-icon,image/vnd.microsoft.icon,image/png,image/jpeg,image/webp" hidden>
   <input type="file" accept="image/png,image/jpeg,image/webp" id="pageBgFile" class="hidden">
@@ -1788,6 +1819,10 @@ html,body{height:100%;min-height:0;overflow:hidden}
 
  const normalizedParent=p=>{const q=project.pages.find(q=>q.id===p.menuParentId&&q.id!==p.id);return q&&!q.menuParentId?q.id:''};
  function headerMode(hd=siteHeader()){return ['always','normal','overlay'].includes(hd.displayMode)?hd.displayMode:(hd.revealOnScroll===true?'overlay':hd.sticky===false?'normal':'always')}
+ function headerPosition(hd=siteHeader()){return ['fixed','normal','hide','shrink'].includes(hd.positionMode)?hd.positionMode:(headerMode(hd)==='normal'?'normal':'fixed')}
+ function headerSurface(hd=siteHeader()){return ['solid','transparent','translucent','scroll'].includes(hd.surfaceMode)?hd.surfaceMode:(headerMode(hd)==='overlay'?'scroll':'solid')}
+ function headerRgba(hex,alpha){hex=validColor(hex||'#192438');const m=/^#([0-9a-f]{6})$/i.exec(hex);if(!m)return hex;const n=m[1];return `rgba(${parseInt(n.slice(0,2),16)},${parseInt(n.slice(2,4),16)},${parseInt(n.slice(4,6),16)},${clamp(num(alpha,.75),.1,.95)})`}
+
  function headerMenuGroups(){const roots=project.pages.filter(p=>!normalizedParent(p));return roots.map(root=>({root,children:project.pages.filter(p=>normalizedParent(p)===root.id)}))}
  function additionalHeaderLinks(){return String(siteHeader().extraLinks||'').split(/\r?\n/).slice(0,12).map(line=>{const i=line.indexOf('|');if(i<=0)return null;const label=line.slice(0,i).trim().slice(0,55),url=line.slice(i+1).trim();if(!label||!url||!validUrl(url)||validUrl(url)==='#')return null;return {label,url:validUrl(url)}}).filter(Boolean)}
 
@@ -2949,7 +2984,8 @@ html,body{height:100%;min-height:0;overflow:hidden}
    }
 
    // v0.36: presets extend the existing element types; old JSON and publishing remain compatible.
-   const presetMap={
+   let carouselImageTarget=null;
+ const presetMap={
      'preset-card':{type:'text',style:{text:'カードのタイトル\n説明文を入力',w:310,h:155,fontSize:16,color:'#24364c',background:'#ffffff',radius:14,align:'left',bold:false,autoTextSize:false,insetPadding:18,borderWidth:1,borderColor:'#d9e2ed',shadow:2}},
      'preset-frame':{type:'box',style:{w:330,h:170,background:'transparent',radius:10,borderWidth:2,borderColor:'#8ca4c4'}},
      'preset-callout':{type:'text',style:{text:'ポイント\nここに説明を入力',w:350,h:126,fontSize:16,color:'#24466e',background:'#edf5ff',radius:10,autoTextSize:false,insetPadding:16,borderWidth:1,borderColor:'#b6d5fb'}},
@@ -2967,6 +3003,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
      heading:{text:'見出しを入力',w:440,h:80,fontSize:36,bold:true,color:'#1e293b'},
      text:{text:'Text',w:440,h:36,fontSize:12,color:'#334155'},
      image:{text:'',w:220,h:150,src:'',fontSize:12},
+     carousel:{text:'スライド',w:820,h:250,fontSize:14,background:'#ffffff',radius:10},
      button:{text:'Text',w:100,h:30,fontSize:12,color:'#ffffff',background:'#276fe1',radius:8,href:'#',bold:true},
      box:{text:'',w:300,h:150,background:'#dbeafe',radius:8},
      line:{text:'',w:280,h:16,color:'#2e3e52'},
@@ -2984,6 +3021,11 @@ html,body{height:100%;min-height:0;overflow:hidden}
    let maxY=45;for(const e of page().elements){maxY=Math.max(maxY,num(e.y)+num(e.h)+22)}
    const t=templates[baseType]||templates.text;
    const e={id:uid(),type:baseType,x:coords.x??70,y:coords.y??maxY,w:t.w,h:t.h,fontSize:t.fontSize||12,color:t.color||'#202936',background:t.background||'transparent',radius:t.radius||0,bold:!!t.bold,align:'left',text:t.text||'',colorMarks:[],sizeMarks:[],fontMarks:[],underlineMarks:[],boldMarks:[],fontFamily:'system',src:t.src||'',htmlCode:t.htmlCode||'',href:t.href||'',linkType:'none',linkPageId:'',linkAnchorTarget:'top',newTab:false,hoverText:'',hoverLift:false,fxHover:'none',fxEnter:'none',fxClick:'none',fxLoop:'none',fxVisual:'none',menuMode:'click',menuSide:'left',menuEdgePlacement:'overlay',menuItems:'ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact',menuBg:'#ffffff',menuTextColor:'#24364a',menuFontFamily:'system',menuFontSize:14,menuLineHeight:1.5,menuKeepVisible:true,menuCollapsedWidth:60,menuButtonBg:'#1c3556',menuButtonColor:'#ffffff',menuDrawerWidth:280,menuDrawerHeight:320,menuDrawerRadius:12,menuDrawerPadding:12,menuItemGap:3,menuButtonRadius:8,menuButtonFontSize:14,menuButtonFontFamily:'system',menuEdgeTop:40,menuEdgeHandleWidth:36,menuEdgeHandleHeight:110,fxSpeed:1,fxDelay:0,gradientMode:'none',gradientColor1:'#1d70d5',gradientColor2:'#bc39b6',gradientAngle:'horizontal',gradientDuration:5,hoverSwapEnabled:false,hoverAltText:'',hoverAltImage:'',hoverAltBg:'#8ebbef',videoUrl:t.videoUrl||'',embedUrl:t.embedUrl||'',printHide:false,autoTextSize:['text','heading'].includes(baseType),autoTextSizeByDevice:{},layouts:{},deviceStyles:{}};
+   if(baseType==='carousel'){
+     e.carouselItems=Array.from({length:4},(_,i)=>({image:'',title:`サービス ${i+1}`,description:'説明文を入力してください',url:''}));
+     e.carouselInterval=5;e.carouselAutoplay=true;e.carouselLoop=true;e.carouselShowArrows=true;e.carouselShowDots=true;
+     e.carouselDesktop=3;e.carouselTablet=2;e.carouselMobile=1;
+   }
    if(CHOICE_TYPES.has(baseType)){
      e.choiceLabel=t.text;
      e.choiceRequired=true;
@@ -3093,6 +3135,16 @@ html,body{height:100%;min-height:0;overflow:hidden}
    ';--msb-edge-top:'+lim(e.menuEdgeTop,0,95,40)+'vh'+
    ';--msb-handle-width:'+lim(e.menuEdgeHandleWidth,16,100,36)+'px'+
    ';--msb-handle-height:'+lim(e.menuEdgeHandleHeight,36,300,110)+'px';
+ }
+ function carouselItems(e){return (Array.isArray(e.carouselItems)?e.carouselItems:[]).slice(0,32).map(v=>({image:safeBackgroundImage(v?.image),title:String(v?.title||'').slice(0,160),description:String(v?.description||'').slice(0,500),url:validUrl(v?.url||'')}))}
+ function carouselMarkup(e,editor=false){
+   const items=carouselItems(e),cols=clamp(num(e.carouselDesktop,3),1,5),tablet=clamp(num(e.carouselTablet,2),1,5),mobile=clamp(num(e.carouselMobile,1),1,3);
+   const cards=items.map((row,i)=>{
+     const img=row.image?`<img src="${attr(row.image)}" alt="${attr(row.title)}" loading="lazy">`:'<span class="msb-slide-placeholder" aria-hidden="true">画像を設定</span>';
+     const content=`<div class="msb-slide-card"><div class="msb-slide-image">${img}</div><div class="msb-slide-caption"><strong>${htmlEscape(row.title||`スライド ${i+1}`)}</strong>${row.description?`<p>${htmlEscape(row.description)}</p>`:''}</div></div>`;
+     return `<div class="msb-slide" data-msb-slide="${i}">${!editor&&row.url&&row.url!=='#'?`<a href="${attr(row.url)}"${/^https?:/i.test(row.url)?' target="_blank" rel="noopener noreferrer"':''}>${content}</a>`:content}</div>`;
+   }).join('');
+   return `<div class="msb-carousel" data-msb-carousel data-carousel-autoplay="${e.carouselAutoplay!==false}" data-carousel-loop="${e.carouselLoop!==false}" data-carousel-interval="${clamp(num(e.carouselInterval,5),2,30)}" style="--msb-car-desktop:${cols};--msb-car-tablet:${tablet};--msb-car-mobile:${mobile}"><div class="msb-carousel-window"><div class="msb-carousel-track">${cards||'<p class="msb-slide-empty">スライドを登録してください</p>'}</div></div>${!editor&&e.carouselShowArrows!==false?'<button class="msb-carousel-prev" type="button" aria-label="前のスライド">‹</button><button class="msb-carousel-next" type="button" aria-label="次のスライド">›</button>':''}${!editor&&e.carouselShowDots!==false?'<div class="msb-carousel-dots" aria-label="スライド位置"></div>':''}</div>`;
  }
  function menuMarkup(e,editor=false){const rows=menuLinks(e).map(row=>`<a class="msb-menu-link" href="${attr(row.href)}"${editor?' tabindex="-1"':''}>${htmlEscape(row.label)}</a>`).join('');return `<div class="msb-menu mode-${menuMode(e)} side-${menuSide(e)}${e.type==='sidebar'?' edge-'+menuEdgePlacement(e):''}${editor?' editor-menu':''}${!editor && e.type==='sidebar' && e.menuKeepVisible===false?' sidebar-scroll-away':''}" data-msb-menu style="${attr(menuVars(e))}">${e.type==='sidebar'?'<div class="msb-edge-sensor" aria-hidden="true"></div>':''}<button type="button" class="msb-menu-trigger" aria-expanded="false" aria-label="メニューを開く"><span aria-hidden="true">☰</span> <span class="msb-menu-caption">${htmlEscape(e.text||'メニュー')}</span></button><nav class="msb-menu-drawer" aria-label="ナビゲーション"><div class="msb-menu-title"${(e.menuDrawerHeading??'メニュー')===''?' style="display:none"':''}>${htmlEscape(e.menuDrawerHeading??'メニュー')}</div>${rows||'<span class="msb-menu-empty">設定から項目を入力してください</span>'}</nav></div>`}
  function wireEditorMenu(el){const root=el.querySelector('[data-msb-menu]');if(!root)return;
@@ -3624,9 +3676,9 @@ html,body{height:100%;min-height:0;overflow:hidden}
    const hd=siteHeader(),node=$('siteHeaderEditor'),artboard=$('siteArtboard');
    artboard.style.width=editorCanvasWidth()+'px';
    if(!hd.enabled){node.classList.add('hidden');node.replaceChildren();return}
-   const displayMode=headerMode(hd);
-   node.classList.remove('hidden');node.classList.toggle('active',headerSelected);node.classList.toggle('is-mobile',device==='tablet'||device==='mobile');node.classList.toggle('is-overlay-scroll',displayMode==='overlay');
-   node.style.backgroundColor=displayMode==='overlay'&&regionLayout().mode==='single'?'transparent':validColor(hd.background||'#192438');node.style.color=validColor(displayMode==='overlay'&&regionLayout().mode==='single'?(hd.overlayColor||'#ffffff'):(hd.color||'#ffffff'));
+   const displayMode=headerMode(hd),headerPos=headerPosition(hd),headerBgMode=headerSurface(hd);
+   node.classList.remove('hidden');node.classList.toggle('active',headerSelected);node.classList.toggle('is-mobile',device==='tablet'||device==='mobile');node.classList.toggle('is-overlay-scroll',headerPos==='fixed'&&(headerBgMode==='scroll'||headerBgMode==='transparent'));
+   node.style.backgroundColor=regionLayout().mode==='single'?(headerBgMode==='transparent'||headerBgMode==='scroll'?'transparent':headerBgMode==='translucent'?headerRgba(hd.background,hd.surfaceOpacity):validColor(hd.background||'#192438')):validColor(hd.background||'#192438');node.style.color=validColor((headerBgMode==='transparent'||headerBgMode==='scroll')&&regionLayout().mode==='single'?(hd.overlayColor||'#ffffff'):(hd.color||'#ffffff'));
    node.style.height=`calc(${clamp(num(hd.height,62),36,160)}px * var(--header-inv-zoom, 1))`;
    const brand=document.createElement('span');brand.className='header-brand';
    const logo=safeBackgroundImage(hd.logo);if(logo){const img=document.createElement('img');img.className='header-logo';img.src=logo;img.alt='';img.style.height=`calc(${clamp(num(hd.logoSize,34),16,100)}px * var(--header-inv-zoom, 1))`;brand.append(img)}
@@ -3649,7 +3701,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    for(const item of additionalHeaderLinks()){const text=document.createElement('span');text.textContent=item.label;links.append(text)}
    const icons=document.createElement('span');icons.className='header-icon';icons.textContent=hd.search!==false?'⌕':'';
    const hamburger=document.createElement('button');hamburger.type='button';hamburger.className='header-mobile-icon';hamburger.textContent='☰';hamburger.setAttribute('aria-label','ページメニューを開く');hamburger.setAttribute('aria-expanded','false');function toggleEditorDrawer(open){mobilePanel.classList.toggle('is-open',open);editorBackdrop.classList.toggle('is-open',open);hamburger.setAttribute('aria-expanded',String(open))}hamburger.onclick=ev=>{ev.stopPropagation();toggleEditorDrawer(!mobilePanel.classList.contains('is-open'))};drawerClose.onclick=ev=>{ev.stopPropagation();toggleEditorDrawer(false)};editorBackdrop.onclick=ev=>{ev.stopPropagation();toggleEditorDrawer(false)};
-   const mode=document.createElement('span');mode.className='header-mode';mode.textContent=displayMode==='overlay'?'先頭は透明':displayMode==='always'?'固定':'通常';
+   const mode=document.createElement('span');mode.className='header-mode';mode.textContent=({solid:'背景色',transparent:'常時透明',translucent:'半透明',scroll:'スクロールで背景色'})[headerBgMode]+' / '+({fixed:'固定',normal:'通常',hide:'自動非表示',shrink:'縮小'})[headerPos];
    node.replaceChildren(hamburger,brand,links,icons,mode,editorBackdrop,mobilePanel);
    if(headerSelected){
      const measure=document.createElement('span');measure.className='header-editor-measure';measure.textContent=`${regionLayout().mode==='single'?'幅 '+WIDTH[device]+'px':'レイアウト全幅'} / 高さ ${clamp(num(hd.height,62),36,160)}px`;
@@ -3671,7 +3723,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
  function hidePartToolbar(){$('quickPartToolbar').classList.add('hidden')}
  let partToolbarManualPos=null,partToolbarDragPointer=null;
  function partDragGrip(){return '<button type="button" class="quick-part-drag" title="バーを移動（ダブルクリックで元の位置）" aria-label="ツールバーを移動">⠿</button>'}
- function partLabel(e){return ({image:'画像',button:'ボタン',box:'図形',line:'線',text:'文章',heading:'見出し',video:'動画',pdf:'PDF',form:'フォーム',choiceRadio:'ラジオボタン',choiceCheckbox:'チェックボックス',choiceSelect:'プルダウン',formInput:'1行入力欄',formTextarea:'複数行入力欄',menu:'ボタンメニュー',sidebar:'画面端サイドバー',html:'HTML埋め込み'})[e?.type]||'パーツ'}
+ function partLabel(e){return ({carousel:'横スライド',image:'画像',button:'ボタン',box:'図形',line:'線',text:'文章',heading:'見出し',video:'動画',pdf:'PDF',form:'フォーム',choiceRadio:'ラジオボタン',choiceCheckbox:'チェックボックス',choiceSelect:'プルダウン',formInput:'1行入力欄',formTextarea:'複数行入力欄',menu:'ボタンメニュー',sidebar:'画面端サイドバー',html:'HTML埋め込み'})[e?.type]||'パーツ'}
  function propertyControl(name,prop,v,options=null){
    const pid=`data-quick-prop="${prop}"`;
    if(options)return `<label>${name}<select ${pid}>${options.map(([val,text])=>`<option value="${val}"${String(v)===String(val)?' selected':''}>${text}</option>`).join('')}</select></label>`;
@@ -4034,6 +4086,8 @@ html,body{height:100%;min-height:0;overflow:hidden}
      if(e.type==='image'){
        if(e.src){const img=document.createElement('img');img.src=e.src;img.alt=e.text||'';img.style.objectFit=typography(e,device).imageFit;content.append(img)}
        else {const ph=document.createElement('div');ph.className='placeholder-image';ph.textContent='画像を選択してください';content.append(ph)}
+     } else if(e.type==='carousel'){
+       content.innerHTML=carouselMarkup(e,true);
      } else if(FORM_INPUT_TYPES.has(e.type)){
        content.innerHTML=formInputMarkup(e,device,true,p);
      } else if(CHOICE_TYPES.has(e.type)){
@@ -4784,8 +4838,10 @@ html,body{height:100%;min-height:0;overflow:hidden}
      panel.innerHTML=`<div class="section-head">共通ヘッダー <button id="closeHeaderProps" type="button" class="small-btn">レイアウトへ戻る</button></div>
        <p class="muted">全ページ共通のヘッダーです。編集画面では実寸の幅と高さを確認できます。青い枠の右下で高さを変更できます。</p>
        ${field('ヘッダーを表示',hd.enabled===true,'headerEnabled','checkbox')}
-       <div class="field"><label for="field-headerDisplayMode">ヘッダーの表示方法</label><select id="field-headerDisplayMode"><option value="overlay" ${headerMode(hd)==='overlay'?'selected':''}>先頭は透明・スクロールで背景色付きに</option><option value="always" ${headerMode(hd)==='always'?'selected':''}>常時表示・スクロール中も固定</option><option value="normal" ${headerMode(hd)==='normal'?'selected':''}>通常表示（固定しない）</option></select></div>
-       <p class="note">先頭は写真の上に文字・メニューだけを表示し、最初のスクロール（約8px）で背景色付きの固定帯に切り替えます。分割レイアウトではヘッダーを全体の上段に固定し、背景色付きで表示します。</p>
+       <div class="field"><label for="field-headerPosition">ヘッダーの固定方法</label><select id="field-headerPosition"><option value="fixed"${headerPosition(hd)==='fixed'?' selected':''}>固定（スクロール中も表示）</option><option value="normal"${headerPosition(hd)==='normal'?' selected':''}>通常（スクロールで流れる）</option><option value="hide"${headerPosition(hd)==='hide'?' selected':''}>下スクロールで隠す・上スクロールで再表示</option><option value="shrink"${headerPosition(hd)==='shrink'?' selected':''}>スクロール中は小さく表示</option></select></div>
+       <div class="field"><label for="field-headerSurface">背景の表示方法</label><select id="field-headerSurface"><option value="solid"${headerSurface(hd)==='solid'?' selected':''}>背景色を常時表示</option><option value="transparent"${headerSurface(hd)==='transparent'?' selected':''}>常時透明</option><option value="translucent"${headerSurface(hd)==='translucent'?' selected':''}>半透明</option><option value="scroll"${headerSurface(hd)==='scroll'?' selected':''}>先頭は透明・スクロールで背景色付き</option></select></div>
+       ${field('半透明の不透明度（10～95％）',Math.round(clamp(num(hd.surfaceOpacity,.75),.1,.95)*100),'headerSurfaceOpacity','number')}
+       <p class="note">固定方法と背景は自由に組み合わせられます。従来の3方式のJSONも表示を維持して読み込みます。常時透明は背景写真と文字色のコントラストにご注意ください。</p>
        ${field('サイト名（空欄はプロジェクト名）',hd.title||'','headerTitle')}
        <div class="section-head">サイト名の書式</div>
        <p class="note">サイト名とメニューのフォント・文字サイズは別々に変更できます。公開時のサイズを基準に編集画面にも表示します。</p>
@@ -4816,7 +4872,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
      $('closeHeaderProps').onclick=()=>{headerSelected=false;layoutPanelView='overview';renderCanvas();renderLayoutPanel();openDock('layout')};
      $('chooseHeaderLogo').onclick=()=>$('headerLogoFile').click();
      $('clearHeaderLogo').onclick=()=>mutate(()=>{hd.logo=''});
-     const setters={headerEnabled:v=>hd.enabled=!!v,headerDisplayMode:v=>{hd.displayMode=['overlay','always','normal'].includes(v)?v:'always';hd.revealOnScroll=v==='overlay';hd.sticky=v!=='normal'},headerTitle:v=>hd.title=String(v||''),headerNav:v=>hd.nav=!!v,headerSearch:v=>hd.search=!!v,headerNavAlign:v=>hd.navAlign=v==='left'?'left':'right',headerFontSize:v=>hd.fontSize=clamp(num(v,13),10,25),headerMenuFont:v=>hd.menuFontFamily=validFont(v),headerBrandFont:v=>hd.brandFontFamily=validFont(v),headerBrandFontSize:v=>hd.brandFontSize=clamp(num(v,18),10,42),headerBrandBold:v=>hd.brandBold=!!v,headerMenuBold:v=>hd.menuBold=!!v,headerOverlayColor:v=>hd.overlayColor=validColor(v),headerLinks:v=>hd.extraLinks=String(v||''),headerLogoSize:v=>hd.logoSize=clamp(num(v,34),16,100),headerHeight:v=>hd.height=clamp(num(v,62),36,160),headerBg:v=>hd.background=validColor(v),headerColor:v=>hd.color=validColor(v)};
+     const setters={headerEnabled:v=>hd.enabled=!!v,headerPosition:v=>{hd.positionMode=['fixed','normal','hide','shrink'].includes(v)?v:'fixed';hd.sticky=v!=='normal'},headerSurface:v=>{hd.surfaceMode=['solid','transparent','translucent','scroll'].includes(v)?v:'solid'},headerSurfaceOpacity:v=>{hd.surfaceOpacity=clamp(num(v,75)/100,.1,.95)},headerTitle:v=>hd.title=String(v||''),headerNav:v=>hd.nav=!!v,headerSearch:v=>hd.search=!!v,headerNavAlign:v=>hd.navAlign=v==='left'?'left':'right',headerFontSize:v=>hd.fontSize=clamp(num(v,13),10,25),headerMenuFont:v=>hd.menuFontFamily=validFont(v),headerBrandFont:v=>hd.brandFontFamily=validFont(v),headerBrandFontSize:v=>hd.brandFontSize=clamp(num(v,18),10,42),headerBrandBold:v=>hd.brandBold=!!v,headerMenuBold:v=>hd.menuBold=!!v,headerOverlayColor:v=>hd.overlayColor=validColor(v),headerLinks:v=>hd.extraLinks=String(v||''),headerLogoSize:v=>hd.logoSize=clamp(num(v,34),16,100),headerHeight:v=>hd.height=clamp(num(v,62),36,160),headerBg:v=>hd.background=validColor(v),headerColor:v=>hd.color=validColor(v)};
      for(const [key,set] of Object.entries(setters))handleField(key,set);
    }
 
@@ -4982,7 +5038,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    }
    const st=styleSource(e,device);
    const r=rect(e),rectInput=field('X',r.x,'x','number')+field('Y',r.y,'y','number')+field('幅',r.w,'w','number')+field('高さ',r.h,'h','number');
-   const names={heading:'見出し',text:'文章',image:'画像',button:'ボタン',box:'図形',line:'線',video:'動画',pdf:'PDF表示',form:'Googleフォーム',choiceRadio:'ラジオボタン',choiceCheckbox:'チェックボックス',choiceSelect:'プルダウン',formInput:'1行入力欄',formTextarea:'複数行入力欄',menu:'ボタンメニュー',sidebar:'画面端サイドバー',html:'HTML埋め込み'};
+   const names={carousel:'横スライド',heading:'見出し',text:'文章',image:'画像',button:'ボタン',box:'図形',line:'線',video:'動画',pdf:'PDF表示',form:'Googleフォーム',choiceRadio:'ラジオボタン',choiceCheckbox:'チェックボックス',choiceSelect:'プルダウン',formInput:'1行入力欄',formTextarea:'複数行入力欄',menu:'ボタンメニュー',sidebar:'画面端サイドバー',html:'HTML埋め込み'};
    const formInputSection=FORM_INPUT_TYPES.has(e.type)?`<div class="section-head">入力欄の設定</div>
      ${field('項目名（送信時の識別用・全端末共通）',e.formLabel||'','formLabel')}
      ${field('項目名を入力欄の上に表示（この端末のみ）',!!displayValue(e,'formShowLabel'),'formShowLabel','checkbox')}
@@ -5105,6 +5161,20 @@ html,body{height:100%;min-height:0;overflow:hidden}
    ${isEdgeMenu?'<p class="note">取っ手・ボタンは表示しません。公開ページの左右端にカーソルを移すと展開し、サイドバーから離れると閉じます。編集画面ではパーツにカーソルを重ねて確認できます。</p>':''}
    <p class="note">リンク指定例：ホーム | index.html ／ お問い合わせ | #contact</p>`:'';
    const imageSection=e.type==='image'?`<button class="small-btn fullbtn" id="chooseImg">画像を選択・変更</button>${field('画像の説明（alt）',e.text||'','alt')}${field('角丸（px）',num(st.radius,0),'radius','number')}${field('透明度（％）',num(st.opacity,100),'opacity','number')}<div class="field"><label for="field-imageFit">画像の表示方法</label><select id="field-imageFit"><option value="cover"${st.imageFit!=='contain'?' selected':''}>枠いっぱい（切り抜き）</option><option value="contain"${st.imageFit==='contain'?' selected':''}>画像全体を表示</option></select></div>`:'';
+   const carouselSection=e.type==='carousel'?`<div class="section-head">横スライドの編集</div>
+     <p class="note">画像・タイトル・説明文・リンクを1組として登録します。編集画面では最初のページを表示し、自動再生はプレビューで確認できます。</p>
+     ${field('自動再生',e.carouselAutoplay!==false,'carouselAutoplay','checkbox')}
+     ${field('切り替え間隔（秒）',clamp(num(e.carouselInterval,5),2,30),'carouselInterval','number')}
+     ${field('最後から最初へ戻る',e.carouselLoop!==false,'carouselLoop','checkbox')}
+     ${field('左右矢印を表示',e.carouselShowArrows!==false,'carouselShowArrows','checkbox')}
+     ${field('位置表示を表示',e.carouselShowDots!==false,'carouselShowDots','checkbox')}
+     <div class="twocol">${field('PCの同時表示枚数（1～5）',clamp(num(e.carouselDesktop,3),1,5),'carouselDesktop','number')}${field('タブレット（1～5）',clamp(num(e.carouselTablet,2),1,5),'carouselTablet','number')}</div>
+     ${field('スマホの同時表示枚数（1～3）',clamp(num(e.carouselMobile,1),1,3),'carouselMobile','number')}
+     <button type="button" class="small-btn fullbtn" id="carouselImportPageImages">このページの既存画像を取り込む</button>
+     <p class="note">既存画像パーツの画像と、近くの見出し・文章をコピーしてスライドを作成します。元パーツは残ります。</p>
+     ${(carouselItems(e)).map((item,i)=>`<details class="style-feature msb-carousel-editor-item"${i===0?' open':''}><summary>スライド ${i+1}：${htmlEscape(item.title||'無題')}</summary><div class="style-fields"><div class="msb-slide-preview">${item.image?`<img src="${attr(item.image)}" alt="">`:'画像未設定'}</div><button type="button" class="small-btn fullbtn" data-msb-carousel-image="${i}">画像を選択</button><button type="button" class="small-btn fullbtn" data-msb-carousel-clear="${i}"${item.image?'':' disabled'}>画像を解除</button><div class="field"><label>タイトル<input type="text" data-msb-carousel-field="title" data-msb-carousel-index="${i}" value="${attr(item.title)}" maxlength="160"></label></div><div class="field"><label>説明文<textarea data-msb-carousel-field="description" data-msb-carousel-index="${i}" rows="3" maxlength="500">${htmlEscape(item.description)}</textarea></label></div><div class="field"><label>リンク（任意）<input type="text" data-msb-carousel-field="url" data-msb-carousel-index="${i}" value="${attr(item.url==='\#'?'':item.url)}" placeholder="https:// または page.html"></label></div><div class="twocol"><button type="button" class="small-btn" data-msb-carousel-move="up" data-msb-carousel-index="${i}"${i===0?' disabled':''}>↑ 上へ</button><button type="button" class="small-btn" data-msb-carousel-move="down" data-msb-carousel-index="${i}"${i===carouselItems(e).length-1?' disabled':''}>↓ 下へ</button></div><button type="button" class="small-btn danger fullbtn" data-msb-carousel-remove="${i}">このスライドを削除</button></div></details>`).join('')}
+     <button type="button" class="small-btn fullbtn" id="carouselAddSlide"${carouselItems(e).length>=32?' disabled':''}>＋ スライドを追加</button>
+     <p class="note">画像はJPEG・PNG・WebP、最大12MBです。画像データはJSONに保存されます。</p>`:'';
    const videoSection=e.type==='video'?field('動画URL（YouTube・Vimeo・MP4等）',e.videoUrl||'','videoUrl')+'<p class="note">YouTube・Vimeoの共有URL、またはMP4等の動画ファイルURLを指定します。プレビューで再生できます。</p>':'';
    const embedding=e.type==='pdf'?safePDF(e.embedUrl):e.type==='form'?safeForm(e.embedUrl):null;
    const htmlEmbedSection=e.type==='html'?`<div class="section-head">HTML埋め込み</div><p class="hybrid-inspector-note">DOCTYPEを含む完成済みHTMLを貼り付けます。パーツ枠内で独立して動作するため、サイト本体のCSS・JavaScriptと干渉しません。</p><button type="button" id="hybridPartFile" class="hybrid-import-btn">HTMLファイルを読み込む</button>${field('埋め込みHTMLコード',e.htmlCode||'','htmlCode','textarea')}${field('互換モード（信頼できるHTMLのみ）',!!e.htmlTrusted,'htmlTrusted','checkbox')}<p class="hybrid-inspector-note">自作アプリで保存機能などが必要な場合のみオンにしてください。第三者から取得したHTMLには使用しないでください。</p>`:'';
@@ -5127,7 +5197,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    const disclosureScope=[p.id,activeLayoutRegion,device,e.id].join('|');
    const disclosureSnapshot=captureInspectorDisclosure(panel,disclosureScope);
    const positionSizeWasOpen=disclosureSnapshot?.expanded.get('id:msbPositionSize')??false;
-   panel.innerHTML=`<div class="section-head">パーツの設定 <button id="closeProps" class="small-btn">戻る</button></div>${ownerLink}<p class="muted">${htmlEscape(names[e.type]||'パーツ')}を編集中です。${device!=='desktop'?'位置・サイズ・文字の見た目はこの端末だけに反映されます。':''}</p>${textSection}${choiceSection}${formInputSection}${fontSection}${colorSection}${bgSection}${alignSection}${radiusSection}${boldSection}${decorativeSection}${gradientSection}${hoverSection}${menuSection}${imageSection}${e.type==='line'?field('線の太さ（px）',num(st.lineWidth,2),'lineWidth','number'):''}${videoSection}${embedSection}${htmlEmbedSection}${['video','pdf','form','menu','html'].includes(e.type)||CHOICE_TYPES.has(e.type)||FORM_INPUT_TYPES.has(e.type)?'':linkFields(e)}${clickActionFields(e,p)}${fxPanelHTML(e)}<details id="msbPositionSize" class="style-feature msb-group"${positionSizeWasOpen?' open':''}><summary>位置・サイズ（${deviceLabel}）</summary><div class="msb-group-content"><div class="twocol">${rectInput}</div>${field('印刷時に非表示',e.printHide,'printHide','checkbox')}</div></details>${hideThisDevice?'<button class="small-btn fullbtn" id="hideOnThisDevice" type="button">この端末では非表示</button>':''}<div class="twocol"><button class="small-btn" id="duplicate">複製</button><button class="small-btn danger" id="deleteElement">この端末から削除</button></div>`;
+   panel.innerHTML=`<div class="section-head">パーツの設定 <button id="closeProps" class="small-btn">戻る</button></div>${ownerLink}<p class="muted">${htmlEscape(names[e.type]||'パーツ')}を編集中です。${device!=='desktop'?'位置・サイズ・文字の見た目はこの端末だけに反映されます。':''}</p>${textSection}${choiceSection}${formInputSection}${fontSection}${colorSection}${bgSection}${alignSection}${radiusSection}${boldSection}${decorativeSection}${gradientSection}${hoverSection}${menuSection}${imageSection}${e.type==='line'?field('線の太さ（px）',num(st.lineWidth,2),'lineWidth','number'):''}${videoSection}${embedSection}${htmlEmbedSection}${carouselSection}${['video','pdf','form','menu','html','carousel'].includes(e.type)||CHOICE_TYPES.has(e.type)||FORM_INPUT_TYPES.has(e.type)?'':linkFields(e)}${clickActionFields(e,p)}${fxPanelHTML(e)}<details id="msbPositionSize" class="style-feature msb-group"${positionSizeWasOpen?' open':''}><summary>位置・サイズ（${deviceLabel}）</summary><div class="msb-group-content"><div class="twocol">${rectInput}</div>${field('印刷時に非表示',e.printHide,'printHide','checkbox')}</div></details>${hideThisDevice?'<button class="small-btn fullbtn" id="hideOnThisDevice" type="button">この端末では非表示</button>':''}<div class="twocol"><button class="small-btn" id="duplicate">複製</button><button class="small-btn danger" id="deleteElement">この端末から削除</button></div>`;
    panel.dataset.msbActivePartId=e.id;
    panel.dataset.msbDisclosureScope=disclosureScope;
    restoreInspectorDisclosure(panel,disclosureSnapshot);
@@ -5220,6 +5290,37 @@ html,body{height:100%;min-height:0;overflow:hidden}
        const opts=choiceOptions(e);if(opts.length>=40)return notify('選択肢は最大40件です。');
        mutate(()=>{setDisplayValue(e,'choiceOptions',[...opts,`選択肢 ${opts.length+1}`])});
      });
+   }
+   if(e.type==='carousel'){
+     const properties=['carouselAutoplay','carouselLoop','carouselShowArrows','carouselShowDots'];
+     for(const key of properties)handleField(key,v=>e[key]=!!v);
+     for(const key of ['carouselInterval','carouselDesktop','carouselTablet','carouselMobile'])handleField(key,v=>e[key]=clamp(num(v,5),key==='carouselInterval'?2:1,key==='carouselInterval'?30:key==='carouselMobile'?3:5));
+     $('carouselAddSlide')?.addEventListener('click',()=>{if(carouselItems(e).length>=32)return;mutate(()=>{e.carouselItems=[...carouselItems(e),{image:'',title:'新しいスライド',description:'',url:''}]})});
+     $('carouselImportPageImages')?.addEventListener('click',()=>{
+       const found=page().elements.filter(x=>x.type==='image'&&safeBackgroundImage(x.src));
+       if(!found.length)return notify('このページに取り込める画像パーツがありません。');
+       if(!confirm(`既存の画像${found.length}件をスライドへ追加しますか？（元のパーツはそのまま残ります）`))return;
+       mutate(()=>{
+         const entries=found.slice(0,32-(carouselItems(e).every(it=>!it.image)?0:carouselItems(e).length)).map(img=>{
+           const r=rect(img,device),texts=page().elements.filter(x=>['heading','text'].includes(x.type)&&partVisibleOnDevice(x,page(),device)).map(x=>({x,rr:rect(x,device)}))
+             .filter(z=>Math.abs((z.rr.x+z.rr.w/2)-(r.x+r.w/2))<Math.max(90,r.w*.7)&&z.rr.y<=r.y+40&&r.y-z.rr.y<115)
+             .sort((a,b)=>Math.abs(r.y-a.rr.y)-Math.abs(r.y-b.rr.y));
+           return {image:img.src,title:String(texts[0]?partText(texts[0].x,device):img.text||'サービス').slice(0,160),description:'',url:img.href&&validUrl(img.href)!=='#'?img.href:''};
+         });
+         e.carouselItems=[...(carouselItems(e).every(it=>!it.image)?[]:carouselItems(e)),...entries];
+       });
+       notify('画像を取り込みました。タイトルとリンクを確認してください。');
+     });
+     panel.querySelectorAll('[data-msb-carousel-field]').forEach(input=>{
+       const i=Number(input.dataset.msbCarouselIndex),key=input.dataset.msbCarouselField;
+       input.addEventListener('focus',()=>record());
+       input.addEventListener('input',()=>{const row=e.carouselItems?.[i];if(!row)return;row[key]=String(input.value).slice(0,key==='description'?500:key==='title'?160:300);saveLocal()});
+       input.addEventListener('blur',()=>{if(key==='url'&&e.carouselItems?.[i])e.carouselItems[i].url=validUrl(input.value)==='#'?'':validUrl(input.value);renderCanvas()});
+     });
+     panel.querySelectorAll('[data-msb-carousel-image]').forEach(b=>b.onclick=()=>{carouselImageTarget={id:e.id,index:Number(b.dataset.msbCarouselImage),pageId:p.id};$('carouselImageFile').click()});
+     panel.querySelectorAll('[data-msb-carousel-clear]').forEach(b=>b.onclick=()=>mutate(()=>{if(e.carouselItems?.[Number(b.dataset.msbCarouselClear)])e.carouselItems[Number(b.dataset.msbCarouselClear)].image='' }));
+     panel.querySelectorAll('[data-msb-carousel-remove]').forEach(b=>b.onclick=()=>{if(!confirm('このスライドを削除しますか？'))return;mutate(()=>{e.carouselItems?.splice(Number(b.dataset.msbCarouselRemove),1)})});
+     panel.querySelectorAll('[data-msb-carousel-move]').forEach(b=>b.onclick=()=>mutate(()=>{const i=Number(b.dataset.msbCarouselIndex),j=i+(b.dataset.msbCarouselMove==='up'?-1:1),a=e.carouselItems;if(!Array.isArray(a)||j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]]}));
    }
    if(e.type==='html'){handleField('htmlCode',v=>e.htmlCode=String(v||''));handleField('htmlTrusted',v=>e.htmlTrusted=!!v);$('hybridPartFile')?.addEventListener('click',()=>{hybridUploadTarget={kind:'part',pageId:pageId,id:e.id};$('hybridHtmlFile').click()});}
    $('msbReturnToAction')?.addEventListener('click',()=>{
@@ -5735,7 +5836,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    const title=hd.title||project.title||'サイト';
    const bgcolor=validColor(hd.background||'#192438'),color=validColor(hd.color||'#ffffff');
    const height=clamp(num(hd.height,62),36,160),logo=safeBackgroundImage(hd.logo),logoSize=clamp(num(hd.logoSize,34),16,100),fontsize=clamp(num(hd.fontSize,13),10,25);
-   const displayMode=headerMode(hd),overlayColor=validColor(hd.overlayColor||'#ffffff'),brandSize=clamp(num(hd.brandFontSize,18),10,42),brandFamily=fontStack(hd.brandFontFamily),menuFamily=fontStack(hd.menuFontFamily);
+   const displayMode=headerMode(hd),positionMode=headerPosition(hd),surfaceMode=headerSurface(hd),overlayColor=validColor(hd.overlayColor||'#ffffff'),brandSize=clamp(num(hd.brandFontSize,18),10,42),brandFamily=fontStack(hd.brandFontFamily),menuFamily=fontStack(hd.menuFontFamily);
    const menu=headerMenuGroups();
    const nav=hd.nav!==false?menu.map(g=>{
      const href=pageFile(g.root),active=g.root.id===p.id||g.children.some(c=>c.id===p.id);
@@ -5753,12 +5854,25 @@ html,body{height:100%;min-height:0;overflow:hidden}
    }).slice(0,1500);
    const indexData=JSON.stringify(searchData).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026');
    const searchHtml=hd.search!==false?`<button type="button" class="site-search-toggle" aria-expanded="false" aria-label="サイト内検索を開く" title="サイト内検索"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 5 5"/></svg></button><div class="site-search-panel" hidden><label for="site-search-input">サイト内検索</label><input id="site-search-input" type="search" placeholder="キーワードを入力" autocomplete="off"><div class="site-search-results" aria-live="polite"></div></div>`:'';
-   const html=`<header class="site-nav-header${displayMode==='overlay'?' is-overlay-scroll':displayMode==='always'?' is-sticky':''}" id="site-top-navigation"><div class="site-nav-inner"><button class="site-nav-toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="site-page-drawer"><span aria-hidden="true">☰</span></button><a class="site-nav-brand" href="index.html">${logoHtml}<span>${h(title)}</span></a><div class="site-nav-actions"><nav class="site-nav-links${hd.navAlign==='left'?' align-left':''}" aria-label="サイトのページ" id="site-page-drawer"><div class="site-nav-drawer-top"><button type="button" class="site-nav-drawer-close" aria-label="メニューを閉じる">×</button></div>${nav}${extras}</nav>${searchHtml}</div></div><div class="site-nav-backdrop" hidden aria-hidden="true"></div></header>${searchHtml?`<script type="application/json" id="siteSearchIndex">${indexData}<\/script>`:''}`;
+   const html=`<header class="site-nav-header${positionMode==='fixed'?(surfaceMode==='scroll'?' is-overlay-scroll':' is-sticky'):positionMode==='hide'?' is-sticky msb-header-hide':positionMode==='shrink'?' is-sticky msb-header-shrink':''}${surfaceMode==='transparent'?' msb-header-transparent':surfaceMode==='translucent'?' msb-header-translucent':surfaceMode==='scroll'?' msb-header-scroll':''}" id="site-top-navigation"><div class="site-nav-inner"><button class="site-nav-toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="site-page-drawer"><span aria-hidden="true">☰</span></button><a class="site-nav-brand" href="index.html">${logoHtml}<span>${h(title)}</span></a><div class="site-nav-actions"><nav class="site-nav-links${hd.navAlign==='left'?' align-left':''}" aria-label="サイトのページ" id="site-page-drawer"><div class="site-nav-drawer-top"><button type="button" class="site-nav-drawer-close" aria-label="メニューを閉じる">×</button></div>${nav}${extras}</nav>${searchHtml}</div></div><div class="site-nav-backdrop" hidden aria-hidden="true"></div></header>${searchHtml?`<script type="application/json" id="siteSearchIndex">${indexData}<\/script>`:''}`;
    const css=`
 .site-nav-header{position:relative;z-index:1001;height:${height}px;color:${color};background:${bgcolor};font-family:${menuFamily}}
 .site-nav-header.is-sticky{position:sticky;top:0}
 .site-nav-header.is-overlay-scroll{position:fixed;top:0;left:0;right:0;width:100%;background:transparent;color:${overlayColor};transition:background-color .17s ease,color .17s ease,box-shadow .17s ease}
 .site-nav-header.is-overlay-scroll.is-scrolled{background:${bgcolor};color:${color};box-shadow:0 2px 8px #0003}
+.site-nav-header.msb-header-transparent.is-sticky{position:fixed;top:0;left:0;right:0;width:100%}
+.site-nav-header.msb-header-transparent,.site-nav-header.msb-header-transparent.is-scrolled{background:transparent!important;color:${overlayColor}!important;box-shadow:none!important}
+.site-nav-header.msb-header-translucent,.site-nav-header.msb-header-translucent.is-scrolled{background:${headerRgba(hd.background,hd.surfaceOpacity)}!important;color:${color}!important;box-shadow:none}
+.site-nav-header.msb-header-scroll:not(.is-overlay-scroll){background:transparent;color:${overlayColor};transition:background-color .2s ease,color .2s ease}
+.site-nav-header.msb-header-scroll.is-scrolled{background:${bgcolor};color:${color}}
+.site-nav-header.msb-header-hide{transition:transform .2s ease,background-color .2s ease}
+.site-nav-header.msb-header-hide.msb-header-hidden{transform:translateY(-105%);pointer-events:none}
+.site-nav-header.msb-header-shrink{transition:height .2s ease,background-color .2s ease}
+.site-nav-header.msb-header-shrink.msb-header-shrunk{height:${Math.max(36,Math.round(height*.68))}px}
+.site-nav-header.msb-header-shrink.msb-header-shrunk .site-nav-brand{font-size:${Math.max(12,Math.round(brandSize*.82))}px}
+.site-nav-header.msb-header-shrink.msb-header-shrunk .site-nav-logo{max-height:${Math.max(20,Math.round(logoSize*.75))}px}
+
+
 @media(prefers-reduced-motion:reduce){.site-nav-header.is-overlay-scroll{transition:none}}
 .site-nav-header button,.site-nav-header input{font-family:inherit}
 .site-nav-inner{max-width:${p.publishWidth==='center'?'1000px':'none'};height:100%;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:20px}
@@ -5848,12 +5962,76 @@ body.site-nav-menu-open{overflow:hidden}
  document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){closeNav();closeSearch()}});
  document.addEventListener('pointerdown',ev=>{if(!header.contains(ev.target)){closeNav();closeSearch()}});
  window.addEventListener('resize',()=>{if(document.documentElement.dataset.msbHeader!=='compact')closeNav()},{passive:true});
- function updateReveal(){if(!header.classList.contains('is-overlay-scroll'))return;const show=(window.scrollY||document.documentElement.scrollTop||0)>=8;const was=header.classList.contains('is-scrolled');header.classList.toggle('is-scrolled',show);if(was&&!show){closeNav();closeSearch()}}
- window.addEventListener('scroll',updateReveal,{passive:true});updateReveal();
+ function updateReveal(){if(!header.classList.contains('is-overlay-scroll')&&!header.classList.contains('msb-header-scroll'))return;const show=(window.scrollY||document.documentElement.scrollTop||0)>=8;const was=header.classList.contains('is-scrolled');header.classList.toggle('is-scrolled',show);if(was&&!show){closeNav();closeSearch()}}
+ let msbLastScroll=window.scrollY||0;
+ function headerScroll(ev){const host=ev?.currentTarget,scrolling=host&&host!==window?host:window;const current=Math.max(0,scrolling===window?(window.scrollY||document.documentElement.scrollTop||0):scrolling.scrollTop||0);
+  if(header.classList.contains('msb-header-hide')){if(Math.abs(current-msbLastScroll)>3){const hide=current>Math.max(60,header.offsetHeight)&&current>msbLastScroll;header.classList.toggle('msb-header-hidden',hide);msbLastScroll=current}}
+  if(header.classList.contains('msb-header-shrink'))header.classList.toggle('msb-header-shrunk',current>12);
+  if(header.classList.contains('is-overlay-scroll')||header.classList.contains('msb-header-scroll')){const show=current>=8;const was=header.classList.contains('is-scrolled');header.classList.toggle('is-scrolled',show);if(was&&!show){closeNav();closeSearch()}}
+ }
+ window.addEventListener('scroll',headerScroll,{passive:true});
+ document.querySelectorAll('.msb-site-scrollport,.msb-region-main').forEach(n=>n.addEventListener('scroll',headerScroll,{passive:true}));headerScroll();
 })();<\/script>`;
    return {html,css:scopedHeaderCss,script};
  }
 
+ const MSB_CAROUSEL_CSS=String.raw`
+.msb-carousel{--msb-car-visible:var(--msb-car-desktop,3);position:relative;width:100%;height:100%;overflow:hidden;background:transparent;font-family:system-ui,-apple-system,sans-serif}
+html[data-msb-active="tablet"] .msb-carousel,html[data-msb-active="tabletLandscape"] .msb-carousel{--msb-car-visible:var(--msb-car-tablet,2)}
+html[data-msb-active="mobile"] .msb-carousel{--msb-car-visible:var(--msb-car-mobile,1)}
+.msb-carousel-window{width:100%;height:100%;overflow:hidden}
+.msb-carousel-track{display:flex;width:100%;height:100%;transition:transform .4s ease;will-change:transform}
+.msb-carousel .msb-slide{box-sizing:border-box;flex:0 0 calc(100% / var(--msb-car-visible));height:100%;min-width:0;padding:0 7px}
+.msb-slide-card,.msb-slide>a{display:flex;flex-direction:column;width:100%;height:100%;min-width:0;color:#27354a;text-decoration:none}
+.msb-slide-card{border-radius:8px;overflow:hidden;background:#fff}
+.msb-slide-image{height:65%;flex:none;overflow:hidden;background:#eef3f9;display:flex;align-items:center;justify-content:center}
+.msb-carousel .msb-slide-image img{width:100%;height:100%;object-fit:cover;display:block}
+.msb-slide-placeholder,.msb-slide-empty{color:#69809b;font-size:13px;text-align:center}
+.msb-slide-caption{padding:7px 7px 12px;overflow:hidden;flex:1;font-size:clamp(11px,1.15vw,16px);line-height:1.4;text-align:center;overflow-wrap:anywhere}
+.msb-slide-caption strong{display:block;font-size:1.05em}
+.msb-slide-caption p{margin:3px 0 0;white-space:pre-wrap;font-size:.93em}
+.msb-carousel-prev,.msb-carousel-next{position:absolute;top:40%;transform:translateY(-50%);z-index:5;border:0;border-radius:50%;background:#15253bbf;color:#fff;cursor:pointer;width:33px;height:33px;font-size:27px;line-height:1}
+.msb-carousel-prev{left:5px}.msb-carousel-next{right:5px}
+.msb-carousel-prev:disabled,.msb-carousel-next:disabled{opacity:.25;cursor:default}
+.msb-carousel-dots{position:absolute;display:flex;gap:6px;justify-content:center;align-items:center;bottom:2px;left:12px;right:12px;z-index:6;min-height:10px}
+.msb-carousel-dots button{width:7px;height:7px;min-width:7px;min-height:7px;border:0;padding:0;border-radius:50%;background:#9aaac0;cursor:pointer}
+.msb-carousel-dots button[aria-current="true"]{background:#2563a7;transform:scale(1.2)}
+.msb-carousel button:focus-visible,.msb-carousel a:focus-visible{outline:3px solid #3885df;outline-offset:-2px}
+.element .msb-carousel,.element .msb-carousel *{pointer-events:none}
+@media(prefers-reduced-motion:reduce){.msb-carousel-track{transition:none}}
+@media print{.msb-carousel-track{transform:none!important}}
+`;
+ const MSB_CAROUSEL_JS=String.raw`(function(){
+ const carousels=[...document.querySelectorAll('[data-msb-carousel]')];
+ for(const root of carousels){
+  const track=root.querySelector('.msb-carousel-track'),items=[...track.children].filter(n=>n.matches('.msb-slide'));
+  if(!items.length)continue;
+  let index=0,timer=null,startX=0,downX=0,downY=0;
+  const prev=root.querySelector('.msb-carousel-prev'),next=root.querySelector('.msb-carousel-next'),dots=root.querySelector('.msb-carousel-dots');
+  const count=()=>Math.max(1,Math.min(items.length,Math.round(Number(getComputedStyle(root).getPropertyValue('--msb-car-visible'))||1)));
+  const max=()=>Math.max(0,items.length-count()),loop=root.dataset.carouselLoop!=='false',seconds=Math.min(30,Math.max(2,Number(root.dataset.carouselInterval)||5));
+  const autoplay=root.dataset.carouselAutoplay!=='false',reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  function render(){index=Math.max(0,Math.min(index,max()));track.style.transform='translateX(-'+(100*index/count())+'%)';
+   if(prev)prev.disabled=!loop&&index===0;if(next)next.disabled=!loop&&index>=max();
+   if(dots){dots.replaceChildren();for(let i=0;i<=max();i++){
+    const dot=document.createElement('button');dot.type='button';dot.setAttribute('aria-label',(i+1)+'番目のスライド');dot.setAttribute('aria-current',String(i===index));dot.onclick=()=>{index=i;render();restart()};dots.append(dot);
+   }} }
+  function move(step){if(!max())return;const to=index+step;index=(to<0?loop?max():0:to>max()?loop?0:max():to);render()}
+  function pause(){if(timer){clearInterval(timer);timer=null}}
+  function play(){pause();if(!autoplay||reduced.matches||!max()||document.hidden)return;timer=setInterval(()=>move(1),seconds*1000)}
+  function restart(){play()}
+  prev?.addEventListener('click',()=>{move(-1);restart()});next?.addEventListener('click',()=>{move(1);restart()});
+  root.addEventListener('mouseenter',pause);root.addEventListener('mouseleave',play);
+  root.addEventListener('focusin',pause);root.addEventListener('focusout',ev=>{if(!root.contains(ev.relatedTarget))play()});
+  root.addEventListener('pointerdown',ev=>{if(ev.pointerType!=='touch')return;startX=ev.clientX;downX=ev.clientX;downY=ev.clientY},{passive:true});
+  root.addEventListener('pointerup',ev=>{if(ev.pointerType!=='touch')return;const dx=ev.clientX-downX,dy=ev.clientY-downY;if(Math.abs(dx)>35&&Math.abs(dx)>Math.abs(dy)*1.3){move(dx<0?1:-1);restart()}},{passive:true});
+  root.addEventListener('keydown',ev=>{if(ev.target.matches('input,textarea,select'))return;if(ev.key==='ArrowRight'||ev.key==='ArrowLeft'){ev.preventDefault();move(ev.key==='ArrowRight'?1:-1);restart()}});
+  document.addEventListener('visibilitychange',()=>document.hidden?pause():play());
+  window.addEventListener('resize',()=>{render();play()},{passive:true});window.addEventListener('msb:profilechange',()=>{render();play()});
+  if(reduced.addEventListener)reduced.addEventListener('change',()=>{render();play()});
+  render();play();
+ }
+})();`;
  const MENU_V57_CSS="\n/* v0.57: shared rail layout in editor and exported pages */\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer{\n box-sizing:border-box!important;\n width:var(--msb-collapsed-width,60px);\n transition:width .22s ease,padding .22s ease;\n}\n.item.menu-part .msb-menu.mode-edge.side-right .msb-menu-drawer,\n#editorRailLayer .editor-sidebar-rail.side-right .msb-menu.mode-edge .msb-menu-drawer{\n left:auto!important;right:0!important;\n}\n.item.menu-part .msb-menu.mode-edge.side-left .msb-menu-drawer,\n#editorRailLayer .editor-sidebar-rail.side-left .msb-menu.mode-edge .msb-menu-drawer{\n left:0!important;right:auto!important;\n}\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer::before,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer::before{\n position:absolute!important;top:var(--msb-rail-label-top,18px)!important;\n left:0!important;width:var(--msb-collapsed-width,60px)!important;\n padding:0!important;margin:0!important;text-align:center!important;\n line-height:1.2!important;box-sizing:border-box!important;\n pointer-events:none!important;\n}\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:hover::before,\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:focus-within::before,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer:hover::before,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer:focus-within::before{\n opacity:0!important;visibility:hidden!important;\n}\n/* Opening shows the independent drawer heading rather than the collapsed marker. */\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:hover,\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:focus-within,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer:hover,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer:focus-within{\n width:var(--msb-drawer-width,280px)!important;\n padding:var(--msb-drawer-pad,12px)!important;\n}\n";
  const MENU_V55_CSS="\n/* v0.55 sidebar label, drawer frame and divider customization */\n.msb-menu-drawer{border:var(--msb-border-width,1px) solid var(--msb-border-color,rgba(212,223,236,.4))!important}\n.msb-menu-title{border-bottom:var(--msb-separator-width,1px) solid var(--msb-separator-color,rgba(223,232,241,.35))!important}\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:before,\n#editorRailLayer .editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer:before,\n.editor-sidebar-rail .msb-menu.mode-edge .msb-menu-drawer:before{\n content:var(--msb-rail-label,'MENU')!important;\n color:var(--msb-rail-label-color,inherit)!important;\n font-size:var(--msb-rail-label-size,10px)!important;\n font-family:var(--msb-rail-label-font,system-ui,sans-serif)!important;\n font-weight:var(--msb-rail-label-weight,700)!important;\n letter-spacing:var(--msb-rail-letter-spacing,1px)!important;\n}\n";
  const SIDEBAR_V50_CSS="\n/* v0.50: persistent slim navigation rail expanding on hover */\n.msb-menu-link{line-height:var(--msb-menu-line-height,1.5)}\n.msb-menu.mode-edge .msb-edge-sensor{display:none!important}\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer{\n position:fixed;top:0;bottom:auto;left:0;right:auto;\n display:block;overflow-x:hidden;overflow-y:auto;\n width:var(--msb-collapsed-width,60px);min-width:0;max-width:min(90vw,900px);\n height:var(--msb-drawer-height,100vh);max-height:100dvh;\n opacity:1;visibility:visible;pointer-events:auto;\n transform:none!important;transition:width .22s ease;z-index:9102;\n border-radius:var(--msb-drawer-radius,0px);padding:0;background:var(--msb-menu-bg,#202020);\n}\n.item.menu-part .msb-menu.mode-edge.side-right .msb-menu-drawer{left:auto;right:0}\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:hover,\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:focus-within{\n width:var(--msb-drawer-width,280px);padding:var(--msb-drawer-pad,12px);\n}\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:before{content:'MENU';display:block;text-align:center;font-size:10px;font-weight:700;letter-spacing:1px;padding:19px 0 24px;white-space:nowrap;}\n.item.menu-part .msb-menu.mode-edge .msb-menu-title,\n.item.menu-part .msb-menu.mode-edge .msb-menu-link{opacity:0;visibility:hidden;transition:opacity .12s ease;white-space:nowrap}\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:hover .msb-menu-title,\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:hover .msb-menu-link,\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:focus-within .msb-menu-title,\n.item.menu-part .msb-menu.mode-edge .msb-menu-drawer:focus-within .msb-menu-link{opacity:1;visibility:visible;white-space:normal;transition-delay:.08s}\n/* Editor uses a movable preview object; hover expands it locally. */\n.element.menu-part .msb-menu.mode-edge{background:transparent;border-radius:0}\n.element.menu-part .msb-menu.mode-edge:before{content:none}\n.element.menu-part .msb-menu.mode-edge .msb-menu-drawer{\n position:absolute;top:0;left:0;right:auto;bottom:auto;\n width:var(--msb-collapsed-width,60px);min-width:0;max-width:600px;\n height:var(--msb-drawer-height,100vh);max-height:320px;\n opacity:1;visibility:visible;pointer-events:auto;transform:none!important;\n overflow:hidden;display:block;border-radius:var(--msb-drawer-radius,0px);padding:0;\n transition:width .22s ease;background:var(--msb-menu-bg,#202020)\n}\n.element.menu-part .msb-menu.mode-edge.side-right .msb-menu-drawer{left:auto;right:0}\n.element.menu-part .msb-menu.mode-edge .msb-menu-drawer:before{content:'MENU';display:block;text-align:center;font-weight:700;font-size:10px;padding:13px 0 17px;white-space:nowrap}\n.element.menu-part .msb-menu.mode-edge .msb-menu-title,\n.element.menu-part .msb-menu.mode-edge .msb-menu-link{visibility:hidden;opacity:0;white-space:nowrap}\n.element.menu-part .msb-menu.mode-edge .msb-menu-drawer:hover,\n.element.menu-part .msb-menu.mode-edge .msb-menu-drawer:focus-within{width:var(--msb-drawer-width,280px);padding:var(--msb-drawer-pad,12px)}\n.element.menu-part .msb-menu.mode-edge .msb-menu-drawer:hover .msb-menu-title,\n.element.menu-part .msb-menu.mode-edge .msb-menu-drawer:hover .msb-menu-link,\n.element.menu-part .msb-menu.mode-edge .msb-menu-drawer:focus-within .msb-menu-title,\n.element.menu-part .msb-menu.mode-edge .msb-menu-drawer:focus-within .msb-menu-link{visibility:visible;opacity:1;white-space:normal}\n@media(hover:none){.item.menu-part .msb-menu.mode-edge .msb-menu-drawer{width:var(--msb-collapsed-width,60px)}}\n@media print{.item.menu-part .msb-menu.mode-edge .msb-menu-drawer{display:none!important}}\n";
@@ -6169,6 +6347,7 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
      const variants=render=>['desktop','tablet','tabletLandscape','mobile'].map(render).join('');
      const id=attr(e.id);let body='';
      if(['menu','sidebar'].includes(e.type))body=menuMarkup(e);
+     else if(e.type==='carousel')body=carouselMarkup(e);
      else if(FORM_INPUT_TYPES.has(e.type))body=variants(dev=>`<div class="view-${dev}" style="display:block;width:100%;height:100%">${formInputMarkup(e,dev,false,p)}</div>`);
      else if(CHOICE_TYPES.has(e.type))body=variants(dev=>`<div class="view-${dev}" style="display:block;width:100%;height:100%">${choicePartMarkup(e,dev,false,p)}</div>`);
      else if(e.type==='image')body=e.src?variants(dev=>{const t=typography(e,dev,p);return `<img class="view-${dev}" src="${attr(e.src)}" alt="${attr(e.text||'')}" style="width:100%;height:100%;object-fit:${t.imageFit};opacity:${t.opacity/100};border-radius:${t.radius}px">`}):'';
@@ -6255,7 +6434,7 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
    };
    const H=codePage?hybridHeight(p,'desktop'):pageHeight('desktop',p),T=codePage?hybridHeight(p,'tablet'):pageHeight('tablet',p),L=codePage?hybridHeight(p,'tabletLandscape'):pageHeight('tabletLandscape',p),M=codePage?hybridHeight(p,'mobile'):pageHeight('mobile',p);
    const googleFonts=getGoogleFontUrl([{...p,elements:[...p.elements,...REGION_KEYS.flatMap(key=>regionPartList(p,key))]}]);
-   return `<!doctype html>\n<html lang="ja">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n${MSB_PUBLIC_PROFILE_BOOT}\n<title>${h(seoPageTitle(p))}</title>\n${seoPageDescription(p)?`<meta name="description" content="${attr(seoPageDescription(p))}">\n`:''}${seoCanonical(p)?`<link rel="canonical" href="${attr(seoCanonical(p))}">\n`:''}${faviconLink()}\n${googleFonts?`<link rel="stylesheet" href="${attr(googleFonts)}">\n`:''}<style>\n*{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}#page-top,.item[id^="anchor-part-"],.bg-band[id^="anchor-section-"]{scroll-margin-top:${showHeader&&hd.sticky!==false?clamp(num(hd.height,62),36,160)+12:12}px}body{margin:0;background:#e9eef4;font-family:${unifiedTextFont()?'"Noto Sans JP",Meiryo,sans-serif':'-apple-system,BlinkMacSystemFont,"Segoe UI",Meiryo,sans-serif'};color:#202936}main{width:100%;max-width:1000px;min-height:${H}px;position:relative;background-color:${attr(p.background||'#ffffff')};${bgCSS}margin:0 auto;overflow:hidden}.bg-band{position:absolute;left:0;width:100%;z-index:0;pointer-events:none}${bandStyles}.item{position:absolute;z-index:2;overflow:visible;overflow-wrap:anywhere}.item-body{display:block;width:100%;height:100%;overflow:hidden;text-decoration:none;color:inherit;transition:transform .18s ease,box-shadow .18s ease}.linked{cursor:pointer}.linked:focus-visible{outline:3px solid #2679dc;outline-offset:2px}.txt{display:block;width:100%;height:100%;white-space:pre-wrap;overflow-wrap:anywhere;-webkit-text-size-adjust:100%;text-size-adjust:100%}.view-tablet,.view-tabletLandscape,.view-mobile{display:none!important}.btn{display:flex;align-items:center;justify-content:center;padding:6px 12px;text-align:center}.shape{display:block;width:100%;height:100%}.shape.has-caption{display:flex;flex-direction:column;justify-content:center;white-space:pre-wrap;overflow-wrap:anywhere}.shape.has-caption>.shape-caption{display:block;width:100%;min-width:0}.line{display:block;border-top:2px solid;margin-top:7px} .item img,.item iframe,.item video{display:block;width:100%;height:100%;object-fit:cover;border:0} .item iframe[title="HTML埋め込み"]{zoom:var(--msb-embedded-inv-zoom,1)}.embed-wrap{display:flex;flex-direction:column;width:100%;height:100%;background:#fff;overflow:hidden}.embed-wrap iframe{display:block;width:100%;min-height:0;flex:1;border:0}.embed-open{display:block;flex:none;text-align:center;font-size:13px;line-height:1.4;padding:9px 5px;color:#125db1;background:#eef5fd;text-decoration:underline;word-break:break-word}.embed-open:focus-visible{outline:2px solid #2679dc;outline-offset:-2px}.embed-missing{height:100%;display:flex;align-items:center;justify-content:center;color:#697b92;background:#eff3f9;border:2px dashed #bbc9d9;font-size:14px}.video-empty{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#fff;background:#19283e}.lift:hover .item-body{transform:translateY(-5px);box-shadow:0 12px 26px #152b463d}.hover-bubble{position:absolute;z-index:50;left:50%;top:calc(100% + 9px);transform:translateX(-50%);width:max-content;max-width:260px;min-width:100px;background:#223249;color:#fff;padding:9px 12px;font-size:12px;line-height:1.55;border-radius:7px;box-shadow:0 6px 16px #101a2b3d;white-space:pre-wrap;overflow-wrap:anywhere;pointer-events:none;opacity:0;transition:opacity .15s ease}.item:hover .hover-bubble,.item:focus-within .hover-bubble{opacity:1}\n${devBandCSS('desktop')}\n${devCSS('desktop')}\n/* v1.22: device profiles follow the orientation chosen by the shared resolver. */
+   return `<!doctype html>\n<html lang="ja">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n${MSB_PUBLIC_PROFILE_BOOT}\n<title>${h(seoPageTitle(p))}</title>\n${seoPageDescription(p)?`<meta name="description" content="${attr(seoPageDescription(p))}">\n`:''}${seoCanonical(p)?`<link rel="canonical" href="${attr(seoCanonical(p))}">\n`:''}${faviconLink()}\n${googleFonts?`<link rel="stylesheet" href="${attr(googleFonts)}">\n`:''}<style>\n*{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}#page-top,.item[id^="anchor-part-"],.bg-band[id^="anchor-section-"]{scroll-margin-top:${showHeader&&headerPosition(hd)!=='normal'?clamp(num(hd.height,62),36,160)+12:12}px}body{margin:0;background:#e9eef4;font-family:${unifiedTextFont()?'"Noto Sans JP",Meiryo,sans-serif':'-apple-system,BlinkMacSystemFont,"Segoe UI",Meiryo,sans-serif'};color:#202936}main{width:100%;max-width:1000px;min-height:${H}px;position:relative;background-color:${attr(p.background||'#ffffff')};${bgCSS}margin:0 auto;overflow:hidden}.bg-band{position:absolute;left:0;width:100%;z-index:0;pointer-events:none}${bandStyles}.item{position:absolute;z-index:2;overflow:visible;overflow-wrap:anywhere}.item-body{display:block;width:100%;height:100%;overflow:hidden;text-decoration:none;color:inherit;transition:transform .18s ease,box-shadow .18s ease}.linked{cursor:pointer}.linked:focus-visible{outline:3px solid #2679dc;outline-offset:2px}.txt{display:block;width:100%;height:100%;white-space:pre-wrap;overflow-wrap:anywhere;-webkit-text-size-adjust:100%;text-size-adjust:100%}.view-tablet,.view-tabletLandscape,.view-mobile{display:none!important}.btn{display:flex;align-items:center;justify-content:center;padding:6px 12px;text-align:center}.shape{display:block;width:100%;height:100%}.shape.has-caption{display:flex;flex-direction:column;justify-content:center;white-space:pre-wrap;overflow-wrap:anywhere}.shape.has-caption>.shape-caption{display:block;width:100%;min-width:0}.line{display:block;border-top:2px solid;margin-top:7px} .item img,.item iframe,.item video{display:block;width:100%;height:100%;object-fit:cover;border:0} .item iframe[title="HTML埋め込み"]{zoom:var(--msb-embedded-inv-zoom,1)}.embed-wrap{display:flex;flex-direction:column;width:100%;height:100%;background:#fff;overflow:hidden}.embed-wrap iframe{display:block;width:100%;min-height:0;flex:1;border:0}.embed-open{display:block;flex:none;text-align:center;font-size:13px;line-height:1.4;padding:9px 5px;color:#125db1;background:#eef5fd;text-decoration:underline;word-break:break-word}.embed-open:focus-visible{outline:2px solid #2679dc;outline-offset:-2px}.embed-missing{height:100%;display:flex;align-items:center;justify-content:center;color:#697b92;background:#eff3f9;border:2px dashed #bbc9d9;font-size:14px}.video-empty{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#fff;background:#19283e}.lift:hover .item-body{transform:translateY(-5px);box-shadow:0 12px 26px #152b463d}.hover-bubble{position:absolute;z-index:50;left:50%;top:calc(100% + 9px);transform:translateX(-50%);width:max-content;max-width:260px;min-width:100px;background:#223249;color:#fff;padding:9px 12px;font-size:12px;line-height:1.55;border-radius:7px;box-shadow:0 6px 16px #101a2b3d;white-space:pre-wrap;overflow-wrap:anywhere;pointer-events:none;opacity:0;transition:opacity .15s ease}.item:hover .hover-bubble,.item:focus-within .hover-bubble{opacity:1}\n${devBandCSS('desktop')}\n${devCSS('desktop')}\n/* v1.22: device profiles follow the orientation chosen by the shared resolver. */
 </style><style data-msb-profile="tablet" media="not all">
 .view-desktop{display:none!important}.view-tablet{display:block!important}.view-tablet.btn{display:flex!important}main{max-width:720px;min-height:${T}px}
 ${devBandCSS('tablet')}
@@ -6284,6 +6463,7 @@ ${MENU_PUBLIC_CSS}
 ${SIDEBAR_V50_CSS}
 ${MENU_V55_CSS}
 ${MENU_V57_CSS}
+${MSB_CAROUSEL_CSS}
 ${railGutterCSS}
 ${screen.css}
 
@@ -6443,11 +6623,15 @@ ${bleedBackgroundCSS('desktop')}
   const active=document.documentElement.dataset.msbActive||'desktop';
   const base=({desktop:1000,tablet:720,tabletLandscape:1024,mobile:390})[active]||1000;
   const zoom=Math.max(.2,Math.min(5,Number(window.__msbBrowserZoom?.())||1));
-  // At 100% / zoom-out keep the existing fit-to-width behavior.
-  // When zooming IN, honor the browser's magnification and center the fitting
-  // device layout rather than scaling the desktop canvas beyond the viewport.
-  // For >400% or narrow windows, only shrink as much as needed to fit.
-  const ratio=zoom>1.03?Math.min(1,w/base):Math.max(.1,w*zoom/base);
+  // Publish at native CSS layout size. Let the browser's page zoom enlarge
+  // the page instead of counteracting it with width-to-viewport auto-scaling:
+  // a 1000px authored canvas must not become 1700px at 100%, only to shrink
+  // back to 1000px at 110%. The independent bleed layer still covers the
+  // full viewport (background-size:cover).
+  // The browser-zoom-aware profile resolver chooses tablet/mobile layouts
+  // when the viewport becomes narrower; only shrink additionally when the
+  // selected authored layout is wider than the available CSS viewport.
+  const ratio=Math.max(.1,Math.min(1,w/base));
   // A CSS zoom reflows text differently in Safari/WebKit and Chromium.
   // Transform scales the *painted* canvas but preserves the authored CSS
   // widths and therefore its line breaks. Reserve the scaled flow height.
@@ -6494,7 +6678,7 @@ ${bleedBackgroundCSS('desktop')}
   window.dispatchEvent(new Event('resize'));
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupOutside);else setupOutside();
-})()<\/script><script>${MSB_ACTION_SCRIPT}<\/script><script>${MSB_LAYOUT_DIAGNOSTIC_JS}<\/script>${MSB_PUBLIC_TEXT_GUARD}</body>\n</html>`;
+})()<\/script><script>${MSB_ACTION_SCRIPT}<\/script><script>${MSB_CAROUSEL_JS}<\/script><script>${MSB_LAYOUT_DIAGNOSTIC_JS}<\/script>${MSB_PUBLIC_TEXT_GUARD}</body>\n</html>`;
  }
  function buildSitePreview(){
    // Build preview pages with the EXACT same renderExportPage() as ZIP/GitHub.
@@ -6937,6 +7121,17 @@ setView(initialView);
 
  $('loadBtn').onclick=()=>$('openFile').click();
  $('openFile').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!Array.isArray(data.pages)||!data.pages.length||!data.pages.every(p=>p.id&&Array.isArray(p.elements)))throw Error('不正な形式');if(!confirm('現在の編集内容を読み込みファイルで置き換えますか？'))return;mutate(()=>{project=data;if(!Array.isArray(project.userColors))project.userColors=storedUserColors();else try{localStorage.setItem(USER_COLORS_KEY,JSON.stringify(cleanUserColors(project.userColors)))}catch{};normalizeIndependentLayouts(project);pageId=data.pages[0].id;selectedId=null;selectedSectionId=null});notify('プロジェクトを読み込みました。端末別の配置は個別に固定しています。')}catch(e){notify('JSONファイルを読み込めませんでした。')}finally{ev.target.value=''}};
+ $('carouselImageFile').onchange=async ev=>{
+   const file=ev.target.files?.[0];ev.target.value='';const target=carouselImageTarget;carouselImageTarget=null;
+   if(!file||!target)return;
+   if(!(await supportedImageFile(file)))return unsupportedImageNotice();
+   if(file.size>12*1024*1024)return notify('画像は12MB以下にしてください。');
+   try{const src=await new Promise((ok,fail)=>{const reader=new FileReader();reader.onload=()=>ok(String(reader.result||''));reader.onerror=fail;reader.readAsDataURL(file)});
+     if(!safeBackgroundImage(src))throw Error('invalid image');
+     mutate(()=>{const e=project.pages.find(p=>p.id===target.pageId)?.elements.find(e=>e.id===target.id);if(e?.type==='carousel'&&e.carouselItems?.[target.index])e.carouselItems[target.index].image=src});
+     notify('スライド画像を設定しました。');
+   }catch{notify('スライド画像の読み込みに失敗しました。')}
+ };
  $('imageFile').onchange=async ev=>{const f=ev.target.files[0];if(f)try{await readImage(f)}catch{notify('画像を読み込めませんでした。')}ev.target.value=''};
  $('hoverSwapImageFile').onchange=async ev=>{
    const f=ev.target.files?.[0];ev.target.value='';if(!f)return;
