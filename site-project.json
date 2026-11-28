@@ -28415,13 +28415,13 @@
           "backgroundPosition": "center",
           "layouts": {
             "mobile": {
-              "height": 1320
+              "height": 1455
             },
             "tablet": {
-              "height": 1470
+              "height": 1485
             },
             "tabletLandscape": {
-              "height": 1315
+              "height": 1345
             }
           },
           "hiddenDevices": [],
@@ -36099,27 +36099,27 @@
           "autoTextSizeByDevice": {},
           "layouts": {
             "mobile": {
-              "x": 25,
+              "x": 10,
               "y": 225,
-              "w": 345,
-              "h": 1060
+              "w": 370,
+              "h": 1215
             },
             "tablet": {
               "x": 35,
               "y": 265,
               "w": 650,
-              "h": 1160
+              "h": 1180
             },
             "tabletLandscape": {
-              "x": 144,
-              "y": 197,
-              "w": 737,
-              "h": 1075
+              "x": 145,
+              "y": 195,
+              "w": 735,
+              "h": 1070
             }
           },
           "deviceStyles": {
             "tablet": {
-              "fontSize": 27,
+              "fontSize": 28,
               "fontFamily": "system",
               "color": "#202936",
               "background": "#f2eae3",
@@ -36643,21 +36643,21 @@
           },
           "layouts": {
             "mobile": {
-              "x": 50,
-              "y": 305,
+              "x": 30,
+              "y": 325,
               "w": 115,
               "h": 30
             },
             "tablet": {
               "x": 85,
-              "y": 365,
+              "y": 370,
               "w": 90,
               "h": 30
             },
             "tabletLandscape": {
-              "x": 239,
-              "y": 289,
-              "w": 92,
+              "x": 230,
+              "y": 290,
+              "w": 90,
               "h": 25
             }
           },
@@ -36763,14 +36763,9 @@
               ],
               "sizeMarks": [
                 {
-                  "start": 0,
-                  "end": 3,
-                  "fontSize": 16
-                },
-                {
                   "start": 5,
                   "end": 7,
-                  "fontSize": 13.5
+                  "fontSize": 12
                 }
               ],
               "fontMarks": [],
@@ -37289,19 +37284,19 @@
           "layouts": {
             "tablet": {
               "x": 85,
-              "y": 465,
+              "y": 470,
               "w": 175,
               "h": 30
             },
             "tabletLandscape": {
-              "x": 235,
-              "y": 387,
-              "w": 141,
+              "x": 230,
+              "y": 390,
+              "w": 140,
               "h": 25
             },
             "mobile": {
-              "x": 50,
-              "y": 405,
+              "x": 30,
+              "y": 425,
               "w": 165,
               "h": 30
             }
@@ -37408,9 +37403,14 @@
               ],
               "sizeMarks": [
                 {
+                  "start": 0,
+                  "end": 7,
+                  "fontSize": 18
+                },
+                {
                   "start": 9,
                   "end": 11,
-                  "fontSize": 13
+                  "fontSize": 12
                 }
               ],
               "fontMarks": [],
@@ -37651,21 +37651,21 @@
           "layouts": {
             "tablet": {
               "x": 80,
-              "y": 610,
+              "y": 600,
               "w": 560,
-              "h": 90
+              "h": 160
             },
             "tabletLandscape": {
-              "x": 217,
-              "y": 516,
+              "x": 215,
+              "y": 515,
               "w": 590,
-              "h": 98
+              "h": 125
             },
             "mobile": {
-              "x": 50,
-              "y": 535,
-              "w": 300,
-              "h": 120
+              "x": 25,
+              "y": 560,
+              "w": 340,
+              "h": 160
             }
           },
           "deviceStyles": {
@@ -38040,14 +38040,14 @@
           "autoTextSizeByDevice": {},
           "layouts": {
             "mobile": {
-              "x": 40,
-              "y": 495,
+              "x": 20,
+              "y": 525,
               "w": 255,
               "h": 130
             },
             "tablet": {
-              "x": 75,
-              "y": 565,
+              "x": 85,
+              "y": 595,
               "w": 255,
               "h": 135
             },
@@ -38078,7 +38078,8 @@
               "gradientAngle": "horizontal",
               "gradientDuration": 5,
               "choiceAccentColor": "#804000",
-              "choiceFieldBorderColor": "#d0c9c3"
+              "choiceFieldBorderColor": "#d0c9c3",
+              "choiceLineHeight": 1.85
             },
             "tabletLandscape": {
               "fontSize": 14.7,
@@ -38120,7 +38121,9 @@
               "gradientAngle": "horizontal",
               "gradientDuration": 5,
               "choiceAccentColor": "#804000",
-              "choiceFieldBorderColor": "#d0c9c3"
+              "choiceFieldBorderColor": "#d0c9c3",
+              "choiceLabelGap": 8,
+              "choiceRowGap": 2
             }
           },
           "choiceLabel": "　",
@@ -38135,31 +38138,34 @@
           "choiceFieldBorderColor": "#d0c9c3",
           "deviceDisplay": {
             "tablet": {
-              "choiceLabel": "連絡方法",
+              "choiceLabel": " ",
               "choiceOptions": [
                 "メールでの連絡を希望",
                 "電話での連絡を希望"
               ],
-              "hideRequiredBadge": false
+              "hideRequiredBadge": true
             },
             "tabletLandscape": {
-              "choiceLabel": "連絡方法",
+              "choiceLabel": "　",
               "choiceOptions": [
                 "メールでの連絡を希望",
                 "電話での連絡を希望"
               ],
-              "hideRequiredBadge": false
+              "hideRequiredBadge": true
             },
             "mobile": {
-              "choiceLabel": "連絡方法",
+              "choiceLabel": "　",
               "choiceOptions": [
                 "メールでの連絡を希望",
                 "電話での連絡を希望"
               ],
-              "hideRequiredBadge": false
+              "hideRequiredBadge": true
             }
           },
-          "hideRequiredBadge": true
+          "hideRequiredBadge": true,
+          "choiceSubmitLabel": "連絡方法",
+          "formRequiredWhenPartId": "",
+          "formRequiredWhenOption": ""
         },
         {
           "id": "eejml55s7",
@@ -38687,21 +38693,21 @@
           "autoTextSizeByDevice": {},
           "layouts": {
             "tablet": {
-              "x": 85,
-              "y": 760,
-              "w": 555,
-              "h": 195
+              "x": 80,
+              "y": 810,
+              "w": 560,
+              "h": 160
             },
             "tabletLandscape": {
               "x": 215,
-              "y": 665,
+              "y": 690,
               "w": 590,
-              "h": 105
+              "h": 110
             },
             "mobile": {
-              "x": 50,
-              "y": 715,
-              "w": 300,
+              "x": 25,
+              "y": 780,
+              "w": 340,
               "h": 180
             }
           },
@@ -38860,10 +38866,10 @@
           "autoTextSizeByDevice": {},
           "layouts": {
             "tablet": {
-              "x": 75,
-              "y": 715,
-              "w": 225,
-              "h": 250
+              "x": 85,
+              "y": 780,
+              "w": 560,
+              "h": 195
             },
             "tabletLandscape": {
               "x": 222,
@@ -38898,7 +38904,8 @@
               "gradientAngle": "horizontal",
               "gradientDuration": 5,
               "choiceAccentColor": "#804000",
-              "choiceFieldBorderColor": "#d0c9c3"
+              "choiceFieldBorderColor": "#d0c9c3",
+              "choiceLayout": "free"
             },
             "tabletLandscape": {
               "fontSize": 14.7,
@@ -38944,7 +38951,7 @@
             }
           },
           "choiceLabel": "ご相談内容",
-          "choiceRequired": false,
+          "choiceRequired": true,
           "choiceOptions": [
             "PCの設定",
             "ネットワーク",
@@ -38952,7 +38959,9 @@
           ],
           "layoutRegion": "main",
           "hiddenDevices": [
-            "desktop"
+            "desktop",
+            "tabletLandscape",
+            "mobile"
           ],
           "choiceAccentColor": "#804000",
           "choiceFieldBorderColor": "#d0c9c3",
@@ -38969,15 +38978,57 @@
               "hideRequiredBadge": false
             },
             "tablet": {
-              "choiceLabel": "ご相談内容",
+              "choiceLabel": "　",
               "choiceOptions": [
                 "PCの設定",
                 "ネットワーク",
                 "スマホ",
                 "業務ツール",
-                "ホームページ"
+                "ホームページ",
+                "トラブル診断",
+                "料金について",
+                "その他",
+                "よくわからない"
               ],
-              "hideRequiredBadge": false
+              "hideRequiredBadge": true,
+              "choicePositions": [
+                {
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "x": 0,
+                  "y": 34.48
+                },
+                {
+                  "x": 0,
+                  "y": 68.97
+                },
+                {
+                  "x": 34.84,
+                  "y": 0
+                },
+                {
+                  "x": 34.84,
+                  "y": 33.91
+                },
+                {
+                  "x": 34.84,
+                  "y": 68.97
+                },
+                {
+                  "x": 69.11,
+                  "y": 0
+                },
+                {
+                  "x": 69.08,
+                  "y": 34.48
+                },
+                {
+                  "x": 69.08,
+                  "y": 68.97
+                }
+              ]
             },
             "tabletLandscape": {
               "choiceLabel": "ご相談内容",
@@ -38989,7 +39040,9 @@
               "hideRequiredBadge": false
             }
           },
-          "choiceSubmitLabel": "ご相談内容"
+          "choiceSubmitLabel": "ご相談内容",
+          "formRequiredWhenPartId": "",
+          "formRequiredWhenOption": ""
         },
         {
           "id": "edt68imbc",
@@ -39073,16 +39126,16 @@
               "h": 50
             },
             "tabletLandscape": {
-              "x": 217,
-              "y": 1167,
+              "x": 215,
+              "y": 1170,
               "w": 590,
-              "h": 49
+              "h": 50
             },
             "mobile": {
-              "x": 45,
-              "y": 1215,
-              "w": 305,
-              "h": 45
+              "x": 25,
+              "y": 1355,
+              "w": 340,
+              "h": 60
             }
           },
           "deviceStyles": {
@@ -39391,19 +39444,19 @@
           "layouts": {
             "tablet": {
               "x": 85,
-              "y": 1135,
+              "y": 1130,
               "w": 225,
               "h": 30
             },
             "tabletLandscape": {
               "x": 230,
-              "y": 946,
-              "w": 197,
+              "y": 945,
+              "w": 195,
               "h": 25
             },
             "mobile": {
-              "x": 50,
-              "y": 1060,
+              "x": 35,
+              "y": 1125,
               "w": 225,
               "h": 30
             }
@@ -39692,9 +39745,9 @@
           "autoTextSizeByDevice": {},
           "layouts": {
             "mobile": {
-              "x": 45,
-              "y": 335,
-              "w": 305,
+              "x": 25,
+              "y": 360,
+              "w": 340,
               "h": 40
             },
             "tablet": {
@@ -39908,9 +39961,9 @@
               "h": 49
             },
             "mobile": {
-              "x": 45,
-              "y": 435,
-              "w": 305,
+              "x": 25,
+              "y": 460,
+              "w": 340,
               "h": 40
             }
           },
@@ -39993,7 +40046,7 @@
           },
           "formLabel": "メールアドレス",
           "formShowLabel": false,
-          "formRequired": false,
+          "formRequired": true,
           "formInputMode": "email",
           "formPlaceholder": "メールアドレスを入力",
           "formMaxLength": 250,
@@ -40005,7 +40058,7 @@
           "layoutRegion": "main",
           "hiddenDevices": [],
           "formPlaceholderColor": "#d0c9c3",
-          "formRequiredWhenOption": "メールでの連絡を希望",
+          "formRequiredWhenOption": "",
           "formAutocomplete": "auto",
           "deviceDisplay": {
             "tablet": {
@@ -40023,7 +40076,8 @@
               "formShowLabel": false,
               "hideRequiredBadge": false
             }
-          }
+          },
+          "formRequiredWhenPartId": ""
         },
         {
           "id": "erhy9uh9s",
@@ -40101,21 +40155,21 @@
           "autoTextSizeByDevice": {},
           "layouts": {
             "tablet": {
-              "x": 300,
-              "y": 650,
+              "x": 295,
+              "y": 700,
               "w": 330,
               "h": 45
             },
             "tabletLandscape": {
-              "x": 425,
-              "y": 560,
+              "x": 415,
+              "y": 585,
               "w": 370,
               "h": 45
             },
             "mobile": {
-              "x": 80,
-              "y": 610,
-              "w": 260,
+              "x": 45,
+              "y": 670,
+              "w": 300,
               "h": 35
             }
           },
@@ -40308,22 +40362,22 @@
           "autoTextSizeByDevice": {},
           "layouts": {
             "mobile": {
-              "x": 45,
-              "y": 1090,
-              "w": 305,
-              "h": 105
+              "x": 25,
+              "y": 1160,
+              "w": 340,
+              "h": 150
             },
             "tablet": {
               "x": 80,
-              "y": 1170,
+              "y": 1160,
               "w": 560,
-              "h": 145
+              "h": 140
             },
             "tabletLandscape": {
-              "x": 217,
-              "y": 971,
+              "x": 215,
+              "y": 975,
               "w": 590,
-              "h": 147
+              "h": 145
             }
           },
           "deviceStyles": {
@@ -40755,7 +40809,8 @@
           "hiddenDevices": [
             "mobile",
             "tablet",
-            "desktop"
+            "desktop",
+            "tabletLandscape"
           ],
           "choiceAccentColor": "#804000",
           "choiceFieldBorderColor": "#d0c9c3",
@@ -40958,7 +41013,10 @@
           ],
           "layoutRegion": "main",
           "hiddenDevices": [
-            "desktop"
+            "desktop",
+            "tabletLandscape",
+            "tablet",
+            "mobile"
           ],
           "choiceAccentColor": "#804000",
           "choiceFieldBorderColor": "#d0c9c3",
@@ -41392,7 +41450,7 @@
             },
             "tabletLandscape": {
               "x": 215,
-              "y": 835,
+              "y": 850,
               "w": 270,
               "h": 75
             },
@@ -41724,7 +41782,7 @@
             },
             "tabletLandscape": {
               "x": 535,
-              "y": 835,
+              "y": 850,
               "w": 270,
               "h": 75
             },
@@ -41898,14 +41956,14 @@
               "h": 135
             },
             "tabletLandscape": {
-              "x": 222,
-              "y": 799,
-              "w": 172,
-              "h": 129
+              "x": 220,
+              "y": 815,
+              "w": 170,
+              "h": 130
             },
             "mobile": {
-              "x": 35,
-              "y": 915,
+              "x": 0,
+              "y": 1125,
               "w": 170,
               "h": 130
             }
@@ -41930,7 +41988,8 @@
               "gradientAngle": "horizontal",
               "gradientDuration": 5,
               "choiceAccentColor": "#804000",
-              "choiceFieldBorderColor": "#d0c9c3"
+              "choiceFieldBorderColor": "#d0c9c3",
+              "choiceLineHeight": 1.75
             },
             "tabletLandscape": {
               "fontSize": 14.7,
@@ -41982,13 +42041,15 @@
             "法人・事業者"
           ],
           "layoutRegion": "main",
-          "hiddenDevices": [],
+          "hiddenDevices": [
+            "mobile"
+          ],
           "choiceAccentColor": "#804000",
           "choiceFieldBorderColor": "#d0c9c3",
           "choiceSubmitLabel": "お客様区分",
           "deviceDisplay": {
             "tablet": {
-              "choiceLabel": "お客様区分",
+              "choiceLabel": "　",
               "choiceOptions": [
                 "個人",
                 "法人・事業者"
@@ -42004,7 +42065,7 @@
               "hideRequiredBadge": false
             },
             "mobile": {
-              "choiceLabel": "お客様区分",
+              "choiceLabel": "　",
               "choiceOptions": [
                 "個人",
                 "法人・事業者"
@@ -42089,20 +42150,20 @@
           "autoTextSizeByDevice": {},
           "layouts": {
             "tablet": {
-              "x": 380,
+              "x": 385,
               "y": 980,
               "w": 180,
               "h": 130
             },
             "tabletLandscape": {
-              "x": 545,
-              "y": 800,
+              "x": 540,
+              "y": 815,
               "w": 160,
               "h": 130
             },
             "mobile": {
-              "x": 195,
-              "y": 915,
+              "x": 190,
+              "y": 1070,
               "w": 170,
               "h": 125
             }
@@ -42128,7 +42189,8 @@
               "gradientDuration": 5,
               "choiceOptionFontSize": 18,
               "choiceAccentColor": "#804000",
-              "choiceFieldBorderColor": "#d0c9c3"
+              "choiceFieldBorderColor": "#d0c9c3",
+              "choiceLineHeight": 1.75
             },
             "tabletLandscape": {
               "fontSize": 14.7,
@@ -42182,14 +42244,16 @@
             "なし／不明"
           ],
           "layoutRegion": "main",
-          "hiddenDevices": [],
+          "hiddenDevices": [
+            "mobile"
+          ],
           "choiceOptionFontSize": 12,
           "choiceAccentColor": "#804000",
           "choiceFieldBorderColor": "#d0c9c3",
           "choiceSubmitLabel": "駐車スペース",
           "deviceDisplay": {
             "tablet": {
-              "choiceLabel": "駐車スペース",
+              "choiceLabel": "　",
               "choiceOptions": [
                 "あり",
                 "なし／不明"
@@ -42205,7 +42269,7 @@
               "hideRequiredBadge": false
             },
             "mobile": {
-              "choiceLabel": "駐車スペース",
+              "choiceLabel": "　",
               "choiceOptions": [
                 "あり",
                 "なし／不明"
@@ -42253,7 +42317,7 @@
           "layouts": {
             "mobile": {
               "x": 65,
-              "y": 1342,
+              "y": 1477,
               "w": 325,
               "h": 45
             },
@@ -42421,7 +42485,7 @@
             },
             "mobile": {
               "x": 15,
-              "y": 1388,
+              "y": 1523,
               "w": 375,
               "h": 55
             }
@@ -42550,7 +42614,7 @@
             },
             "mobile": {
               "x": 40,
-              "y": 1583,
+              "y": 1718,
               "w": 315,
               "h": 285
             },
@@ -42686,7 +42750,7 @@
             },
             "mobile": {
               "x": 40,
-              "y": 1478,
+              "y": 1613,
               "w": 55,
               "h": 25
             },
@@ -42823,7 +42887,7 @@
             },
             "mobile": {
               "x": 40,
-              "y": 1528,
+              "y": 1663,
               "w": 105,
               "h": 25
             },
@@ -42960,7 +43024,7 @@
             },
             "mobile": {
               "x": 115,
-              "y": 1478,
+              "y": 1613,
               "w": 175,
               "h": 30
             },
@@ -43097,7 +43161,7 @@
             },
             "mobile": {
               "x": 310,
-              "y": 1478,
+              "y": 1613,
               "w": 50,
               "h": 25
             },
@@ -43234,7 +43298,7 @@
             },
             "mobile": {
               "x": 185,
-              "y": 1528,
+              "y": 1663,
               "w": 175,
               "h": 35
             },
@@ -43375,7 +43439,7 @@
             },
             "mobile": {
               "x": 20,
-              "y": 1920,
+              "y": 2055,
               "w": 350,
               "h": 144
             },
@@ -43526,7 +43590,7 @@
             },
             "mobile": {
               "x": 100,
-              "y": 2088,
+              "y": 2223,
               "w": 175,
               "h": 30
             },
@@ -43668,7 +43732,7 @@
             },
             "mobile": {
               "x": 105,
-              "y": 2128,
+              "y": 2263,
               "w": 195,
               "h": 55
             },
@@ -44097,7 +44161,7 @@
             },
             "tablet": {
               "x": 120,
-              "y": 1511,
+              "y": 1526,
               "w": 475,
               "h": 65
             },
@@ -44247,7 +44311,7 @@
           "layouts": {
             "tablet": {
               "x": 105,
-              "y": 1586,
+              "y": 1601,
               "w": 495,
               "h": 65
             },
@@ -44382,7 +44446,7 @@
           "layouts": {
             "tablet": {
               "x": 40,
-              "y": 1816,
+              "y": 1831,
               "w": 640,
               "h": 275
             },
@@ -44518,7 +44582,7 @@
           "layouts": {
             "tablet": {
               "x": 85,
-              "y": 1706,
+              "y": 1721,
               "w": 70,
               "h": 35
             },
@@ -44655,7 +44719,7 @@
           "layouts": {
             "tablet": {
               "x": 240,
-              "y": 1706,
+              "y": 1721,
               "w": 130,
               "h": 30
             },
@@ -44792,7 +44856,7 @@
           "layouts": {
             "tablet": {
               "x": 440,
-              "y": 1706,
+              "y": 1721,
               "w": 215,
               "h": 35
             },
@@ -44929,7 +44993,7 @@
           "layouts": {
             "tablet": {
               "x": 175,
-              "y": 1761,
+              "y": 1776,
               "w": 55,
               "h": 30
             },
@@ -45066,7 +45130,7 @@
           "layouts": {
             "tablet": {
               "x": 395,
-              "y": 1766,
+              "y": 1781,
               "w": 225,
               "h": 40
             },
@@ -45207,7 +45271,7 @@
           "layouts": {
             "tablet": {
               "x": 40,
-              "y": 2166,
+              "y": 2181,
               "w": 640,
               "h": 175
             },
@@ -45358,7 +45422,7 @@
           "layouts": {
             "tablet": {
               "x": 80,
-              "y": 2381,
+              "y": 2396,
               "w": 220,
               "h": 30
             },
@@ -45500,7 +45564,7 @@
           "layouts": {
             "tablet": {
               "x": 440,
-              "y": 2351,
+              "y": 2366,
               "w": 235,
               "h": 80
             },
@@ -45656,7 +45720,7 @@
             },
             "tabletLandscape": {
               "x": 332,
-              "y": 1340,
+              "y": 1370,
               "w": 375,
               "h": 58
             }
@@ -45806,7 +45870,7 @@
             },
             "tabletLandscape": {
               "x": 141,
-              "y": 1407,
+              "y": 1437,
               "w": 762,
               "h": 37
             },
@@ -45947,7 +46011,7 @@
             },
             "tabletLandscape": {
               "x": 141,
-              "y": 1533,
+              "y": 1563,
               "w": 762,
               "h": 172
             }
@@ -46083,7 +46147,7 @@
             },
             "tabletLandscape": {
               "x": 210,
-              "y": 1478,
+              "y": 1508,
               "w": 61,
               "h": 25
             }
@@ -46220,7 +46284,7 @@
             },
             "tabletLandscape": {
               "x": 288,
-              "y": 1478,
+              "y": 1508,
               "w": 111,
               "h": 25
             }
@@ -46357,7 +46421,7 @@
             },
             "tabletLandscape": {
               "x": 405,
-              "y": 1478,
+              "y": 1508,
               "w": 178,
               "h": 25
             }
@@ -46494,7 +46558,7 @@
             },
             "tabletLandscape": {
               "x": 595,
-              "y": 1478,
+              "y": 1508,
               "w": 49,
               "h": 25
             }
@@ -46631,7 +46695,7 @@
             },
             "tabletLandscape": {
               "x": 656,
-              "y": 1478,
+              "y": 1508,
               "w": 178,
               "h": 25
             }
@@ -46772,7 +46836,7 @@
             },
             "tabletLandscape": {
               "x": 125,
-              "y": 1752,
+              "y": 1782,
               "w": 535,
               "h": 145
             }
@@ -46923,7 +46987,7 @@
             },
             "tabletLandscape": {
               "x": 695,
-              "y": 1772,
+              "y": 1802,
               "w": 180,
               "h": 25
             }
@@ -47065,7 +47129,7 @@
             },
             "tabletLandscape": {
               "x": 695,
-              "y": 1827,
+              "y": 1857,
               "w": 190,
               "h": 60
             }
@@ -49025,6 +49089,4832 @@
             "tablet",
             "tabletLandscape",
             "mobile"
+          ]
+        },
+        {
+          "id": "e7uhm4i6d",
+          "type": "choiceCheckbox",
+          "x": 275,
+          "y": 575,
+          "w": 480,
+          "h": 130,
+          "fontSize": 12,
+          "color": "#26364c",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "ご相談内容",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": false,
+          "autoTextSizeByDevice": {},
+          "layouts": {
+            "tablet": {
+              "x": 40,
+              "y": 40,
+              "w": 350,
+              "h": 130
+            },
+            "tabletLandscape": {
+              "x": 225,
+              "y": 635,
+              "w": 480,
+              "h": 130
+            },
+            "mobile": {
+              "x": 40,
+              "y": 40,
+              "w": 350,
+              "h": 130
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "choiceLabel": "　",
+          "choiceRequired": true,
+          "choiceOptions": [
+            "PCの設定",
+            "ネットワーク",
+            "スマホ",
+            "業務ツール",
+            "ホームページ",
+            "トラブル診断",
+            "料金について",
+            "その他",
+            "よくわからない"
+          ],
+          "deviceDisplay": {
+            "tablet": {
+              "choiceLabel": "ご相談内容",
+              "choiceOptions": [
+                "PCの設定",
+                "ネットワーク",
+                "スマホ",
+                "料金について",
+                "その他"
+              ],
+              "hideRequiredBadge": false
+            },
+            "tabletLandscape": {
+              "choiceLabel": "ご相談内容",
+              "choiceOptions": [
+                "PCの設定",
+                "ネットワーク",
+                "スマホ",
+                "料金について",
+                "その他"
+              ],
+              "hideRequiredBadge": false
+            },
+            "mobile": {
+              "choiceLabel": "ご相談内容",
+              "choiceOptions": [
+                "PCの設定",
+                "ネットワーク",
+                "スマホ",
+                "料金について",
+                "その他"
+              ],
+              "hideRequiredBadge": false
+            }
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "mobile",
+            "tabletLandscape"
+          ],
+          "choicePositions": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 33.33
+            },
+            {
+              "x": 0,
+              "y": 66.67
+            },
+            {
+              "x": 32.88,
+              "y": 0
+            },
+            {
+              "x": 32.88,
+              "y": 33.33
+            },
+            {
+              "x": 32.88,
+              "y": 66.67
+            },
+            {
+              "x": 69.4,
+              "y": 0
+            },
+            {
+              "x": 69.39,
+              "y": 34.02
+            },
+            {
+              "x": 69.4,
+              "y": 66.67
+            }
+          ],
+          "choiceLayout": "free",
+          "hideRequiredBadge": true
+        },
+        {
+          "id": "e8g9vesrw",
+          "type": "choiceCheckbox",
+          "x": 275,
+          "y": 575,
+          "w": 480,
+          "h": 130,
+          "fontSize": 12,
+          "color": "#26364c",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "ご相談内容",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": false,
+          "autoTextSizeByDevice": {},
+          "layouts": {
+            "tablet": {
+              "x": 40,
+              "y": 40,
+              "w": 350,
+              "h": 130
+            },
+            "tabletLandscape": {
+              "x": 220,
+              "y": 680,
+              "w": 585,
+              "h": 120
+            },
+            "mobile": {
+              "x": 40,
+              "y": 40,
+              "w": 350,
+              "h": 130
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceLayout": "free",
+              "fontSize": 14,
+              "sizeMarks": [],
+              "choiceAccentColor": "#804000",
+              "choiceFieldBorderColor": "#d0c9c3",
+              "choiceControlSize": 15
+            },
+            "mobile": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "choiceLabel": "　",
+          "choiceRequired": true,
+          "choiceOptions": [
+            "PCの設定",
+            "ネットワーク",
+            "スマホ",
+            "業務ツール",
+            "ホームページ",
+            "トラブル診断",
+            "料金について",
+            "その他",
+            "よくわからない"
+          ],
+          "deviceDisplay": {
+            "tablet": {
+              "choiceLabel": "ご相談内容",
+              "choiceOptions": [
+                "PCの設定",
+                "ネットワーク",
+                "スマホ",
+                "料金について",
+                "その他"
+              ],
+              "hideRequiredBadge": false,
+              "choicePositions": [
+                {
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "x": 0,
+                  "y": 33.33
+                },
+                {
+                  "x": 0,
+                  "y": 66.67
+                },
+                {
+                  "x": 32.88,
+                  "y": 0
+                },
+                {
+                  "x": 32.88,
+                  "y": 33.33
+                },
+                {
+                  "x": 32.88,
+                  "y": 66.67
+                },
+                {
+                  "x": 69.4,
+                  "y": 0
+                },
+                {
+                  "x": 69.39,
+                  "y": 34.02
+                },
+                {
+                  "x": 69.4,
+                  "y": 66.67
+                }
+              ]
+            },
+            "tabletLandscape": {
+              "choiceLabel": " ",
+              "choiceOptions": [
+                "PCの設定",
+                "ネットワーク",
+                "スマホ",
+                "料金について",
+                "その他",
+                "よくわからない",
+                "業務ツール",
+                "ホームページ",
+                "トラブル診断"
+              ],
+              "hideRequiredBadge": true,
+              "choicePositions": [
+                {
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "x": 0,
+                  "y": 37.23
+                },
+                {
+                  "x": 0,
+                  "y": 70.21
+                },
+                {
+                  "x": 68.78,
+                  "y": 0
+                },
+                {
+                  "x": 68.78,
+                  "y": 37.23
+                },
+                {
+                  "x": 68.84,
+                  "y": 70.21
+                },
+                {
+                  "x": 36.3,
+                  "y": 0
+                },
+                {
+                  "x": 36.3,
+                  "y": 37.23
+                },
+                {
+                  "x": 36.3,
+                  "y": 70.21
+                }
+              ]
+            },
+            "mobile": {
+              "choiceLabel": "ご相談内容",
+              "choiceOptions": [
+                "PCの設定",
+                "ネットワーク",
+                "スマホ",
+                "料金について",
+                "その他"
+              ],
+              "hideRequiredBadge": false,
+              "choicePositions": [
+                {
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "x": 0,
+                  "y": 33.33
+                },
+                {
+                  "x": 0,
+                  "y": 66.67
+                },
+                {
+                  "x": 32.88,
+                  "y": 0
+                },
+                {
+                  "x": 32.88,
+                  "y": 33.33
+                },
+                {
+                  "x": 32.88,
+                  "y": 66.67
+                },
+                {
+                  "x": 69.4,
+                  "y": 0
+                },
+                {
+                  "x": 69.39,
+                  "y": 34.02
+                },
+                {
+                  "x": 69.4,
+                  "y": 66.67
+                }
+              ]
+            }
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "mobile"
+          ],
+          "choicePositions": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 33.33
+            },
+            {
+              "x": 0,
+              "y": 66.67
+            },
+            {
+              "x": 32.88,
+              "y": 0
+            },
+            {
+              "x": 32.88,
+              "y": 33.33
+            },
+            {
+              "x": 32.88,
+              "y": 66.67
+            },
+            {
+              "x": 69.4,
+              "y": 0
+            },
+            {
+              "x": 69.39,
+              "y": 34.02
+            },
+            {
+              "x": 69.4,
+              "y": 66.67
+            }
+          ],
+          "choiceLayout": "free",
+          "hideRequiredBadge": true,
+          "choiceSubmitLabel": "ご相談内容"
+        },
+        {
+          "id": "e055uv5e0",
+          "type": "text",
+          "x": 285,
+          "y": 335,
+          "w": 115,
+          "h": 20,
+          "fontSize": 12,
+          "color": "#334155",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "メールアドレス  必須",
+          "colorMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "color": "#d00606"
+            }
+          ],
+          "sizeMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "fontSize": 9
+            }
+          ],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [
+            {
+              "start": 0,
+              "end": 7,
+              "bold": true
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "bold": true
+            }
+          ],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": true,
+          "autoTextSizeByDevice": {
+            "desktop": false,
+            "mobile": false,
+            "tablet": false
+          },
+          "layouts": {
+            "tablet": {
+              "x": 105,
+              "y": 485,
+              "w": 175,
+              "h": 30
+            },
+            "tabletLandscape": {
+              "x": 230,
+              "y": 485,
+              "w": 100,
+              "h": 30
+            },
+            "mobile": {
+              "x": 70,
+              "y": 425,
+              "w": 165,
+              "h": 30
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13.5
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 6,
+                  "end": 8,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 6,
+                  "end": 8,
+                  "fontSize": 11.1
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 4,
+                  "bold": true
+                },
+                {
+                  "start": 6,
+                  "end": 8,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "deviceTexts": {
+            "tablet": "メールアドレス  必須",
+            "tabletLandscape": "連絡方法  必須",
+            "mobile": "メールアドレス  必須"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "mobile"
+          ]
+        },
+        {
+          "id": "ejxo07nea",
+          "type": "text",
+          "x": 305,
+          "y": 355,
+          "w": 115,
+          "h": 20,
+          "fontSize": 12,
+          "color": "#334155",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "メールアドレス  必須",
+          "colorMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "color": "#d00606"
+            }
+          ],
+          "sizeMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "fontSize": 9
+            }
+          ],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [
+            {
+              "start": 0,
+              "end": 7,
+              "bold": true
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "bold": true
+            }
+          ],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": true,
+          "autoTextSizeByDevice": {
+            "desktop": false,
+            "mobile": false,
+            "tablet": false
+          },
+          "layouts": {
+            "tablet": {
+              "x": 125,
+              "y": 505,
+              "w": 175,
+              "h": 30
+            },
+            "tabletLandscape": {
+              "x": 230,
+              "y": 660,
+              "w": 115,
+              "h": 30
+            },
+            "mobile": {
+              "x": 90,
+              "y": 445,
+              "w": 165,
+              "h": 30
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13.5
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 7,
+                  "end": 9,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 7,
+                  "end": 9,
+                  "fontSize": 11.1
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 5,
+                  "bold": true
+                },
+                {
+                  "start": 7,
+                  "end": 9,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "deviceTexts": {
+            "tablet": "メールアドレス  必須",
+            "tabletLandscape": "ご相談内容  必須",
+            "mobile": "メールアドレス  必須"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "mobile"
+          ]
+        },
+        {
+          "id": "ei2l2gieh",
+          "type": "choiceRadio",
+          "x": 285,
+          "y": 475,
+          "w": 445,
+          "h": 155,
+          "fontSize": 16,
+          "color": "#26364c",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "連絡方法",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": false,
+          "autoTextSizeByDevice": {},
+          "layouts": {
+            "tabletLandscape": {
+              "x": 430,
+              "y": 515,
+              "w": 455,
+              "h": 160
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "choiceLabel": "連絡方法",
+          "choiceRequired": true,
+          "choiceOptions": [
+            "メールでの連絡を希望",
+            "電話での連絡を希望"
+          ],
+          "deviceDisplay": {
+            "tablet": {
+              "choiceLabel": "連絡方法",
+              "choiceOptions": [
+                "メールでの連絡を希望",
+                "電話での連絡を希望"
+              ],
+              "hideRequiredBadge": false
+            },
+            "tabletLandscape": {
+              "choiceLabel": "連絡方法",
+              "choiceOptions": [
+                "メールでの連絡を希望",
+                "電話での連絡を希望"
+              ],
+              "hideRequiredBadge": false
+            },
+            "mobile": {
+              "choiceLabel": "連絡方法",
+              "choiceOptions": [
+                "メールでの連絡を希望",
+                "電話での連絡を希望"
+              ],
+              "hideRequiredBadge": false
+            }
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "mobile",
+            "tabletLandscape"
+          ]
+        },
+        {
+          "id": "ecng4xv9f",
+          "type": "choiceRadio",
+          "x": 450,
+          "y": 435,
+          "w": 295,
+          "h": 70,
+          "fontSize": 12,
+          "color": "#26364c",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "連絡方法",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": false,
+          "autoTextSizeByDevice": {},
+          "layouts": {
+            "tablet": {
+              "x": 40,
+              "y": 40,
+              "w": 295,
+              "h": 70
+            },
+            "tabletLandscape": {
+              "x": 420,
+              "y": 505,
+              "w": 335,
+              "h": 80
+            },
+            "mobile": {
+              "x": 40,
+              "y": 40,
+              "w": 295,
+              "h": 70
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceLayout": "horizontal",
+              "fontSize": 15,
+              "sizeMarks": []
+            },
+            "mobile": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "choiceLabel": "　",
+          "choiceRequired": false,
+          "choiceOptions": [
+            "9～12時",
+            "13～18時",
+            "指定なし"
+          ],
+          "deviceDisplay": {
+            "tablet": {
+              "choiceLabel": "連絡方法",
+              "choiceOptions": [
+                "メールでの連絡を希望",
+                "電話での連絡を希望"
+              ],
+              "hideRequiredBadge": false
+            },
+            "tabletLandscape": {
+              "choiceLabel": "　",
+              "choiceOptions": [
+                "9～12時",
+                "13～18時",
+                "指定なし"
+              ],
+              "hideRequiredBadge": true
+            },
+            "mobile": {
+              "choiceLabel": "連絡方法",
+              "choiceOptions": [
+                "メールでの連絡を希望",
+                "電話での連絡を希望"
+              ],
+              "hideRequiredBadge": false
+            }
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "mobile"
+          ],
+          "hideRequiredBadge": true,
+          "choiceLayout": "horizontal",
+          "choiceControlSize": 13,
+          "choiceAccentColor": "#804000",
+          "choiceFieldBorderColor": "#d0c9c3",
+          "choiceSubmitLabel": "電話での連絡希望の時間帯",
+          "formRequiredWhenPartId": "e85ipurfo",
+          "formRequiredWhenOption": "電話での連絡を希望",
+          "formRequired": false
+        },
+        {
+          "id": "eqwxzsfdd",
+          "type": "choiceRadio",
+          "x": 470,
+          "y": 455,
+          "w": 295,
+          "h": 70,
+          "fontSize": 12,
+          "color": "#26364c",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "連絡方法",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": false,
+          "autoTextSizeByDevice": {},
+          "layouts": {
+            "tablet": {
+              "x": 295,
+              "y": 640,
+              "w": 340,
+              "h": 60
+            },
+            "tabletLandscape": {
+              "x": 440,
+              "y": 525,
+              "w": 335,
+              "h": 80
+            },
+            "mobile": {
+              "x": 60,
+              "y": 60,
+              "w": 295,
+              "h": 70
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceLayout": "horizontal",
+              "fontSize": 16,
+              "sizeMarks": []
+            },
+            "tabletLandscape": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceLayout": "horizontal",
+              "fontSize": 15,
+              "sizeMarks": []
+            },
+            "mobile": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "choiceLabel": "　",
+          "choiceRequired": false,
+          "choiceOptions": [
+            "9～12時",
+            "13～18時",
+            "指定なし"
+          ],
+          "deviceDisplay": {
+            "tablet": {
+              "choiceLabel": " ",
+              "choiceOptions": [
+                "9～12時",
+                "13～18時",
+                "指定なし"
+              ],
+              "hideRequiredBadge": false,
+              "choicePositions": [
+                {
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "x": 0,
+                  "y": 61.89
+                }
+              ]
+            },
+            "tabletLandscape": {
+              "choiceLabel": "　",
+              "choiceOptions": [
+                "9～12時",
+                "13～18時",
+                "指定なし"
+              ],
+              "hideRequiredBadge": true
+            },
+            "mobile": {
+              "choiceLabel": "連絡方法",
+              "choiceOptions": [
+                "メールでの連絡を希望",
+                "電話での連絡を希望"
+              ],
+              "hideRequiredBadge": false
+            }
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tabletLandscape",
+            "mobile"
+          ],
+          "hideRequiredBadge": true,
+          "choiceLayout": "horizontal",
+          "choiceControlSize": 13,
+          "choiceAccentColor": "#804000",
+          "choiceFieldBorderColor": "#d0c9c3",
+          "choiceSubmitLabel": "電話での連絡希望の時間帯",
+          "formRequiredWhenPartId": "e85ipurfo",
+          "formRequiredWhenOption": "電話での連絡を希望",
+          "formRequired": false
+        },
+        {
+          "id": "eelkbw7q6",
+          "type": "text",
+          "x": 285,
+          "y": 335,
+          "w": 115,
+          "h": 20,
+          "fontSize": 12,
+          "color": "#334155",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "メールアドレス  必須",
+          "colorMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "color": "#d00606"
+            }
+          ],
+          "sizeMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "fontSize": 9
+            }
+          ],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [
+            {
+              "start": 0,
+              "end": 7,
+              "bold": true
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "bold": true
+            }
+          ],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": true,
+          "autoTextSizeByDevice": {
+            "desktop": false,
+            "mobile": false,
+            "tablet": false
+          },
+          "layouts": {
+            "tablet": {
+              "x": 85,
+              "y": 570,
+              "w": 175,
+              "h": 30
+            },
+            "tabletLandscape": {
+              "x": 250,
+              "y": 410,
+              "w": 140,
+              "h": 25
+            },
+            "mobile": {
+              "x": 70,
+              "y": 425,
+              "w": 165,
+              "h": 30
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 6,
+                  "end": 8,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 6,
+                  "end": 8,
+                  "fontSize": 13.5
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 4,
+                  "bold": true
+                },
+                {
+                  "start": 6,
+                  "end": 8,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 11.1
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "deviceTexts": {
+            "tablet": "連絡方法  必須",
+            "tabletLandscape": "メールアドレス  必須",
+            "mobile": "メールアドレス  必須"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tabletLandscape",
+            "mobile"
+          ]
+        },
+        {
+          "id": "e2b02ut6o",
+          "type": "text",
+          "x": 305,
+          "y": 355,
+          "w": 115,
+          "h": 20,
+          "fontSize": 12,
+          "color": "#334155",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "メールアドレス  必須",
+          "colorMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "color": "#d00606"
+            }
+          ],
+          "sizeMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "fontSize": 9
+            }
+          ],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [
+            {
+              "start": 0,
+              "end": 7,
+              "bold": true
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "bold": true
+            }
+          ],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": true,
+          "autoTextSizeByDevice": {
+            "desktop": false,
+            "mobile": false,
+            "tablet": false
+          },
+          "layouts": {
+            "tablet": {
+              "x": 85,
+              "y": 780,
+              "w": 175,
+              "h": 30
+            },
+            "tabletLandscape": {
+              "x": 270,
+              "y": 430,
+              "w": 140,
+              "h": 25
+            },
+            "mobile": {
+              "x": 90,
+              "y": 445,
+              "w": 165,
+              "h": 30
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 7,
+                  "end": 9,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 7,
+                  "end": 9,
+                  "fontSize": 13.5
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 5,
+                  "bold": true
+                },
+                {
+                  "start": 7,
+                  "end": 9,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 11.1
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "deviceTexts": {
+            "tablet": "ご相談内容  必須",
+            "tabletLandscape": "メールアドレス  必須",
+            "mobile": "メールアドレス  必須"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tabletLandscape",
+            "mobile"
+          ]
+        },
+        {
+          "id": "e7ve5gx86",
+          "type": "text",
+          "x": 325,
+          "y": 375,
+          "w": 115,
+          "h": 20,
+          "fontSize": 12,
+          "color": "#334155",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "メールアドレス  必須",
+          "colorMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "color": "#d00606"
+            }
+          ],
+          "sizeMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "fontSize": 9
+            }
+          ],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [
+            {
+              "start": 0,
+              "end": 7,
+              "bold": true
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "bold": true
+            }
+          ],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": true,
+          "autoTextSizeByDevice": {
+            "desktop": false,
+            "mobile": false,
+            "tablet": false
+          },
+          "layouts": {
+            "tablet": {
+              "x": 90,
+              "y": 990,
+              "w": 175,
+              "h": 30
+            },
+            "tabletLandscape": {
+              "x": 290,
+              "y": 450,
+              "w": 140,
+              "h": 25
+            },
+            "mobile": {
+              "x": 110,
+              "y": 465,
+              "w": 165,
+              "h": 30
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": true,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 11.1
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "deviceTexts": {
+            "tablet": "お客様区分",
+            "tabletLandscape": "メールアドレス  必須",
+            "mobile": "メールアドレス  必須"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tabletLandscape",
+            "mobile"
+          ]
+        },
+        {
+          "id": "e0bcbdm0x",
+          "type": "text",
+          "x": 345,
+          "y": 395,
+          "w": 115,
+          "h": 20,
+          "fontSize": 12,
+          "color": "#334155",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "メールアドレス  必須",
+          "colorMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "color": "#d00606"
+            }
+          ],
+          "sizeMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "fontSize": 9
+            }
+          ],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [
+            {
+              "start": 0,
+              "end": 7,
+              "bold": true
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "bold": true
+            }
+          ],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": true,
+          "autoTextSizeByDevice": {
+            "desktop": false,
+            "mobile": false,
+            "tablet": false
+          },
+          "layouts": {
+            "tablet": {
+              "x": 385,
+              "y": 990,
+              "w": 175,
+              "h": 30
+            },
+            "tabletLandscape": {
+              "x": 310,
+              "y": 470,
+              "w": 140,
+              "h": 25
+            },
+            "mobile": {
+              "x": 130,
+              "y": 485,
+              "w": 165,
+              "h": 30
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": true,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 11.1
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "deviceTexts": {
+            "tablet": "駐車スペース",
+            "tabletLandscape": "メールアドレス  必須",
+            "mobile": "メールアドレス  必須"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tabletLandscape",
+            "mobile"
+          ]
+        },
+        {
+          "id": "ef6tr8zbk",
+          "type": "choiceRadio",
+          "x": 490,
+          "y": 475,
+          "w": 295,
+          "h": 70,
+          "fontSize": 12,
+          "color": "#26364c",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "連絡方法",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": false,
+          "autoTextSizeByDevice": {},
+          "layouts": {
+            "tablet": {
+              "x": 315,
+              "y": 650,
+              "w": 340,
+              "h": 60
+            },
+            "tabletLandscape": {
+              "x": 460,
+              "y": 545,
+              "w": 335,
+              "h": 80
+            },
+            "mobile": {
+              "x": 30,
+              "y": 590,
+              "w": 340,
+              "h": 85
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceLayout": "horizontal",
+              "fontSize": 16,
+              "sizeMarks": []
+            },
+            "tabletLandscape": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceLayout": "horizontal",
+              "fontSize": 15,
+              "sizeMarks": []
+            },
+            "mobile": {
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceLayout": "horizontal",
+              "fontSize": 16,
+              "sizeMarks": []
+            }
+          },
+          "choiceLabel": "　",
+          "choiceRequired": false,
+          "choiceOptions": [
+            "9～12時",
+            "13～18時",
+            "指定なし"
+          ],
+          "deviceDisplay": {
+            "tablet": {
+              "choiceLabel": " ",
+              "choiceOptions": [
+                "9～12時",
+                "13～18時",
+                "指定なし"
+              ],
+              "hideRequiredBadge": false,
+              "choicePositions": [
+                {
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "x": 0,
+                  "y": 61.89
+                }
+              ]
+            },
+            "tabletLandscape": {
+              "choiceLabel": "　",
+              "choiceOptions": [
+                "9～12時",
+                "13～18時",
+                "指定なし"
+              ],
+              "hideRequiredBadge": true
+            },
+            "mobile": {
+              "choiceLabel": "　",
+              "choiceOptions": [
+                "9～12時",
+                "13～18時",
+                "指定なし"
+              ],
+              "hideRequiredBadge": false
+            }
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "tabletLandscape"
+          ],
+          "hideRequiredBadge": true,
+          "choiceLayout": "horizontal",
+          "choiceControlSize": 13,
+          "choiceAccentColor": "#804000",
+          "choiceFieldBorderColor": "#d0c9c3",
+          "choiceSubmitLabel": "電話での連絡希望の時間帯",
+          "formRequiredWhenPartId": "e85ipurfo",
+          "formRequiredWhenOption": "電話での連絡を希望",
+          "formRequired": false
+        },
+        {
+          "id": "edxcf0ohg",
+          "type": "text",
+          "x": 285,
+          "y": 335,
+          "w": 115,
+          "h": 20,
+          "fontSize": 12,
+          "color": "#334155",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "メールアドレス  必須",
+          "colorMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "color": "#d00606"
+            }
+          ],
+          "sizeMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "fontSize": 9
+            }
+          ],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [
+            {
+              "start": 0,
+              "end": 7,
+              "bold": true
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "bold": true
+            }
+          ],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": true,
+          "autoTextSizeByDevice": {
+            "desktop": false,
+            "mobile": false,
+            "tablet": false
+          },
+          "layouts": {
+            "tablet": {
+              "x": 105,
+              "y": 490,
+              "w": 175,
+              "h": 30
+            },
+            "tabletLandscape": {
+              "x": 250,
+              "y": 410,
+              "w": 140,
+              "h": 25
+            },
+            "mobile": {
+              "x": 30,
+              "y": 525,
+              "w": 165,
+              "h": 30
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13.5
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 11.1
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 6,
+                  "end": 8,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 0,
+                  "end": 4,
+                  "fontSize": 18
+                },
+                {
+                  "start": 6,
+                  "end": 8,
+                  "fontSize": 12
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 4,
+                  "bold": true
+                },
+                {
+                  "start": 6,
+                  "end": 8,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "deviceTexts": {
+            "tablet": "メールアドレス  必須",
+            "tabletLandscape": "メールアドレス  必須",
+            "mobile": "連絡方法  必須"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "tabletLandscape"
+          ]
+        },
+        {
+          "id": "eizlkgdoa",
+          "type": "choiceCheckbox",
+          "x": 280,
+          "y": 575,
+          "w": 140,
+          "h": 135,
+          "fontSize": 12,
+          "color": "#26364c",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "ご相談内容",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": false,
+          "autoTextSizeByDevice": {},
+          "layouts": {
+            "tablet": {
+              "x": 100,
+              "y": 780,
+              "w": 540,
+              "h": 170
+            },
+            "tabletLandscape": {
+              "x": 242,
+              "y": 647,
+              "w": 172,
+              "h": 166
+            },
+            "mobile": {
+              "x": 20,
+              "y": 755,
+              "w": 350,
+              "h": 215
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#26364c",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceAccentColor": "#804000",
+              "choiceFieldBorderColor": "#d0c9c3",
+              "choiceLayout": "free"
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#26364c",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceAccentColor": "#804000",
+              "choiceFieldBorderColor": "#d0c9c3"
+            },
+            "mobile": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#26364c",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceAccentColor": "#804000",
+              "choiceFieldBorderColor": "#d0c9c3",
+              "choiceLayout": "free",
+              "choiceLabelGap": 0,
+              "choiceColumns": 2
+            }
+          },
+          "choiceLabel": "ご相談内容",
+          "choiceRequired": true,
+          "choiceOptions": [
+            "PCの設定",
+            "ネットワーク",
+            "スマホ"
+          ],
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "tabletLandscape"
+          ],
+          "choiceAccentColor": "#804000",
+          "choiceFieldBorderColor": "#d0c9c3",
+          "deviceDisplay": {
+            "mobile": {
+              "choiceLabel": "　",
+              "choiceOptions": [
+                "PCの設定",
+                "ネットワーク",
+                "スマホ",
+                "業務ツール",
+                "ホームページ",
+                "トラブル診断",
+                "料金について",
+                "その他",
+                "よくわからない"
+              ],
+              "hideRequiredBadge": true,
+              "choicePositions": [
+                {
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "x": 0,
+                  "y": 19.23
+                },
+                {
+                  "x": 0,
+                  "y": 38.46
+                },
+                {
+                  "x": 0,
+                  "y": 57.69
+                },
+                {
+                  "x": 0,
+                  "y": 76.92
+                },
+                {
+                  "x": 52.15,
+                  "y": 0
+                },
+                {
+                  "x": 52.14,
+                  "y": 19.42
+                },
+                {
+                  "x": 52.15,
+                  "y": 38.58
+                },
+                {
+                  "x": 52.15,
+                  "y": 58.14
+                }
+              ]
+            },
+            "tablet": {
+              "choiceLabel": "　",
+              "choiceOptions": [
+                "PCの設定",
+                "ネットワーク",
+                "スマホ",
+                "業務ツール",
+                "ホームページ",
+                "トラブル診断",
+                "料金について",
+                "その他",
+                "よくわからない"
+              ],
+              "hideRequiredBadge": true,
+              "choicePositions": [
+                {
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "x": 0,
+                  "y": 34.48
+                },
+                {
+                  "x": 0,
+                  "y": 68.97
+                },
+                {
+                  "x": 34.84,
+                  "y": 0
+                },
+                {
+                  "x": 34.84,
+                  "y": 33.91
+                },
+                {
+                  "x": 34.84,
+                  "y": 68.97
+                },
+                {
+                  "x": 69.11,
+                  "y": 0
+                },
+                {
+                  "x": 69.08,
+                  "y": 34.48
+                },
+                {
+                  "x": 69.08,
+                  "y": 68.97
+                }
+              ]
+            },
+            "tabletLandscape": {
+              "choiceLabel": "ご相談内容",
+              "choiceOptions": [
+                "PCの設定",
+                "ネットワーク",
+                "スマホ"
+              ],
+              "hideRequiredBadge": false
+            }
+          },
+          "choiceSubmitLabel": "ご相談内容",
+          "formRequiredWhenPartId": "",
+          "formRequiredWhenOption": ""
+        },
+        {
+          "id": "e72xfxco2",
+          "type": "text",
+          "x": 305,
+          "y": 355,
+          "w": 115,
+          "h": 20,
+          "fontSize": 12,
+          "color": "#334155",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "メールアドレス  必須",
+          "colorMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "color": "#d00606"
+            }
+          ],
+          "sizeMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "fontSize": 9
+            }
+          ],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [
+            {
+              "start": 0,
+              "end": 7,
+              "bold": true
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "bold": true
+            }
+          ],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": true,
+          "autoTextSizeByDevice": {
+            "desktop": false,
+            "mobile": false,
+            "tablet": false
+          },
+          "layouts": {
+            "tablet": {
+              "x": 125,
+              "y": 510,
+              "w": 175,
+              "h": 30
+            },
+            "tabletLandscape": {
+              "x": 270,
+              "y": 430,
+              "w": 140,
+              "h": 25
+            },
+            "mobile": {
+              "x": 30,
+              "y": 745,
+              "w": 165,
+              "h": 30
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13.5
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 11.1
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 7,
+                  "end": 9,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 0,
+                  "end": 5,
+                  "fontSize": 18
+                },
+                {
+                  "start": 7,
+                  "end": 9,
+                  "fontSize": 12
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 5,
+                  "bold": true
+                },
+                {
+                  "start": 7,
+                  "end": 9,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "deviceTexts": {
+            "tablet": "メールアドレス  必須",
+            "tabletLandscape": "メールアドレス  必須",
+            "mobile": "ご相談内容  必須"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "tabletLandscape"
+          ]
+        },
+        {
+          "id": "ekpy646mh",
+          "type": "box",
+          "x": 280,
+          "y": 440,
+          "w": 480,
+          "h": 120,
+          "fontSize": 13,
+          "color": "#000000",
+          "background": "#ffffff",
+          "radius": 8,
+          "bold": false,
+          "align": "left",
+          "text": "\n",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": false,
+          "autoTextSizeByDevice": {},
+          "layouts": {
+            "tablet": {
+              "x": 100,
+              "y": 620,
+              "w": 555,
+              "h": 140
+            },
+            "tabletLandscape": {
+              "x": 235,
+              "y": 535,
+              "w": 590,
+              "h": 125
+            },
+            "mobile": {
+              "x": 25,
+              "y": 1020,
+              "w": 155,
+              "h": 80
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 19.5,
+              "fontFamily": "system",
+              "color": "#000000",
+              "background": "#ffffff",
+              "align": "left",
+              "radius": 8,
+              "bold": false,
+              "boxTextVertical": "middle",
+              "borderColor": "#d0c9c3",
+              "insetPadding": 12,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#000000",
+              "background": "#ffffff",
+              "align": "left",
+              "radius": 8,
+              "bold": false,
+              "boxTextVertical": "middle",
+              "borderColor": "#d0c9c3",
+              "insetPadding": 12,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 19.5,
+              "fontFamily": "system",
+              "color": "#000000",
+              "background": "#ffffff",
+              "align": "left",
+              "radius": 8,
+              "bold": false,
+              "boxTextVertical": "middle",
+              "borderColor": "#d0c9c3",
+              "insetPadding": 12,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "insetPadding": 12,
+          "boxTextVertical": "middle",
+          "deviceTexts": {
+            "tablet": "\n",
+            "tabletLandscape": "\n",
+            "mobile": "\n"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "tabletLandscape"
+          ],
+          "borderColor": "#d0c9c3"
+        },
+        {
+          "id": "etosdb6g8",
+          "type": "box",
+          "x": 300,
+          "y": 460,
+          "w": 480,
+          "h": 120,
+          "fontSize": 13,
+          "color": "#000000",
+          "background": "#ffffff",
+          "radius": 8,
+          "bold": false,
+          "align": "left",
+          "text": "\n",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": false,
+          "autoTextSizeByDevice": {},
+          "layouts": {
+            "tablet": {
+              "x": 120,
+              "y": 640,
+              "w": 555,
+              "h": 140
+            },
+            "tabletLandscape": {
+              "x": 255,
+              "y": 555,
+              "w": 590,
+              "h": 125
+            },
+            "mobile": {
+              "x": 210,
+              "y": 1020,
+              "w": 155,
+              "h": 80
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 19.5,
+              "fontFamily": "system",
+              "color": "#000000",
+              "background": "#ffffff",
+              "align": "left",
+              "radius": 8,
+              "bold": false,
+              "boxTextVertical": "middle",
+              "borderColor": "#d0c9c3",
+              "insetPadding": 12,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#000000",
+              "background": "#ffffff",
+              "align": "left",
+              "radius": 8,
+              "bold": false,
+              "boxTextVertical": "middle",
+              "borderColor": "#d0c9c3",
+              "insetPadding": 12,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 19.5,
+              "fontFamily": "system",
+              "color": "#000000",
+              "background": "#ffffff",
+              "align": "left",
+              "radius": 8,
+              "bold": false,
+              "boxTextVertical": "middle",
+              "borderColor": "#d0c9c3",
+              "insetPadding": 12,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "insetPadding": 12,
+          "boxTextVertical": "middle",
+          "deviceTexts": {
+            "tablet": "\n",
+            "tabletLandscape": "\n",
+            "mobile": "\n"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "tabletLandscape"
+          ],
+          "borderColor": "#d0c9c3"
+        },
+        {
+          "id": "ef8cx3do5",
+          "type": "choiceRadio",
+          "x": 275,
+          "y": 710,
+          "w": 140,
+          "h": 105,
+          "fontSize": 12,
+          "color": "#26364c",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "連絡方法",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": false,
+          "autoTextSizeByDevice": {},
+          "layouts": {
+            "tablet": {
+              "x": 100,
+              "y": 965,
+              "w": 200,
+              "h": 135
+            },
+            "tabletLandscape": {
+              "x": 240,
+              "y": 835,
+              "w": 170,
+              "h": 130
+            },
+            "mobile": {
+              "x": 20,
+              "y": 985,
+              "w": 170,
+              "h": 130
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#26364c",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceAccentColor": "#804000",
+              "choiceFieldBorderColor": "#d0c9c3"
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#26364c",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceAccentColor": "#804000",
+              "choiceFieldBorderColor": "#d0c9c3"
+            },
+            "mobile": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#26364c",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceAccentColor": "#804000",
+              "choiceFieldBorderColor": "#d0c9c3",
+              "choiceLineHeight": 1.75
+            }
+          },
+          "choiceLabel": "お客様区分",
+          "choiceRequired": false,
+          "choiceOptions": [
+            "個人",
+            "法人・事業者"
+          ],
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "tabletLandscape"
+          ],
+          "choiceAccentColor": "#804000",
+          "choiceFieldBorderColor": "#d0c9c3",
+          "choiceSubmitLabel": "お客様区分",
+          "deviceDisplay": {
+            "tablet": {
+              "choiceLabel": "　",
+              "choiceOptions": [
+                "個人",
+                "法人・事業者"
+              ],
+              "hideRequiredBadge": false
+            },
+            "tabletLandscape": {
+              "choiceLabel": "お客様区分",
+              "choiceOptions": [
+                "個人",
+                "法人・事業者"
+              ],
+              "hideRequiredBadge": false
+            },
+            "mobile": {
+              "choiceLabel": "　",
+              "choiceOptions": [
+                "個人",
+                "法人・事業者"
+              ],
+              "hideRequiredBadge": false
+            }
+          }
+        },
+        {
+          "id": "ec8x5lg4x",
+          "type": "choiceRadio",
+          "x": 535,
+          "y": 710,
+          "w": 130,
+          "h": 105,
+          "fontSize": 12,
+          "color": "#26364c",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "連絡方法",
+          "colorMarks": [],
+          "sizeMarks": [],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": false,
+          "autoTextSizeByDevice": {},
+          "layouts": {
+            "tablet": {
+              "x": 395,
+              "y": 965,
+              "w": 180,
+              "h": 130
+            },
+            "tabletLandscape": {
+              "x": 560,
+              "y": 835,
+              "w": 160,
+              "h": 130
+            },
+            "mobile": {
+              "x": 205,
+              "y": 985,
+              "w": 170,
+              "h": 125
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#26364c",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceOptionFontSize": 18,
+              "choiceAccentColor": "#804000",
+              "choiceFieldBorderColor": "#d0c9c3"
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#26364c",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceOptionFontSize": 14.7,
+              "choiceAccentColor": "#804000",
+              "choiceFieldBorderColor": "#d0c9c3"
+            },
+            "mobile": {
+              "fontSize": 16,
+              "fontFamily": "system",
+              "color": "#26364c",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5,
+              "choiceOptionFontSize": 16,
+              "choiceAccentColor": "#804000",
+              "choiceFieldBorderColor": "#d0c9c3",
+              "choiceLineHeight": 1.75
+            }
+          },
+          "choiceLabel": "駐車スペース",
+          "choiceRequired": false,
+          "choiceOptions": [
+            "あり",
+            "なし／不明"
+          ],
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "tabletLandscape"
+          ],
+          "choiceOptionFontSize": 12,
+          "choiceAccentColor": "#804000",
+          "choiceFieldBorderColor": "#d0c9c3",
+          "choiceSubmitLabel": "駐車スペース",
+          "deviceDisplay": {
+            "tablet": {
+              "choiceLabel": "　",
+              "choiceOptions": [
+                "あり",
+                "なし／不明"
+              ],
+              "hideRequiredBadge": false
+            },
+            "tabletLandscape": {
+              "choiceLabel": "駐車スペース",
+              "choiceOptions": [
+                "あり",
+                "なし／不明"
+              ],
+              "hideRequiredBadge": false
+            },
+            "mobile": {
+              "choiceLabel": "　",
+              "choiceOptions": [
+                "あり",
+                "なし／不明"
+              ],
+              "hideRequiredBadge": false
+            }
+          }
+        },
+        {
+          "id": "en643r8s5",
+          "type": "text",
+          "x": 325,
+          "y": 375,
+          "w": 115,
+          "h": 20,
+          "fontSize": 12,
+          "color": "#334155",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "メールアドレス  必須",
+          "colorMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "color": "#d00606"
+            }
+          ],
+          "sizeMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "fontSize": 9
+            }
+          ],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [
+            {
+              "start": 0,
+              "end": 7,
+              "bold": true
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "bold": true
+            }
+          ],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": true,
+          "autoTextSizeByDevice": {
+            "desktop": false,
+            "mobile": false,
+            "tablet": false
+          },
+          "layouts": {
+            "tablet": {
+              "x": 145,
+              "y": 530,
+              "w": 175,
+              "h": 30
+            },
+            "tabletLandscape": {
+              "x": 290,
+              "y": 450,
+              "w": 140,
+              "h": 25
+            },
+            "mobile": {
+              "x": 35,
+              "y": 985,
+              "w": 100,
+              "h": 30
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13.5
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 11.1
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": true,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "deviceTexts": {
+            "tablet": "メールアドレス  必須",
+            "tabletLandscape": "メールアドレス  必須",
+            "mobile": "お客様区分"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "tabletLandscape"
+          ]
+        },
+        {
+          "id": "et781vl9m",
+          "type": "text",
+          "x": 345,
+          "y": 395,
+          "w": 115,
+          "h": 20,
+          "fontSize": 12,
+          "color": "#334155",
+          "background": "transparent",
+          "radius": 0,
+          "bold": false,
+          "align": "left",
+          "text": "メールアドレス  必須",
+          "colorMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "color": "#d00606"
+            }
+          ],
+          "sizeMarks": [
+            {
+              "start": 9,
+              "end": 11,
+              "fontSize": 9
+            }
+          ],
+          "fontMarks": [],
+          "underlineMarks": [],
+          "boldMarks": [
+            {
+              "start": 0,
+              "end": 7,
+              "bold": true
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "bold": true
+            }
+          ],
+          "fontFamily": "system",
+          "src": "",
+          "htmlCode": "",
+          "href": "",
+          "linkType": "none",
+          "linkPageId": "",
+          "linkAnchorTarget": "top",
+          "newTab": false,
+          "hoverText": "",
+          "hoverLift": false,
+          "fxHover": "none",
+          "fxEnter": "none",
+          "fxClick": "none",
+          "fxLoop": "none",
+          "fxVisual": "none",
+          "menuMode": "click",
+          "menuSide": "left",
+          "menuEdgePlacement": "overlay",
+          "menuItems": "ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact",
+          "menuBg": "#ffffff",
+          "menuTextColor": "#24364a",
+          "menuFontFamily": "system",
+          "menuFontSize": 14,
+          "menuLineHeight": 1.5,
+          "menuKeepVisible": true,
+          "menuCollapsedWidth": 60,
+          "menuButtonBg": "#1c3556",
+          "menuButtonColor": "#ffffff",
+          "menuDrawerWidth": 280,
+          "menuDrawerHeight": 320,
+          "menuDrawerRadius": 12,
+          "menuDrawerPadding": 12,
+          "menuItemGap": 3,
+          "menuButtonRadius": 8,
+          "menuButtonFontSize": 14,
+          "menuButtonFontFamily": "system",
+          "menuEdgeTop": 40,
+          "menuEdgeHandleWidth": 36,
+          "menuEdgeHandleHeight": 110,
+          "fxSpeed": 1,
+          "fxDelay": 0,
+          "gradientMode": "none",
+          "gradientColor1": "#1d70d5",
+          "gradientColor2": "#bc39b6",
+          "gradientAngle": "horizontal",
+          "gradientDuration": 5,
+          "hoverSwapEnabled": false,
+          "hoverAltText": "",
+          "hoverAltImage": "",
+          "hoverAltBg": "#8ebbef",
+          "videoUrl": "",
+          "embedUrl": "",
+          "printHide": false,
+          "autoTextSize": true,
+          "autoTextSizeByDevice": {
+            "desktop": false,
+            "mobile": false,
+            "tablet": false
+          },
+          "layouts": {
+            "tablet": {
+              "x": 165,
+              "y": 550,
+              "w": 175,
+              "h": 30
+            },
+            "tabletLandscape": {
+              "x": 310,
+              "y": 470,
+              "w": 140,
+              "h": 25
+            },
+            "mobile": {
+              "x": 215,
+              "y": 985,
+              "w": 120,
+              "h": 30
+            }
+          },
+          "deviceStyles": {
+            "tablet": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 13.5
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "tabletLandscape": {
+              "fontSize": 14.7,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": false,
+              "colorMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "color": "#d00606"
+                }
+              ],
+              "sizeMarks": [
+                {
+                  "start": 9,
+                  "end": 11,
+                  "fontSize": 11.1
+                }
+              ],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [
+                {
+                  "start": 0,
+                  "end": 7,
+                  "bold": true
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "bold": true
+                }
+              ],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            },
+            "mobile": {
+              "fontSize": 18,
+              "fontFamily": "system",
+              "color": "#334155",
+              "background": "transparent",
+              "align": "left",
+              "radius": 0,
+              "bold": true,
+              "colorMarks": [],
+              "sizeMarks": [],
+              "fontMarks": [],
+              "underlineMarks": [],
+              "boldMarks": [],
+              "gradientMode": "none",
+              "gradientColor1": "#1d70d5",
+              "gradientColor2": "#bc39b6",
+              "gradientAngle": "horizontal",
+              "gradientDuration": 5
+            }
+          },
+          "deviceTexts": {
+            "tablet": "メールアドレス  必須",
+            "tabletLandscape": "メールアドレス  必須",
+            "mobile": "駐車スペース"
+          },
+          "layoutRegion": "main",
+          "hiddenDevices": [
+            "desktop",
+            "tablet",
+            "tabletLandscape"
           ]
         }
       ],
