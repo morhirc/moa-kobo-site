@@ -1345,7 +1345,8 @@ html,body{height:100%;min-height:0;overflow:hidden}
   <div class="part-detail-heading" id="partDetailDrag" title="ドラッグして移動"><span class="drag-hint" aria-hidden="true">⠿</span><span id="partDetailTitle">パーツの詳細設定</span><button id="partDetailClose" type="button" aria-label="詳細設定を閉じる">×</button></div>
   <div id="partDetailMount"></div>
 </div>
-<div id="partContextMenu" class="part-context-menu hidden" role="menu" aria-label="パーツ操作">
+<div id="partContextMenu" class="part-context-menu hidden" role="menu" aria-label="パーツ・セクション操作">
+  <div data-context-kind="part">
   <button type="button" data-part-action="copy" role="menuitem">コピー</button>
   <button type="button" data-part-action="cut" role="menuitem">切り取り</button>
   <button type="button" data-part-action="paste" role="menuitem">貼り付け</button>
@@ -1354,7 +1355,16 @@ html,body{height:100%;min-height:0;overflow:hidden}
   <button type="button" data-part-action="front" role="menuitem">最前面へ移動</button>
   <button type="button" data-part-action="back" role="menuitem">最背面へ移動</button>
   <div class="context-divider" role="separator"></div>
-  <button type="button" data-part-action="delete" role="menuitem" class="danger-action">削除</button>
+  <button type="button" data-part-action="delete" role="menuitem" class="danger-action">この端末から非表示</button>
+  </div>
+  <div data-context-kind="section" class="hidden">
+    <button type="button" data-section-action="copy" role="menuitem">セクションをコピー（パーツ含む）</button>
+    <button type="button" data-section-action="paste" role="menuitem">下へ貼り付け</button>
+    <button type="button" data-section-action="duplicate" role="menuitem">すぐ下へ複製</button>
+    <div class="context-divider" role="separator"></div>
+    <button type="button" data-section-action="hide" role="menuitem" class="danger-action">この端末で非表示</button>
+    <button type="button" data-section-action="deleteWithParts" role="menuitem" class="danger-action">セクション＋中のパーツをこの端末から削除</button>
+  </div>
 </div>
 <div id="colorPalette" class="color-palette hidden" role="dialog" aria-label="基本色とユーザー設定の色">
   <div class="color-palette-title">基本色</div>
@@ -2150,7 +2160,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
      const r=rect(e,device,p),middle=num(r.y)+num(r.h)/2;
      return middle>=band.y&&middle<band.y+band.h;
    }).map(e=>({
-     part:clone(e),
+     ...makePartClipboard(e),
      offsets:Object.fromEntries(SECTION_DEVICES.map(dev=>{
        const r=rect(e,dev,p),b=sectionRects(p,dev).find(x=>x.id===s.id);
        return [dev,{...r,y:num(r.y)-num(b?.y,band.y)}];
@@ -2205,6 +2215,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
      snap.parts.forEach(({offsets},i)=>{
        const cp=clones[i],r=offsets[device];
        const position={...r,y:Math.max(0,Math.round(at+r.y))};
+       applyClipboardAppearance(cp,snap.parts[i],device);
        initializeNewPartVisibility(cp,p,device);
        if(device==='desktop')Object.assign(cp,position);
        else{cp.layouts=cp.layouts||{};cp.layouts[device]=position;}
@@ -2234,14 +2245,14 @@ html,body{height:100%;min-height:0;overflow:hidden}
    $('closeSectionRestore').onclick=closeModal;
    $('modalContent').querySelectorAll('[data-restore-section]').forEach(btn=>btn.onclick=()=>{
      const sec=allSections(p).find(s=>s.id===btn.dataset.restoreSection);if(!sec)return;
-     closeModal();mutate(()=>{setSectionVisible(sec,device,true);selectedSectionId=sec.id;selectedId=null;});
+     closeModal();mutate(()=>{if(device!=='desktop'&&isAutoMode(p,device))freezeDeviceLayout(p,device);restoreHiddenSectionHere(p,sec,device);selectedSectionId=sec.id;selectedId=null;});
      notify('この端末にセクションを復元しました。');
    });
  }
  function chooseSection(id){headerSelected=false;expandedPageId=pageId;selectedSectionId=id;selectedId=null;renderCanvas();renderInspector();renderPages();renderSections();openDock('props');}
  function renderSections(){const root=$('sectionList');if(!root)return;root.replaceChildren();const list=sections();
    if(!list.length){const p=document.createElement('p');p.className='page-empty';p.textContent='セクションはありません';root.append(p);return}
-   list.forEach((s,i)=>{const btn=document.createElement('button');btn.className='section-item'+(s.id===selectedSectionId?' active':'');const swatch=document.createElement('span');swatch.className='section-swatch';const style=backgroundValues(s,device);swatch.style.backgroundColor=style.background||'#ffffff';const image=safeBackgroundImage(style.backgroundImage);if(image)swatch.style.backgroundImage=`url("${image}")`;const label=document.createElement('span');label.textContent=(s.title||'セクション '+(i+1))+'  ('+sectionHeight(s)+'px)';btn.append(swatch,label);btn.onclick=()=>{chooseSection(s.id);document.querySelector('.bg-section.selected')?.scrollIntoView({block:'nearest'})};root.append(btn)});
+   list.forEach((s,i)=>{const btn=document.createElement('button');btn.className='section-item'+(s.id===selectedSectionId?' active':'');const swatch=document.createElement('span');swatch.className='section-swatch';const style=backgroundValues(s,device);swatch.style.backgroundColor=style.background||'#ffffff';const image=safeBackgroundImage(style.backgroundImage);if(image)swatch.style.backgroundImage=`url("${image}")`;const label=document.createElement('span');label.textContent=(s.title||'セクション '+(i+1))+'  ('+sectionHeight(s)+'px)';btn.dataset.sectionId=s.id;btn.append(swatch,label);btn.onclick=()=>{chooseSection(s.id);document.querySelector('.bg-section.selected')?.scrollIntoView({block:'nearest'})};btn.oncontextmenu=ev=>showPartContextMenu(ev,null,s.id);root.append(btn)});
    // Reveal legacy parts that are clipped by the normal editor paper boundary.
    if(activeLayoutRegion==='main'){
      const extras=outsideSectionParts();
@@ -4213,77 +4224,244 @@ html,body{height:100%;min-height:0;overflow:hidden}
      }
    })}else{refreshPartSelectionVisual();renderInspector()}
  }
- // Right-click actions use an internal part clipboard, independent of the system clipboard.
- let partClipboard=null,partContextId=null,partContextPoint=null;
+ // Context actions use an internal clipboard; they never touch the OS clipboard.
+ let partClipboard=null,partContextId=null,partContextSectionId=null,partContextPoint=null;
  function hidePartContextMenu(){$('partContextMenu').classList.add('hidden');}
- function showPartContextMenu(ev,id){
+ function makePartClipboard(e){
+   const p=page(),dev=device;
+   return {part:clone(e),at:{x:rect(e).x,y:rect(e).y},box:{...rect(e)},
+     sourceDevice:dev,sourceStyle:cloneDeviceStyle(styleSource(e,dev,p)),
+     sourceText:partText(e,dev),sourceDisplay:Object.fromEntries(
+       DEVICE_DISPLAY_KEYS.filter(k=>(CHOICE_TYPES.has(e.type)||FORM_INPUT_TYPES.has(e.type))&&displayValue(e,k,dev)!==undefined)
+         .map(k=>[k,clone(displayValue(e,k,dev))])),
+     deviceRects:Object.fromEntries(PART_DEVICES.map(d=>[d,{...rect(e,d,p)}]))};
+ }
+ function makeMultiPartClipboard(parts){
+   const items=parts.map(makePartClipboard);
+   const minX=Math.min(...items.map(v=>v.box.x)),minY=Math.min(...items.map(v=>v.box.y));
+   return {kind:'multi',items,at:{x:minX,y:minY}};
+ }
+ function selectedContextParts(id){
+   const group=groupParts();
+   if(group.length>1&&group.some(e=>e.id===id))return group;
+   const e=page().elements.find(part=>part.id===id);
+   return e?[e]:[];
+ }
+ function showPartContextMenu(ev,id,sectionId=null){
    if(editingId&&id===editingId&&ev.target.closest('[contenteditable="true"]'))return;
    ev.preventDefault();ev.stopPropagation();closeColorPalette();
    if(editingId)finishInlineEdit();
-   partContextId=id;const r=$('paper').getBoundingClientRect();
+   partContextId=id;partContextSectionId=sectionId;
+   const r=$('paper').getBoundingClientRect();
    partContextPoint={x:(ev.clientX-r.left)/editorZoom,y:(ev.clientY-r.top)/editorZoom};
-   if(id){selectedId=id;selectedSectionId=null;headerSelected=false;renderCanvas();renderInspector();renderSections()}
+   if(sectionId){
+     clearMultiSelection();selectedId=null;selectedSectionId=sectionId;headerSelected=false;
+     renderCanvas();renderInspector();renderSections();
+   } else if(id){
+     if(!groupParts().some(e=>e.id===id))clearMultiSelection();
+     selectedId=id;selectedSectionId=null;headerSelected=false;
+     renderCanvas();renderInspector();renderSections();
+   }
    const menu=$('partContextMenu');
+   menu.querySelector('[data-context-kind="part"]').classList.toggle('hidden',!!sectionId);
+   menu.querySelector('[data-context-kind="section"]').classList.toggle('hidden',!sectionId);
    for(const btn of menu.querySelectorAll('[data-part-action]')){
      btn.disabled=btn.dataset.partAction==='paste'?!partClipboard:!id;
+   }
+   for(const btn of menu.querySelectorAll('[data-section-action]')){
+     btn.disabled=btn.dataset.sectionAction==='paste'?!sectionClipboard:!sectionId;
    }
    menu.classList.remove('hidden');
    menu.style.left=Math.round(Math.max(5,Math.min(ev.clientX,window.innerWidth-menu.offsetWidth-5)))+'px';
    menu.style.top=Math.round(Math.max(5,Math.min(ev.clientY,window.innerHeight-menu.offsetHeight-5)))+'px';
  }
- function makePartClipboard(e){
-   const p=page();
-   return {part:clone(e),at:{x:rect(e).x,y:rect(e).y},box:{...rect(e)},
-     deviceRects:Object.fromEntries(['desktop','tablet','tabletLandscape','mobile'].map(dev=>[dev,{...rect(e,dev,p)}]))};
+ // Transfer the *visibly edited* state of the copy source to the destination
+ // viewport. Without this, independent mobile/tablet choice options and styles
+ // defaulted back when a PC-edited radio/checkbox was pasted on a phone.
+ function applyClipboardAppearance(copied,entry,dest=device){
+   const look=clone(entry.sourceStyle||cloneDeviceStyle(entry.part)),txt=String(entry.sourceText??entry.part.text??'');
+   if(dest==='desktop')Object.assign(copied,look);
+   else{copied.deviceStyles=copied.deviceStyles||{};copied.deviceStyles[dest]=look;}
+   if(DEVICE_TEXT_TYPES.has(copied.type)){
+     if(dest==='desktop')copied.text=txt;
+     else{seedDeviceTexts(copied);copied.deviceTexts[dest]=txt;}
+   }
+   for(const [key,value] of Object.entries(entry.sourceDisplay||{}))setDisplayValue(copied,key,clone(value),dest);
+   if(['text','heading'].includes(copied.type)&&entry.part.autoTextSizeByDevice){
+     copied.autoTextSizeByDevice=copied.autoTextSizeByDevice||{};
+     copied.autoTextSizeByDevice[dest]=isAutoTextSize(entry.part,entry.sourceDevice);
+   }
+ }
+ function remapPastedPartReferences(copied,idMap){
+   if(copied.clickOwnerId&&idMap.has(copied.clickOwnerId))copied.clickOwnerId=idMap.get(copied.clickOwnerId);
+   else delete copied.clickOwnerId;
+   if(Array.isArray(copied.clickTargets))copied.clickTargets=copied.clickTargets.map(id=>idMap.get(id)||id);
+   const link=String(copied.linkAnchorTarget||'');
+   if(link.startsWith('part:')&&idMap.has(link.slice(5)))copied.linkAnchorTarget='part:'+idMap.get(link.slice(5));
+   if(copied.formRequiredWhenPartId&&idMap.has(copied.formRequiredWhenPartId))copied.formRequiredWhenPartId=idMap.get(copied.formRequiredWhenPartId);
  }
  function pastePart(at=partContextPoint){
    if(!partClipboard)return;
+   const entries=partClipboard.kind==='multi'?partClipboard.items:[partClipboard];
+   if(!entries.length)return;
+   const minX=Math.min(...entries.map(item=>item.box.x)),minY=Math.min(...entries.map(item=>item.box.y));
+   const maxX=Math.max(...entries.map(item=>item.box.x+item.box.w));
+   const groupWidth=Math.max(1,maxX-minX),canvasW=editorCanvasWidth();
+   const horizontalScale=Math.min(1,canvasW/groupWidth);
+   const target=at||{x:minX+25,y:minY+25};
+   const anchorX=clamp(snapEditorPx(target.x),0,Math.max(0,canvasW-groupWidth*horizontalScale));
+   const anchorY=Math.max(0,snapEditorPx(target.y));
    mutate(()=>{
-     const p=page(),copied=clone(partClipboard.part),source=partClipboard.box;
-     const sources=partClipboard.deviceRects||{desktop:{x:copied.x,y:copied.y,w:copied.w,h:copied.h}};
-     copied.id=uid();
-     delete copied.clickOwnerId;
-     const destination=at||{x:partClipboard.at.x+25,y:partClipboard.at.y+25};
-     const pastedWidth=Math.min(editorCanvasWidth(),Math.max(32,num(source?.w,copied.w)));
-     const pastedHeight=Math.max(16,num(source?.h,copied.h));
-     const placed={x:clamp(snapEditorPx(destination.x),0,Math.max(0,editorCanvasWidth()-pastedWidth)),
-       y:Math.max(0,snapEditorPx(destination.y)),w:pastedWidth,h:pastedHeight};
-     // The desktop position is independent of clicks made on mobile/tablet.
-     const pc=sources.desktop||{x:copied.x,y:copied.y,w:copied.w,h:copied.h};
-     const pcW=Math.min(WIDTH.desktop,Math.max(32,Math.round(num(pc.w,120))));
-     copied.x=device==='desktop'?clamp(placed.x,0,WIDTH.desktop-pcW):clamp(Math.round(num(pc.x)+20),0,WIDTH.desktop-pcW);
-     copied.y=device==='desktop'?placed.y:Math.max(0,Math.round(num(pc.y)+20));
-     copied.w=device==='desktop'?placed.w:pcW;
-     copied.h=device==='desktop'?placed.h:Math.max(16,Math.round(num(pc.h,60)));
-     copied.layouts={};
-     for(const dev of ['tablet','tabletLandscape','mobile']){
-       if(isAutoMode(p,dev))continue;
-       const base=sources[dev]||{x:Math.round(copied.x*WIDTH[dev]/WIDTH.desktop),y:copied.y,w:Math.min(WIDTH[dev],copied.w),h:copied.h};
-       const w=dev===device?placed.w:Math.min(WIDTH[dev],Math.max(32,Math.round(num(base.w,120))));
-       copied.layouts[dev]=dev===device?{...placed}:{
-         x:clamp(Math.round(num(base.x,0)+20),0,WIDTH[dev]-w),
-         y:Math.max(0,Math.round(num(base.y,0)+20)),w,h:Math.max(16,Math.round(num(base.h,50)))};
-     }
-     copied.layoutRegion=activeLayoutRegion;initializeNewPartVisibility(copied,p);p.elements.push(copied);
-     selectedId=copied.id;selectedSectionId=null;headerSelected=false;
+     const p=page();if(device!=='desktop')freezeDeviceLayout(p,device);
+     const idMap=new Map(entries.map(entry=>[entry.part.id,uid()]));
+     const created=entries.map(entry=>{
+       const copied=clone(entry.part),source=entry.box;
+       copied.id=idMap.get(entry.part.id);
+       applyClipboardAppearance(copied,entry,device);
+       const w=Math.max(32,Math.min(canvasW,Math.round(num(source.w,120)*horizontalScale)));
+       const h=Math.max(16,Math.round(num(source.h,50)));
+       const x=clamp(snapEditorPx(anchorX+(source.x-minX)*horizontalScale),0,Math.max(0,canvasW-w));
+       const y=Math.max(0,snapEditorPx(anchorY+(source.y-minY)));
+       const placed={x,y,w,h};
+       const pc=entry.deviceRects?.desktop||{x:copied.x,y:copied.y,w:copied.w,h:copied.h};
+       const pcW=Math.min(WIDTH.desktop,Math.max(32,Math.round(num(pc.w,120))));
+       copied.x=device==='desktop'?placed.x:clamp(Math.round(num(pc.x)+20),0,WIDTH.desktop-pcW);
+       copied.y=device==='desktop'?placed.y:Math.max(0,Math.round(num(pc.y)+20));
+       copied.w=device==='desktop'?placed.w:pcW;
+       copied.h=device==='desktop'?placed.h:Math.max(16,Math.round(num(pc.h,60)));
+       copied.layouts={};
+       for(const dev of ['tablet','tabletLandscape','mobile']){
+         if(isAutoMode(p,dev))continue;
+         const base=entry.deviceRects?.[dev]||{x:Math.round(copied.x*WIDTH[dev]/WIDTH.desktop),y:copied.y,w:Math.min(WIDTH[dev],copied.w),h:copied.h};
+         const destWidth=Math.min(WIDTH[dev],Math.max(32,Math.round(num(base.w,120))));
+         copied.layouts[dev]=dev===device?{...placed}:{
+           x:clamp(Math.round(num(base.x,0)+20),0,WIDTH[dev]-destWidth),
+           y:Math.max(0,Math.round(num(base.y,0)+20)),w:destWidth,h:Math.max(16,Math.round(num(base.h,50)))};
+       }
+       copied.layoutRegion=activeLayoutRegion;
+       initializeNewPartVisibility(copied,p,device);
+       remapPastedPartReferences(copied,idMap);
+       return copied;
+     });
+     p.elements.push(...created);
+     selectedId=created.at(-1).id;selectedSectionId=null;headerSelected=false;
+     if(created.length>1){selectedIds=new Set(created.map(e=>e.id));multiSelectionScope=currentSelectionScope()}
+     else clearMultiSelection();
    });
+   notify(entries.length>1?`${entries.length}個のパーツをまとめて貼り付けました。`:'パーツを貼り付けました。');
+ }
+ function copyContextParts(parts){
+   if(!parts.length)return;
+   finishInlineEdit();
+   partClipboard=parts.length>1?makeMultiPartClipboard(parts):makePartClipboard(parts[0]);
+   notify(`${parts.length}個のパーツをコピーしました。`);
+ }
+ function hideContextParts(parts){
+   const ids=new Set(parts.map(e=>e.id));
+   mutate(()=>removePartsOnActiveDevice(ids,page()));
+ }
+ // This operation is local to the editing viewport. Hidden on this screen,
+ // retained in JSON for other screens and Undo/restore.
+ function sectionContentsOnDevice(p,id,dev=device){
+   const band=sectionRects(p,dev).find(b=>b.id===id);
+   if(!band)return {band:null,contents:[],followers:[]};
+   const contents=[],followers=[];
+   for(const part of p.elements||[]){
+     if(part.type==='sidebar'||!partVisibleOnDevice(part,p,dev))continue;
+     const r={...rect(part,dev,p)};
+     const center=num(r.y)+num(r.h)/2;
+     if(center>=band.y&&center<band.y+band.h)contents.push({part,rect:r});
+     else if(center>=band.y+band.h)followers.push({part,rect:r});
+   }
+   return {band,contents,followers};
+ }
+ function moveSectionFollowersOnDevice(followers,delta,dev=device){
+   for(const {part,rect:r} of followers){
+     const nextY=Math.max(0,Math.round(num(r.y)-delta));
+     if(dev==='desktop')part.y=nextY;
+     else{part.layouts=part.layouts||{};part.layouts[dev]={...r,y:nextY};}
+   }
+ }
+ function removeSectionWithPartsHere(id=selectedSectionId){
+   const p=page(),s=sections(p,device).find(item=>item.id===id);
+   if(!s)return;
+   const current=sectionContentsOnDevice(p,id);
+   if(!current.band)return;
+   const name=({desktop:'PC',tablet:'タブレット縦',tabletLandscape:'タブレット横',mobile:'スマホ'})[device];
+   if(!confirm(`「${s.title||'セクション'}」と中のパーツ ${current.contents.length}個を${name}から削除しますか？\n他の端末は変更しません。［元に戻す］で取り消せます。`))return;
+   finishInlineEdit();
+   mutate(()=>{
+     if(device!=='desktop'&&isAutoMode(p,device))freezeDeviceLayout(p,device);
+     const {band,contents,followers}=sectionContentsOnDevice(p,id);
+     if(!band)return;
+     // Only mark the previously visible contents; hidden parts stay hidden.
+     s.hiddenWithPartsByDevice=s.hiddenWithPartsByDevice||{};
+     s.hiddenWithPartsByDevice[device]=contents.map(({part})=>part.id);
+     for(const {part} of contents)setPartVisible(part,device,false);
+     setSectionVisible(s,device,false);
+     moveSectionFollowersOnDevice(followers,band.h);
+     selectedId=null;selectedSectionId=null;headerSelected=false;clearMultiSelection();
+   });
+   notify(`${name}からセクションと${current.contents.length}個のパーツを削除しました。`);
+ }
+ function restoreHiddenSectionHere(p,s,dev=device){
+   // Find its original insertion point even though the section is hidden.
+   const order=p.sectionOrder?.[dev];
+   const base=allSections(p),rank=new Map(Array.isArray(order)?order.map((id,i)=>[id,i]):[]);
+   const sorted=[...base].sort((a,b)=>(rank.has(a.id)?rank.get(a.id):(Array.isArray(order)?order.length:0)+base.indexOf(a))-
+     (rank.has(b.id)?rank.get(b.id):(Array.isArray(order)?order.length:0)+base.indexOf(b)));
+   let startY=0;
+   for(const section of sorted){
+     if(section.id===s.id)break;
+     if(sectionVisibleOnDevice(section,dev))startY+=sectionHeight(section,dev,p);
+   }
+   const height=sectionHeight(s,dev,p);
+   const ids=Array.isArray(s.hiddenWithPartsByDevice?.[dev])?s.hiddenWithPartsByDevice[dev]:null;
+   if(ids){
+     const idSet=new Set(ids);
+     const followers=(p.elements||[]).filter(e=>e.type!=='sidebar'&&!idSet.has(e.id)&&partVisibleOnDevice(e,p,dev))
+       .map(e=>({part:e,rect:{...rect(e,dev,p)}}))
+       .filter(({rect:r})=>num(r.y)+num(r.h)/2>=startY);
+     moveSectionFollowersOnDevice(followers,-height,dev);
+     for(const e of p.elements||[])if(idSet.has(e.id))setPartVisible(e,dev,true);
+     delete s.hiddenWithPartsByDevice[dev];
+   }
+   setSectionVisible(s,dev,true);
  }
  function actPartContext(action){
-   const p=page(),e=p.elements.find(item=>item.id===partContextId);
-   if(['copy','cut'].includes(action)&&e){partClipboard=makePartClipboard(e);}
-   if(action==='cut'&&e)mutate(()=>removePartsOnActiveDevice([e.id],p));
+   const p=page(),parts=selectedContextParts(partContextId),e=parts[0];
+   if(action==='copy'||action==='cut')copyContextParts(parts);
+   if(action==='cut'&&parts.length)hideContextParts(parts);
    if(action==='paste')pastePart();
-   if(action==='duplicate'&&e){partClipboard=makePartClipboard(e);pastePart({x:rect(e).x+25,y:rect(e).y+25});}
-   if(action==='delete'&&e)mutate(()=>removePartsOnActiveDevice([e.id],p));
-   if(['front','back'].includes(action)&&e)mutate(()=>{const index=p.elements.findIndex(x=>x.id===e.id);p.elements.splice(index,1);if(action==='front')p.elements.push(e);else p.elements.unshift(e);selectedId=e.id});
+   if(action==='duplicate'&&parts.length){copyContextParts(parts);pastePart({x:Math.min(...parts.map(e=>rect(e).x))+25,y:Math.min(...parts.map(e=>rect(e).y))+25});}
+   if(action==='delete'&&parts.length)hideContextParts(parts);
+   if(['front','back'].includes(action)&&e)mutate(()=>{const ids=new Set(parts.map(e=>e.id));const selected=p.elements.filter(part=>ids.has(part.id));p.elements=p.elements.filter(part=>!ids.has(part.id));if(action==='front')p.elements.push(...selected);else p.elements.unshift(...selected);selectedId=e.id});
    hidePartContextMenu();
+ }
+ function actSectionContext(action){
+   const id=partContextSectionId;if(!id)return;
+   hidePartContextMenu();
+   if(action==='copy')copySection(id);
+   if(action==='paste')pasteSection(id);
+   if(action==='duplicate'){copySection(id);pasteSection(id);}
+   if(action==='hide'){
+     if(!confirm('この端末でセクションを非表示にしますか？他の端末とパーツは残ります。'))return;
+     const s=allSections(page()).find(s=>s.id===id);
+     if(s)mutate(()=>{setSectionVisible(s,device,false);selectedSectionId=null;});
+   }
+   if(action==='deleteWithParts')removeSectionWithPartsHere(id);
  }
  $('paper').addEventListener('contextmenu',ev=>{
    const part=ev.target.closest('.element');
-   if(!part&&!ev.target.closest('#paper'))return;
-   showPartContextMenu(ev,part?.dataset.id||null);
+   const section=!part?ev.target.closest('.bg-section'):null;
+   if(!part&&!section&&!ev.target.closest('#paper'))return;
+   showPartContextMenu(ev,part?.dataset.id||null,section?.dataset.sectionId||null);
  });
- $('partContextMenu').addEventListener('click',ev=>{const btn=ev.target.closest('[data-part-action]');if(btn&&!btn.disabled)actPartContext(btn.dataset.partAction)});
+ $('partContextMenu').addEventListener('click',ev=>{
+   const btn=ev.target.closest('[data-part-action],[data-section-action]');if(!btn||btn.disabled)return;
+   if(btn.dataset.partAction)actPartContext(btn.dataset.partAction);
+   else actSectionContext(btn.dataset.sectionAction);
+ });
  document.addEventListener('pointerdown',ev=>{if(!ev.target.closest('#partContextMenu'))hidePartContextMenu()},true);
  document.addEventListener('keydown',ev=>{if(ev.key==='Escape')hidePartContextMenu()},true);
  function startSectionResize(ev,id){if(ev.button!==0)return;ev.stopPropagation();ev.preventDefault();
@@ -4580,6 +4758,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    });
    $('msbActionPastePart')?.addEventListener('click',()=>{
      if(!partClipboard)return notify('先にキャンバスのパーツを右クリックし、コピーしてください。');
+     if(partClipboard.kind==='multi')return notify('動作の内容にはパーツを1個ずつコピーしてください。');
      addActionContent(e.id,[{clipboard:partClipboard.part}]);
    });
    $('msbActionCreateContact')?.addEventListener('click',()=>{
@@ -4774,7 +4953,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    if(s){
      delete panel.dataset.msbDisclosureScope;
      const sectionBg=backgroundValues(s,device),index=sections(p).indexOf(s),h=sectionHeight(s),bg=safeBackgroundImage(sectionBg.backgroundImage);
-     panel.innerHTML=`<div class="section-head">背景セクションの設定（${{desktop:'PC',tablet:'タブレット縦',tabletLandscape:'タブレット横',mobile:'スマホ'}[device]}） <button id="closeSectionProps" class="small-btn">戻る</button></div><p class="muted">${index+1}番目の背景です。高さを変更すると、下のセクションとそのパーツが一緒に移動します。</p>${field('セクション名',s.title||'セクション '+(index+1),'sectionTitle')}${field('背景色',sectionBg.background||'#ffffff','sectionBg','color')}<div class="background-preview" id="sectionBgPreview"></div><button class="small-btn fullbtn" id="chooseSectionBg">背景画像を選択・変更</button><div style="height:8px"></div><button class="small-btn fullbtn" id="removeSectionBg" ${bg?'':'disabled'}>背景画像を削除</button>${field('画像の表示方法',backgroundSize(sectionBg.backgroundSize),'sectionSize','select',['cover','contain','auto'])}${field('画像の配置',backgroundPosition(sectionBg.backgroundPosition),'sectionPosition','select',['center','top','bottom','left','right'])}<hr class="hr"><div class="section-head">高さ（${{desktop:'PC',tablet:'タブレット縦',tabletLandscape:'タブレット横',mobile:'スマホ'}[device]}）</div>${field('高さ（px）',h,'sectionHeight','number')}<p class="note">最小高さは10pxです。必要に応じて細い区切り帯にもできます。全幅公開時は背景画像の横方向に空白を残さない表示になります。</p><p class="note">キャンバス上の背景の下端をドラッグして高さを調整できます。端末ごとに異なる高さを保存できます。</p><button id="resetSectionSize" class="small-btn fullbtn" ${device==='desktop'?'disabled':''}>PCの高さをこの端末に取得（下のパーツも移動）</button><hr class="hr"><div class="section-head">セクション全体をコピー</div><p class="note">背景・文字・画像など、このセクション内のパーツをまとめて複製できます。別ページへ貼り付けることもできます。</p><div class="twocol"><button id="copySection" class="small-btn">コピー</button><button id="duplicateSection" class="small-btn">すぐ下に複製</button></div><div style="height:8px"></div><button id="pasteSection" class="small-btn fullbtn" ${sectionClipboard?'':'disabled'}>選択セクションの下へ貼り付け</button><p class="note">コピー後、別のセクションを選んで［貼り付け］できます。ページタブの［貼り付け］は末尾へ追加します。Ctrl+C / Ctrl+Vも利用できます。</p><hr class="hr"><div class="twocol"><button id="sectionUp" class="small-btn" ${index===0?'disabled':''}>↑ 上へ移動</button><button id="sectionDown" class="small-btn" ${index===sections(p).length-1?'disabled':''}>↓ 下へ移動</button></div><div style="height:12px"></div><button id="deleteSection" class="small-btn fullbtn danger">この端末からセクションを削除</button><p class="note">この端末だけセクションを非表示にします。ほかの端末とパーツは残り、元に戻すこともできます。</p>`;
+     panel.innerHTML=`<div class="section-head">背景セクションの設定（${{desktop:'PC',tablet:'タブレット縦',tabletLandscape:'タブレット横',mobile:'スマホ'}[device]}） <button id="closeSectionProps" class="small-btn">戻る</button></div><p class="muted">${index+1}番目の背景です。高さを変更すると、下のセクションとそのパーツが一緒に移動します。</p>${field('セクション名',s.title||'セクション '+(index+1),'sectionTitle')}${field('背景色',sectionBg.background||'#ffffff','sectionBg','color')}<div class="background-preview" id="sectionBgPreview"></div><button class="small-btn fullbtn" id="chooseSectionBg">背景画像を選択・変更</button><div style="height:8px"></div><button class="small-btn fullbtn" id="removeSectionBg" ${bg?'':'disabled'}>背景画像を削除</button>${field('画像の表示方法',backgroundSize(sectionBg.backgroundSize),'sectionSize','select',['cover','contain','auto'])}${field('画像の配置',backgroundPosition(sectionBg.backgroundPosition),'sectionPosition','select',['center','top','bottom','left','right'])}<hr class="hr"><div class="section-head">高さ（${{desktop:'PC',tablet:'タブレット縦',tabletLandscape:'タブレット横',mobile:'スマホ'}[device]}）</div>${field('高さ（px）',h,'sectionHeight','number')}<p class="note">最小高さは10pxです。必要に応じて細い区切り帯にもできます。全幅公開時は背景画像の横方向に空白を残さない表示になります。</p><p class="note">キャンバス上の背景の下端をドラッグして高さを調整できます。端末ごとに異なる高さを保存できます。</p><button id="resetSectionSize" class="small-btn fullbtn" ${device==='desktop'?'disabled':''}>PCの高さをこの端末に取得（下のパーツも移動）</button><hr class="hr"><div class="section-head">セクション全体をコピー</div><p class="note">背景・文字・画像など、このセクション内のパーツをまとめて複製できます。別ページへ貼り付けることもできます。</p><div class="twocol"><button id="copySection" class="small-btn">コピー</button><button id="duplicateSection" class="small-btn">すぐ下に複製</button></div><div style="height:8px"></div><button id="pasteSection" class="small-btn fullbtn" ${sectionClipboard?'':'disabled'}>選択セクションの下へ貼り付け</button><p class="note">コピー後、別のセクションを選んで［貼り付け］できます。ページタブの［貼り付け］は末尾へ追加します。Ctrl+C / Ctrl+Vも利用できます。</p><hr class="hr"><div class="twocol"><button id="sectionUp" class="small-btn" ${index===0?'disabled':''}>↑ 上へ移動</button><button id="sectionDown" class="small-btn" ${index===sections(p).length-1?'disabled':''}>↓ 下へ移動</button></div><div style="height:12px"></div><button id="deleteSection" class="small-btn fullbtn danger">この端末でセクションを非表示</button><p class="note">この端末のみ非表示です。ほかの端末とパーツは残ります。</p><button id="deleteSectionAll" class="small-btn fullbtn danger">セクション＋中のパーツをこの端末から削除</button><p class="note">編集中の端末だけから削除します。ほかの端末のパーツ・配置は残ります。右クリックからも操作できます。</p>`;
      const prev=$('sectionBgPreview');prev.style.backgroundColor=sectionBg.background||'#fff';prev.style.backgroundImage=bg?`url("${bg}")`:'';prev.style.backgroundSize=backgroundSize(sectionBg.backgroundSize);prev.style.backgroundPosition=backgroundPosition(sectionBg.backgroundPosition);
      $('closeSectionProps').onclick=()=>{selectedSectionId=null;expandedPageId=pageId;renderCanvas();renderInspector();renderPages();renderSections();openDock('pages')};
      $('chooseSectionBg').onclick=()=>{bgTarget={kind:'section',pageId:p.id,id:s.id};$('pageBgFile').click()};
@@ -4788,6 +4967,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
      $('duplicateSection').onclick=()=>duplicateSection();
      $('pasteSection').onclick=()=>pasteSection(s.id);
      $('deleteSection').onclick=()=>{if(!confirm('この端末で背景セクションを非表示にしますか？他の端末と文字・画像などのパーツは残ります。'))return;mutate(()=>{setSectionVisible(s,device,false);selectedSectionId=null})};
+     $('deleteSectionAll').onclick=()=>removeSectionWithPartsHere(s.id);
      return;
    }
    if(!e){const pageBg=backgroundValues(p,device),bg=safeBackgroundImage(pageBg.backgroundImage);
@@ -5841,6 +6021,12 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
     // Header uses the same selected profile as all page elements.
     const header=(m==='tablet'||m==='mobile')?'compact':'wide';
     const changed=root.dataset.msbActive!==m||root.dataset.msbHeader!==header;
+    // Distinguish browser-zoom emulation from a physical tablet. On desktop
+    // Chrome at 175% / 200% the tablet profile must still paint full-width
+    // section backgrounds; on real iPad retain the anchored canvas approach.
+    const desktopZoomReflow=browserZoom()>1.03 &&
+      !(matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>1);
+    root.dataset.msbZoomReflow=desktopZoomReflow?'true':'false';
     root.dataset.msbActive=m;
     root.dataset.msbHeader=header;
     // Device styles are explicitly enabled rather than relying on viewport
@@ -6205,6 +6391,14 @@ main#page-top{background:transparent!important;background-image:none!important}
  html:not([data-msb-active="tablet"]):not([data-msb-active="tabletLandscape"]) main>.bg-band{background:none!important}
  html[data-msb-active="tablet"] .site-bleed,
  html[data-msb-active="tabletLandscape"] .site-bleed{display:none!important}
+ /* Desktop Chrome browser zoom uses the tablet-authored layout at 175/200%.
+    Preserve the center-aligned 720px foreground, but let its backgrounds
+    bleed to the viewport edges (as on desktop/mobile). A physical iPad
+    remains on the established anchored-background rendering path. */
+ html[data-msb-zoom-reflow="true"][data-msb-active="tablet"] .site-bleed,
+ html[data-msb-zoom-reflow="true"][data-msb-active="tabletLandscape"] .site-bleed{display:block!important}
+ html[data-msb-zoom-reflow="true"][data-msb-active="tablet"] main>.bg-band,
+ html[data-msb-zoom-reflow="true"][data-msb-active="tabletLandscape"] main>.bg-band{background:none!important}
 }
 @media print{.site-bleed{display:none!important}main{overflow:hidden!important;background-color:${attr(p.background||'#ffffff')}!important}}`:''}
 /* Preserve the background image layout of each device after full-bleed sizing rules. */
@@ -6423,7 +6617,7 @@ setView(initialView);
  function openModal(html){$('modalContent').innerHTML=html;$('modal').classList.remove('hidden')}
  function closeModal(){$('modal').classList.add('hidden')}
  $('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});
- $('helpBtn').onclick=()=>openModal(`<h2>morhirc Site Builder v1.22</h2><p>ビジュアル編集とHTMLコード編集を組み合わせたHybrid版です。ページ欄の⠿を上下にドラッグすると、ページ一覧・共通ヘッダー・プレビューの表示順を変更できます。ページ名やファイル名は変更されません。ページ欄の［＋ HTML］で完成済みHTMLを貼り付けるページを作成し、通常のページにはパーツの［HTML埋め込み］を配置できます。外部ファイルに依存するHTMLは単体コピーだけでは完全に動かない場合があります。ヘッダーは先頭で透明・スクロール時に背景色付きへ切り替えでき、サイト名とメニューのフォントを個別設定できます。</p><p><b>共通ヘッダー</b><br>「レイアウト」→「共通ヘッダー」から追加・編集できます。設定パネルを閉じていても、このボタンから開き直せます。編集画面では階層メニューの開閉とページ選択ができ、検索はプレビューまたは公開HTMLで利用できます。ファビコンは歯車（サイト設定）から変更できます。全ページ共通のロゴ・サイト名・階層メニュー・サイト内検索を設定できます。スクロール時の固定、スマホ用メニューも対応します。階層構成は各ページの設定で親ページを選択します。フッターは未実装です。<br><b>SEO設定</b><br>歯車（サイト設定）→「SEO」でページを選び、検索結果用タイトル・説明文（description）・正規URL（canonical）を設定できます。タイトルは空欄ならページ名とサイト名から自動生成します。canonicalは公開URLが入力されていれば自動生成され、必要な場合だけ個別URLを指定できます。サイト設定（⚙）の「公開URL」を設定すると、サイト一式の書き出し時にsitemap.xmlとrobots.txtも生成されます。</p><p><b>既存サイトから移行</b><br>歯車→全体→制作モードで「既存サイトから移行」を選び、移行タブで旧URLを登録できます。現在のファイル名に合わせれば既存URLを維持できます。URLを変更した場合は通常パーツのリンクを更新し、公開前チェックと移行用対応表を作成します。Apache / Xserver向け301ルール案は手動で既存.htaccessに追記する必要があります。GitHub Pagesではサーバー側301を設定できません。</p><p><b>表示の調整</b><br>上部バーの［パネルを開く／閉じる］で右側のパーツ・ページ・レイアウト・サイト設定を切り替えます。［表示倍率］の「画面に収める」はキャンバスを編集領域へ収め、「公開サイズ（仕上がり）」は現在のブラウザ幅で公開HTMLで表示した際の文字・画像の大きさに近づけます。50〜200%の倍率も選択できます。これは表示だけの設定で、保存する座標や公開HTMLの大きさは変更しません。<br><b>基本操作</b><br>右のパーツタブでは基本機能をコンパクトな2列表示にし、追加機能を「レイアウト」「デザイン・図形」「メディア・埋め込み」「サイト共通」に分類しています。カテゴリーを開くとカード・囲み枠・装飾ボタンなども追加できます。影・枠線・余白は各パーツの「装飾」から調整できます。<br>① 右側の「パーツ」タブからパーツを追加します。追加位置は「今見えている場所」「クリックして指定」から選べます。クリック指定はEscで中止できます。<br>② ドラッグで移動、右下でサイズ変更します。<br>③ 文章・見出し・ボタン・四角形の文字はダブルクリックで直接編集します。図形は文字が空欄なら従来どおり図形のみ表示されます。図形内の文字は右の設定でも変更できます。<br>④ 文字編集ツールバー左端の⠿をドラッグすると位置を移動でき、ダブルクリックで自動位置に戻せます。文字をダブルクリックして一部分を範囲選択すると、［詳細］の設定パネルで色・サイズ・フォント・太字・下線を個別に変更できます。色は基本色をワンクリックで選択でき、独自の色は「ユーザー設定の色」の［＋登録］で保存・再利用できます。［削除］を押すと登録色を削除できます。背景や図形の色も同じ方法です。太字と下線は［詳細］から切り替えます。<br>⑤ 背景画像はパーツ未選択の［ページ設定］から画像を選びます。<br>背景セクションを選択すると［コピー］［すぐ下に複製］［貼り付け］が利用できます。背景と中のパーツをまとめてコピーでき、別ページへも貼り付けられます。<br>⑥ 1ページ内で複数の背景を使う場合は「ページ」タブでページ名の矢印を開き、［背景セクション ＋追加］を押し、色・画像・高さを設定します。セクションの下端のハンドルで高さを10pxまで縮められます。<br>⑥ セクションの高さ変更では、下に続く背景セクションとその中のパーツが一緒に移動します。現在の端末だけに反映され、編集中のセクション内のパーツ配置は維持します。新規の文章・見出しパーツは文字量に合わせて自動サイズ調整できます。既存の見出し・文章は右側の「文字量に合わせて枠を自動調整」をオンにするとフィットします。手動で幅・高さを変更すると、その端末だけ自動調整が解除されます。<br>⑦ 右の設定の「動き・効果」では、ホバー・登場・クリック・常時・見た目の各効果をサンプルから選べます。ボタン・文章・図形・画像の「クリック時の動作」でアコーディオン、表示切替、ポップアップ、コピー、画像拡大、タブ切替を設定できます。アコーディオンなどは［この動作用の内容を作成］から新しい文章・ボタン・画像・図形を追加でき、入力欄に文章を貼り付けるか、右クリックでコピーしたパーツを追加することもできます。クリックの演出はプレビュー・公開HTMLで確認できます。<br>⑤ 動画はYouTube・Vimeoの共有URLまたは動画ファイルのURLを指定します。<br>⑥ PDF表示はGoogle Driveの共有URLか直接PDF URLを貼り付けます。<br>⑦ Googleフォームは公開用の完全なURLを貼り付けます。<br>⑧ タブレット・スマホはPCとは独立した配置です。編集時に他端末の配置を自動調整しません。必要なときだけ［PCから取得］を実行すると、その端末だけ配置を上書きします。文章・見出し・ボタン・図形内の文字内容（改行を含む）と文字装飾は端末ごとに独立します。画像とリンク先は全端末共通です。端末ごとの位置・サイズも個別に保存します。非表示のパーツは上部の［非表示］から配置できます。</p><p><b>保存の違い</b><br>［プレビュー］を押すと編集中の文字を確定して、現在のページから表示します。［編集保存］は後から編集を続けられるJSONです。歯車（サイト設定）→「公開・保存」の［サイト一式を書き出す］は全ページとサイトマップを含むHTML一式のZIPです。 ［iPad・スマホ実機プレビュー］では公開前のHTMLをWindows PCから一時配信して、実機のSafariで確認できます。ページ間リンクを利用する場合はZIPの全ファイルを同じ場所に公開してください。</p><p><b>注意</b><br>編集内容はブラウザにも自動保存しますが、画像が多い場合は容量に注意してください。PDFやGoogleフォームは公開先の共有設定とブラウザ制限によっては埋め込み表示できない場合があります。その際は「別タブで開く」を利用してください。標準の「入力内容を確認」ボタンで入力チェック・確認画面を利用できます。受信にはクリック時の動作で送信先（Webアプリ等）の設定が必要です。GitHub公開はサイトの公開URLがMOA工房に一致した場合に利用できます。</p><button onclick="document.getElementById('modal').classList.add('hidden')">閉じる</button>`);
+ $('helpBtn').onclick=()=>openModal(`<h2>morhirc Site Builder v1.22</h2><p>ビジュアル編集とHTMLコード編集を組み合わせたHybrid版です。ページ欄の⠿を上下にドラッグすると、ページ一覧・共通ヘッダー・プレビューの表示順を変更できます。ページ名やファイル名は変更されません。ページ欄の［＋ HTML］で完成済みHTMLを貼り付けるページを作成し、通常のページにはパーツの［HTML埋め込み］を配置できます。外部ファイルに依存するHTMLは単体コピーだけでは完全に動かない場合があります。ヘッダーは先頭で透明・スクロール時に背景色付きへ切り替えでき、サイト名とメニューのフォントを個別設定できます。</p><p><b>共通ヘッダー</b><br>「レイアウト」→「共通ヘッダー」から追加・編集できます。設定パネルを閉じていても、このボタンから開き直せます。編集画面では階層メニューの開閉とページ選択ができ、検索はプレビューまたは公開HTMLで利用できます。ファビコンは歯車（サイト設定）から変更できます。全ページ共通のロゴ・サイト名・階層メニュー・サイト内検索を設定できます。スクロール時の固定、スマホ用メニューも対応します。階層構成は各ページの設定で親ページを選択します。フッターは未実装です。<br><b>SEO設定</b><br>歯車（サイト設定）→「SEO」でページを選び、検索結果用タイトル・説明文（description）・正規URL（canonical）を設定できます。タイトルは空欄ならページ名とサイト名から自動生成します。canonicalは公開URLが入力されていれば自動生成され、必要な場合だけ個別URLを指定できます。サイト設定（⚙）の「公開URL」を設定すると、サイト一式の書き出し時にsitemap.xmlとrobots.txtも生成されます。</p><p><b>既存サイトから移行</b><br>歯車→全体→制作モードで「既存サイトから移行」を選び、移行タブで旧URLを登録できます。現在のファイル名に合わせれば既存URLを維持できます。URLを変更した場合は通常パーツのリンクを更新し、公開前チェックと移行用対応表を作成します。Apache / Xserver向け301ルール案は手動で既存.htaccessに追記する必要があります。GitHub Pagesではサーバー側301を設定できません。</p><p><b>表示の調整</b><br>上部バーの［パネルを開く／閉じる］で右側のパーツ・ページ・レイアウト・サイト設定を切り替えます。［表示倍率］の「画面に収める」はキャンバスを編集領域へ収め、「公開サイズ（仕上がり）」は現在のブラウザ幅で公開HTMLで表示した際の文字・画像の大きさに近づけます。50〜200%の倍率も選択できます。これは表示だけの設定で、保存する座標や公開HTMLの大きさは変更しません。<br><b>基本操作</b><br>右のパーツタブでは基本機能をコンパクトな2列表示にし、追加機能を「レイアウト」「デザイン・図形」「メディア・埋め込み」「サイト共通」に分類しています。カテゴリーを開くとカード・囲み枠・装飾ボタンなども追加できます。影・枠線・余白は各パーツの「装飾」から調整できます。<br>① 右側の「パーツ」タブからパーツを追加します。追加位置は「今見えている場所」「クリックして指定」から選べます。クリック指定はEscで中止できます。<br>② ドラッグで移動、右下でサイズ変更します。<br>③ 文章・見出し・ボタン・四角形の文字はダブルクリックで直接編集します。図形は文字が空欄なら従来どおり図形のみ表示されます。図形内の文字は右の設定でも変更できます。<br>④ 文字編集ツールバー左端の⠿をドラッグすると位置を移動でき、ダブルクリックで自動位置に戻せます。文字をダブルクリックして一部分を範囲選択すると、［詳細］の設定パネルで色・サイズ・フォント・太字・下線を個別に変更できます。色は基本色をワンクリックで選択でき、独自の色は「ユーザー設定の色」の［＋登録］で保存・再利用できます。［削除］を押すと登録色を削除できます。背景や図形の色も同じ方法です。太字と下線は［詳細］から切り替えます。<br>⑤ 背景画像はパーツ未選択の［ページ設定］から画像を選びます。<br>背景セクションを選択すると［コピー］［すぐ下に複製］［貼り付け］が利用できます。Ctrl＋クリックで複数パーツを選択してコピー・貼り付けできます。セクションは右クリックから端末別の非表示または中のパーツを含む端末別削除を選べます。背景と中のパーツをまとめてコピーでき、別ページへも貼り付けられます。<br>⑥ 1ページ内で複数の背景を使う場合は「ページ」タブでページ名の矢印を開き、［背景セクション ＋追加］を押し、色・画像・高さを設定します。セクションの下端のハンドルで高さを10pxまで縮められます。<br>⑥ セクションの高さ変更では、下に続く背景セクションとその中のパーツが一緒に移動します。現在の端末だけに反映され、編集中のセクション内のパーツ配置は維持します。新規の文章・見出しパーツは文字量に合わせて自動サイズ調整できます。既存の見出し・文章は右側の「文字量に合わせて枠を自動調整」をオンにするとフィットします。手動で幅・高さを変更すると、その端末だけ自動調整が解除されます。<br>⑦ 右の設定の「動き・効果」では、ホバー・登場・クリック・常時・見た目の各効果をサンプルから選べます。ボタン・文章・図形・画像の「クリック時の動作」でアコーディオン、表示切替、ポップアップ、コピー、画像拡大、タブ切替を設定できます。アコーディオンなどは［この動作用の内容を作成］から新しい文章・ボタン・画像・図形を追加でき、入力欄に文章を貼り付けるか、右クリックでコピーしたパーツを追加することもできます。クリックの演出はプレビュー・公開HTMLで確認できます。<br>⑤ 動画はYouTube・Vimeoの共有URLまたは動画ファイルのURLを指定します。<br>⑥ PDF表示はGoogle Driveの共有URLか直接PDF URLを貼り付けます。<br>⑦ Googleフォームは公開用の完全なURLを貼り付けます。<br>⑧ タブレット・スマホはPCとは独立した配置です。編集時に他端末の配置を自動調整しません。必要なときだけ［PCから取得］を実行すると、その端末だけ配置を上書きします。文章・見出し・ボタン・図形内の文字内容（改行を含む）と文字装飾は端末ごとに独立します。画像とリンク先は全端末共通です。端末ごとの位置・サイズも個別に保存します。非表示のパーツは上部の［非表示］から配置できます。</p><p><b>保存の違い</b><br>［プレビュー］を押すと編集中の文字を確定して、現在のページから表示します。［編集保存］は後から編集を続けられるJSONです。歯車（サイト設定）→「公開・保存」の［サイト一式を書き出す］は全ページとサイトマップを含むHTML一式のZIPです。 ［iPad・スマホ実機プレビュー］では公開前のHTMLをWindows PCから一時配信して、実機のSafariで確認できます。ページ間リンクを利用する場合はZIPの全ファイルを同じ場所に公開してください。</p><p><b>注意</b><br>編集内容はブラウザにも自動保存しますが、画像が多い場合は容量に注意してください。PDFやGoogleフォームは公開先の共有設定とブラウザ制限によっては埋め込み表示できない場合があります。その際は「別タブで開く」を利用してください。標準の「入力内容を確認」ボタンで入力チェック・確認画面を利用できます。受信にはクリック時の動作で送信先（Webアプリ等）の設定が必要です。GitHub公開はサイトの公開URLがMOA工房に一致した場合に利用できます。</p><button onclick="document.getElementById('modal').classList.add('hidden')">閉じる</button>`);
  $('newBtn').onclick=()=>{cancelPlacement();openModal(`<h2>サイトの作成方法</h2><p>新規作成か、既存URLを引き継ぐリニューアルかを選択してください。現在の編集内容は置き換わります。</p><button id="msbNewFresh" type="button">新規サイトを作成</button> <button id="msbNewMigration" type="button">既存サイトから移行</button> <button id="msbNewCancel" type="button" style="background:#65758d">キャンセル</button>`);
    $('msbNewCancel').onclick=closeModal;
    for(const [id,mode] of [['msbNewFresh','new'],['msbNewMigration','migration']])$(id).onclick=()=>{
@@ -6818,8 +7012,18 @@ setView(initialView);
  if('ResizeObserver' in window)new ResizeObserver(()=>applyEditorZoom()).observe($('workarea'));
  window.addEventListener('resize',applyEditorZoom,{passive:true});
  document.addEventListener('keydown',ev=>{const inField=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)||document.activeElement.isContentEditable;
-   if((ev.ctrlKey||ev.metaKey)&&!ev.altKey&&!inField&&ev.key.toLowerCase()==='c'&&selectedSectionId){ev.preventDefault();copySection();}
-   if((ev.ctrlKey||ev.metaKey)&&!ev.altKey&&!inField&&ev.key.toLowerCase()==='v'&&sectionClipboard&&!selected()){ev.preventDefault();pasteSection(selectedSectionId||null);}
+   if((ev.ctrlKey||ev.metaKey)&&!ev.altKey&&!inField&&ev.key.toLowerCase()==='c'){
+     if(selectedSectionId){ev.preventDefault();copySection();}
+     else if(selected()){ev.preventDefault();copyContextParts(groupParts().length>1?groupParts():[selected()]);}
+   }
+   if((ev.ctrlKey||ev.metaKey)&&!ev.altKey&&!inField&&ev.key.toLowerCase()==='x'&&selected()){
+     ev.preventDefault();const parts=groupParts().length>1?groupParts():[selected()];copyContextParts(parts);hideContextParts(parts);
+   }
+   if((ev.ctrlKey||ev.metaKey)&&!ev.altKey&&!inField&&ev.key.toLowerCase()==='v'){
+     if(selectedSectionId&&sectionClipboard){ev.preventDefault();pasteSection(selectedSectionId);}
+     else if(partClipboard){ev.preventDefault();pastePart(null);}
+     else if(sectionClipboard&&!selected()){ev.preventDefault();pasteSection(null);}
+   }
    if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='z'&&!inField){ev.preventDefault();ev.shiftKey?redo():undo()}
    if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='y'&&!inField){ev.preventDefault();redo()}
    if((ev.key==='Delete'||ev.key==='Backspace')&&!inField&&selected()){ev.preventDefault();const ids=new Set(groupParts().length>1?groupParts().map(p=>p.id):[selectedId]);mutate(()=>{removePartsOnActiveDevice(ids,page())})}
