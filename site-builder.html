@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v1.25: shared editor snap for all movable elements; Shift disables snapping -->
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -161,13 +162,15 @@
   .top .top-grid-btn:focus-visible{outline:2px solid #9aceff;outline-offset:2px}
 
   .element {position:absolute;touch-action:none;user-select:none;outline:1px solid transparent;cursor:grab;overflow:visible}
-  .element.selected {outline:2px solid #2680ed;z-index:500!important} /* 選択したパーツを重なりの最前面へ */
+  /* Selection is only a visual marker: layer order always follows the
+     saved parts array (and deliberate bring-forward/send-back commands). */
+  .element.selected {outline:2px solid #2680ed;outline-offset:2px}
 .inspector-text-mode{padding:9px 10px!important;border-radius:7px;background:#eff5ff;color:#235493!important;line-height:1.6}.inspector-text-mode.is-partial{background:#deecff;color:#123d7c!important;font-weight:700}
   .element:hover:not(.selected) {outline:1px dashed #81abdf}
 
   /* v0.93: Ctrl-click multi-selection is editor-only; nothing is exported. */
-  .element.multi-selected{outline:2px solid #2680ed!important;outline-offset:2px;z-index:499!important}
-  .element.multi-selected.selected{outline:3px solid #1261c3!important;z-index:500!important}
+  .element.multi-selected{outline:2px solid #2680ed!important;outline-offset:2px}
+  .element.multi-selected.selected{outline:3px solid #1261c3!important}
   .element.multi-selected .resize{display:none!important}
   .msb-multi-count{font-weight:750;color:#174f88;margin:0 0 10px}
   .msb-multi-actions{display:flex;gap:8px;margin:10px 0}
@@ -304,7 +307,7 @@
   .inspector .fullbtn {width:100%;padding:9px 11px;text-align:center}
   .hidden {display:none!important}
   .toast {position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:80;background:#21364e;color:#fff;padding:12px 20px;border-radius:9px;box-shadow:0 8px 26px #1b344e33;max-width:80vw;display:none}
-  .modal {position:fixed;inset:0;z-index:60;background:#142032a8;display:flex;align-items:center;justify-content:center;padding:20px}
+  .modal {position:fixed;inset:0;z-index:7000;background:#142032a8;display:flex;align-items:center;justify-content:center;padding:20px}
   .modal-panel {width:min(480px,100%);background:#fff;border-radius:14px;box-shadow:0 20px 60px #0004;padding:24px;line-height:1.8}
   .modal-panel.preview-panel {width:min(1100px,96vw);height:min(90vh,900px);display:flex;flex-direction:column;gap:12px;padding:14px}
   .modal-panel.preview-panel iframe {flex:1;width:100%;min-height:0;border:1px solid #d8e2ee;background:white;border-radius:8px}
@@ -1061,6 +1064,10 @@
 
   /* v0.85 — Focused canvas tools. All editing properties remain in the 詳細 inspector. */
   .msb-toolbar-internals{display:none!important}
+  .quick-text-toolbar.msb-partial-tools .msb-toolbar-internals{display:flex!important;align-items:center;gap:6px}
+  .quick-text-toolbar.msb-partial-tools .qb-secondary,.quick-text-toolbar.msb-partial-tools .qb-textbg,.quick-text-toolbar.msb-partial-tools #quickToolbarHint{display:none!important}
+  .quick-text-toolbar.msb-partial-tools .quick-label{font-weight:700;color:#175a9f}
+  .quick-text-toolbar.msb-partial-tools{max-width:calc(100vw - 14px);overflow-x:auto}
   .quick-text-toolbar.msb-compact-toolbar{gap:7px;padding:5px 7px;max-width:calc(100vw - 14px);box-shadow:0 5px 17px #142e4c22}
   .quick-text-toolbar.msb-compact-toolbar .quick-label{min-width:36px;padding:0 7px 0 2px}
   .quick-text-toolbar.msb-compact-toolbar .qb-secondary{height:32px;min-width:64px;border:1px solid #c0d0e4;border-radius:7px;padding:4px 9px;background:#fff;color:#274466;font:inherit;font-weight:700;cursor:pointer}
@@ -1279,6 +1286,17 @@ html,body{height:100%;min-height:0;overflow:hidden}
         <button class="catalog-pick" data-add="preset-divider" title="薄い区切り線を配置"><span class="catalog-icon">─</span>区切り線</button>
       </div>
     </details>
+    <details class="catalog-group" data-category="form-controls">
+      <summary>フォーム入力 <span class="catalog-chevron" aria-hidden="true">⌄</span></summary>
+      <div class="catalog-picks">
+        <button class="catalog-pick" data-add="choiceRadio" title="選択肢から1つだけ選択"><span class="catalog-icon">◉</span>ラジオボタン</button>
+        <button class="catalog-pick" data-add="choiceCheckbox" title="選択肢を複数選択"><span class="catalog-icon">☑</span>チェックボックス</button>
+        <button class="catalog-pick" data-add="choiceSelect" title="リストから1つ選択"><span class="catalog-icon">▾</span>プルダウン</button>
+        <button class="catalog-pick" data-add="formInput" title="お名前・メールアドレス・電話番号などの1行入力"><span class="catalog-icon">▤</span>1行入力欄</button>
+        <button class="catalog-pick" data-add="formTextarea" title="お問い合わせ本文などの複数行入力"><span class="catalog-icon">▧</span>複数行入力欄</button>
+        <button class="catalog-pick" data-add="preset-form-confirm-button" title="入力内容の確認画面を開く動作付きボタン"><span class="catalog-icon">✓</span>入力内容を確認</button>
+      </div>
+    </details>
     <details class="catalog-group" data-category="media">
       <summary>メディア・埋め込み <span class="catalog-chevron" aria-hidden="true">⌄</span></summary>
       <div class="catalog-picks">
@@ -1451,19 +1469,23 @@ html,body{height:100%;min-height:0;overflow:hidden}
 
  const MIN_SECTION_HEIGHT=10;
  const MSB_PUBLIC_CSS='\n/* v0.42 published: text gradient and hover content swapping */\n@keyframes msbGradientTravel{from{background-position:0% 50%}to{background-position:100% 50%}}\n.msb-gradient-ink{display:inline;color:transparent!important;-webkit-text-fill-color:transparent!important;-webkit-background-clip:text;background-clip:text;background-repeat:no-repeat;box-decoration-break:clone;-webkit-box-decoration-break:clone}\n.msb-gradient-ink.is-animated{background-size:230% 100%;animation:msbGradientTravel var(--gradient-duration,5s) linear infinite alternate}\n.item .fx-motion-loop{position:relative}\n.item.has-hover-swap .item-body{position:relative}\n.item .msb-hover-original,.item .msb-hover-alt{position:absolute;inset:0;display:block;width:100%;height:100%;overflow:hidden;transition:opacity .26s ease}\n.item .msb-hover-original{opacity:1}\n.item .msb-hover-alt{opacity:0;pointer-events:none}\n.item.has-hover-swap:hover .msb-hover-original,.item.has-hover-swap:focus-within .msb-hover-original{opacity:0}\n.item.has-hover-swap:hover .msb-hover-alt,.item.has-hover-swap:focus-within .msb-hover-alt{opacity:1}\n';
- const MSB_ACTION_CSS="/* v1.03: declarative click interactions */\n.item .item-body.msb-action-trigger{appearance:none;-webkit-appearance:none;display:block;width:100%;height:100%;margin:0;padding:0;background:transparent;border:0;border-radius:inherit;text-align:inherit;color:inherit;font:inherit;cursor:pointer}\n.item .msb-action-trigger:focus-visible{outline:3px solid #2878df;outline-offset:3px}\n.item.msb-action-concealed{display:none!important}\n.item.msb-tab-active>.fx-motion-enter>.fx-motion-loop>.msb-action-trigger{outline:2px solid #2878df;outline-offset:2px}\n.msb-action-overlay{position:fixed;inset:0;z-index:100100;background:#101d2bba;display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}\n.msb-action-dialog{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:13px;max-width:min(850px,96vw);max-height:90dvh;overflow:auto;width:100%;padding:24px;background:#fff;color:#202936;border-radius:12px;box-shadow:0 15px 55px #0005;line-height:1.65}\n.msb-action-dialog h2{font-size:21px;margin:0 0 5px}.msb-action-dialog .msb-action-popup-text{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}\n.msb-action-dialog .msb-action-close{align-self:flex-end;padding:7px 12px;border:1px solid #cbd5e1;border-radius:7px;background:#f5f7fa;cursor:pointer}\n.msb-action-dialog .msb-action-popup-part{flex:none;max-width:100%;min-height:20px;overflow:auto;position:relative}\n.msb-action-dialog .msb-action-popup-part .item-body{position:relative;display:block;width:100%;height:100%;overflow:auto}\n.msb-action-dialog .msb-action-large-image{max-width:100%;max-height:73dvh;width:auto;height:auto;object-fit:contain;margin:auto}\n#msb-action-toast{position:fixed;z-index:100200;bottom:24px;left:50%;transform:translateX(-50%);background:#18304c;color:#fff;border-radius:8px;padding:10px 17px;box-shadow:0 5px 25px #0003;opacity:0;pointer-events:none;transition:opacity .2s}\n#msb-action-toast.shown{opacity:1}\n@media print{.msb-action-overlay,#msb-action-toast{display:none!important}}\n";
- const MSB_ACTION_SCRIPT="(function(){\n  'use strict';\n  // Declarative action runtime. Only explicitly configured triggers can operate\n  // on existing parts; no user-supplied script or HTML is evaluated.\n  const roots=[...document.querySelectorAll('[data-msb-click-action]')];\n  if(!roots.length)return;\n  const main=document.getElementById('page-top');\n  const allItems=[...document.querySelectorAll('.item')];\n  const mainItems=[...document.querySelectorAll('main#page-top>.item')];\n  const mainBands=[...document.querySelectorAll('main#page-top>.bg-band')];\n  const lookup=id=>document.getElementById('anchor-part-'+id);\n  const actionOf=root=>root.dataset.msbClickAction;\n  const targetsOf=root=>(root.dataset.msbClickTargets||'').split(',').filter(Boolean).map(lookup).filter(Boolean);\n  const collapsible=roots.filter(root=>['accordion','toggle','popup','tab'].includes(actionOf(root)));\n  const state=new Map();\n  const tabs=new Map();\n  for(const root of roots){\n    const kind=actionOf(root);\n    state.set(root,(kind==='accordion'||kind==='toggle')&&root.dataset.msbStartOpen==='true');\n    if(kind==='tab'){\n      const group=root.dataset.msbClickGroup||'default';\n      if(!tabs.has(group))tabs.set(group,[]);\n      tabs.get(group).push(root);\n    }\n  }\n  for(const group of tabs.values()){if(group.length)state.set(group[0],true);}\n  const cssOriginalVisible=new Map();\n  function refresh(){\n    // Restore authored CSS before reading current device breakpoints. Layout is\n    // recomputed from the saved baseline, never from a prior mutated position.\n    for(const node of allItems){node.style.top='';node.classList.remove('msb-action-concealed');}\n    for(const band of mainBands){band.style.top='';band.style.height='';}\n    if(main)main.style.minHeight='';\n    cssOriginalVisible.clear();\n    for(const node of allItems)cssOriginalVisible.set(node,getComputedStyle(node).display!=='none');\n    for(const group of tabs.values()){\n      const available=group.filter(root=>cssOriginalVisible.get(root));\n      const active=available.find(root=>state.get(root))||available[0];\n      if(active)for(const root of group)state.set(root,root===active);\n    }\n    const baseTop=new Map(allItems.map(node=>[node,parseFloat(getComputedStyle(node).top)||0]));\n    const baseHeight=new Map(allItems.map(node=>[node,node.offsetHeight||parseFloat(getComputedStyle(node).height)||0]));\n    const bandRects=mainBands.map(node=>({node,top:parseFloat(getComputedStyle(node).top)||0,height:parseFloat(getComputedStyle(node).height)||0}));\n    const flows=[];\n    const hidden=new Set();\n    // Declared popup parts, accordion contents, and inactive tab panes are\n    // hidden at load. Visibility from the responsive design still takes priority.\n    for(const root of collapsible){\n      if(!cssOriginalVisible.get(root))continue;\n      const kind=actionOf(root),items=targetsOf(root).filter(t=>cssOriginalVisible.get(t)&&t!==root);\n      const expanded=!!state.get(root);\n      const show=expanded;\n      const btn=root.querySelector('.msb-action-trigger');\n      if(btn){\n        if(kind==='tab')btn.setAttribute('aria-pressed',String(expanded));\n        else if(kind==='accordion'||kind==='toggle')btn.setAttribute('aria-expanded',String(expanded));\n      }\n      root.classList.toggle('msb-tab-active',kind==='tab'&&expanded);\n      if(kind==='popup'||!show)for(const t of items)hidden.add(t);\n      if(kind==='accordion'&&!expanded&&items.length){\n        const top=Math.min(...items.map(t=>baseTop.get(t)));\n        const end=Math.max(...items.map(t=>baseTop.get(t)+baseHeight.get(t)));\n        if(end>top)flows.push({top,end,height:end-top,items:new Set(items)});\n      }\n    }\n    for(const item of hidden)item.classList.add('msb-action-concealed');\n    if(flows.length){\n      for(const node of mainItems){\n        if(!cssOriginalVisible.get(node)||node.classList.contains('menu-part'))continue;\n        const y=baseTop.get(node);\n        const dy=flows.reduce((sum,flow)=>sum+(y>=flow.end-0.5&&!flow.items.has(node)?flow.height:0),0);\n        if(dy)node.style.top=(y-dy)+'px';\n      }\n      // Close the background and move subsequent sections only when an entire\n      // accordion is located inside one section. Other sections remain intact.\n      for(const band of bandRects){\n        const before=flows.reduce((sum,f)=>sum+(f.end<=band.top+0.5?f.height:0),0);\n        const inside=flows.reduce((sum,f)=>sum+(f.top>=band.top-0.5&&f.end<=band.top+band.height+0.5?f.height:0),0);\n        if(before)band.node.style.top=(band.top-before)+'px';\n        if(inside)band.node.style.height=Math.max(10,band.height-inside)+'px';\n      }\n      if(main){\n        const original=parseFloat(getComputedStyle(main).minHeight)||0;\n        const total=flows.reduce((sum,f)=>sum+f.height,0);\n        if(total)main.style.minHeight=Math.max(10,original-total)+'px';\n      }\n    }\n    window.dispatchEvent(new Event('msb:layoutchange'));\n  }\n  function toast(message){\n    let t=document.getElementById('msb-action-toast');\n    if(!t){t=document.createElement('div');t.id='msb-action-toast';t.setAttribute('role','status');document.body.append(t)}\n    t.textContent=message;t.classList.add('shown');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('shown'),2400);\n  }\n  async function copyText(value){\n    try{\n      if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(value);toast('コピーしました');return;}\n      const ta=document.createElement('textarea');ta.value=value;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;left:-9999px;top:0';document.body.append(ta);ta.select();const ok=document.execCommand('copy');ta.remove();if(!ok)throw Error('copy failed');toast('コピーしました');\n    }catch{toast('コピーできませんでした。ブラウザの権限をご確認ください。');}\n  }\n  function openModal(root,isZoom){\n    const overlay=document.createElement('div');overlay.className='msb-action-overlay';\n    const panel=document.createElement('section');panel.className='msb-action-dialog';panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',isZoom?'画像の拡大表示':(root.dataset.msbPopupTitle||'詳細'));\n    const close=document.createElement('button');close.type='button';close.className='msb-action-close';close.textContent='閉じる ×';\n    const dismiss=()=>{overlay.remove();document.removeEventListener('keydown',escape);root.querySelector('.msb-action-trigger')?.focus();};\n    const escape=ev=>{if(ev.key==='Escape'){ev.preventDefault();dismiss();}};\n    close.onclick=dismiss;overlay.onclick=ev=>{if(ev.target===overlay)dismiss()};\n    panel.append(close);\n    if(isZoom){\n      const img=[...root.querySelectorAll('.item-body img')].find(n=>getComputedStyle(n).display!=='none');\n      if(!img)return toast('拡大する画像がありません');\n      const larger=document.createElement('img');larger.src=img.src;larger.alt=img.alt||'';larger.className='msb-action-large-image';panel.append(larger);\n    }else{\n      const title=root.dataset.msbPopupTitle||'';\n      if(title){const heading=document.createElement('h2');heading.textContent=title;panel.append(heading);}\n      const message=root.dataset.msbPopupText||'';\n      if(message){const p=document.createElement('p');p.className='msb-action-popup-text';p.textContent=message;panel.append(p);}\n      for(const target of targetsOf(root).filter(t=>cssOriginalVisible.get(t))){\n        // The actual editable part stays in place; the dialog displays a copy.\n        const body=target.querySelector('.item-body');if(!body)continue;\n        const item=document.createElement('div');item.className='msb-action-popup-part';\n        const content=body.cloneNode(true);content.removeAttribute('href');content.removeAttribute('target');content.style.height='100%';\n        const width=Math.max(100,Math.min(target.offsetWidth||parseFloat(getComputedStyle(target).width)||500,800));\n        const height=Math.max(35,Math.min(target.offsetHeight||parseFloat(getComputedStyle(target).height)||180,600));\n        item.style.width='min(100%,'+width+'px)';item.style.height=height+'px';\n        item.append(content);panel.append(item);\n      }\n    }\n    overlay.append(panel);document.body.append(overlay);document.addEventListener('keydown',escape);close.focus();\n  }\n  function switchTab(clicked){\n    const group=tabs.get(clicked.dataset.msbClickGroup||'default')||[];\n    for(const root of group)state.set(root,root===clicked);\n  }\n  document.addEventListener('click',ev=>{\n    const btn=ev.target.closest('.msb-action-trigger');if(!btn)return;\n    const root=btn.closest('[data-msb-click-action]');if(!root)return;\n    const kind=actionOf(root);\n    if(kind==='accordion'||kind==='toggle'){\n      state.set(root,!state.get(root));refresh();window.dispatchEvent(new Event('resize'));return;\n    }\n    if(kind==='tab'){switchTab(root);refresh();return;}\n    if(kind==='copy'){copyText(root.dataset.msbCopyText||root.textContent.trim());return;}\n    if(kind==='popup'){openModal(root,false);return;}\n    if(kind==='zoom'){openModal(root,true);}\n  });\n  // Re-evaluate which parts are visible after changing device breakpoint.\n  let pending=false;\n  window.addEventListener('resize',()=>{\n    if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;refresh();});\n  },{passive:true});\n  refresh();\n})();\n";
+ const MSB_ACTION_CSS="/* v1.03: declarative click interactions */\n.item .item-body.msb-action-trigger{appearance:none;-webkit-appearance:none;display:block;width:100%;height:100%;margin:0;padding:0;background:transparent;border:0;border-radius:inherit;text-align:inherit;color:inherit;font:inherit;cursor:pointer}\n.item .msb-action-trigger:focus-visible{outline:3px solid #2878df;outline-offset:3px}\n.item.msb-action-concealed{display:none!important}\n.item.msb-tab-active>.fx-motion-enter>.fx-motion-loop>.msb-action-trigger{outline:2px solid #2878df;outline-offset:2px}\n.msb-action-overlay{position:fixed;inset:0;z-index:100100;background:#101d2bba;display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}\n.msb-action-dialog{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:13px;max-width:min(850px,96vw);max-height:90dvh;overflow:auto;width:100%;padding:24px;background:#fff;color:#202936;border-radius:12px;box-shadow:0 15px 55px #0005;line-height:1.65}\n.msb-action-dialog h2{font-size:21px;margin:0 0 5px}.msb-action-dialog .msb-action-popup-text{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}\n.msb-action-dialog .msb-action-close{align-self:flex-end;padding:7px 12px;border:1px solid #cbd5e1;border-radius:7px;background:#f5f7fa;cursor:pointer}\n.msb-action-dialog .msb-action-popup-part{flex:none;max-width:100%;min-height:20px;overflow:auto;position:relative}\n.msb-action-dialog .msb-action-popup-part .item-body{position:relative;display:block;width:100%;height:100%;overflow:auto}\n.msb-action-dialog .msb-action-large-image{max-width:100%;max-height:73dvh;width:auto;height:auto;object-fit:contain;margin:auto}\n#msb-action-toast{position:fixed;z-index:100200;bottom:24px;left:50%;transform:translateX(-50%);background:#18304c;color:#fff;border-radius:8px;padding:10px 17px;box-shadow:0 5px 25px #0003;opacity:0;pointer-events:none;transition:opacity .2s}\n#msb-action-toast.shown{opacity:1}\n@media print{.msb-action-overlay,#msb-action-toast{display:none!important}}\n\n/* Reusable form confirmation dialog — independent of visual theme and device profile. */\n.msb-form-confirm-dialog{max-width:580px;gap:12px}\n.msb-form-confirm-list{margin:0;width:100%;display:flex;flex-direction:column;gap:13px;font-size:14px;line-height:1.65}\n.msb-form-confirm-entry{display:flex;flex-direction:column;gap:5px;min-width:0}\n.msb-form-confirm-entry dt,.msb-form-confirm-entry dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}\n.msb-form-confirm-entry dt{font-weight:700;color:#394b60;font-size:13px;padding:0 2px}\n.msb-form-confirm-entry dd{color:#1f2937;background:#f7f9fc;border:1px solid #d9e1eb;border-radius:7px;padding:10px 12px;min-height:39px}\n.msb-form-confirm-entry dd.msb-form-confirm-empty{color:#7a8593;background:#fbfcfe}\n.msb-form-confirm-question{width:100%;font-size:14px;font-weight:700;margin:10px 0 0;color:#253b57}\n.msb-form-confirm-actions{display:flex;width:100%;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:7px}\n.msb-form-confirm-actions button{font:inherit;font-weight:700;cursor:pointer;padding:11px 19px;border:1px solid #b8c5d4;border-radius:8px;color:#263e5c;background:#fff}\n.msb-form-confirm-actions button.msb-form-confirm-send{background:#276fe1;border-color:#276fe1;color:white}\n.msb-form-confirm-actions button:disabled{opacity:.48;cursor:not-allowed}\n.msb-form-confirm-note{color:#874c12;background:#fff7ed;border:1px solid #f2d0a2;border-radius:6px;padding:10px;margin:0}\n.msb-form-confirm-status{margin:0;color:#28465d;font-size:13px}\n@media(max-width:480px){.msb-form-confirm-dialog{padding:16px}.msb-form-confirm-list{gap:10px;font-size:13px}.msb-form-confirm-entry dd{padding:9px 10px}}\n";
+ const MSB_ACTION_SCRIPT="(function(){\n  'use strict';\n  // Declarative action runtime. Only explicitly configured triggers can operate\n  // on existing parts; no user-supplied script or HTML is evaluated.\n  const roots=[...document.querySelectorAll('[data-msb-click-action]')];\n  if(!roots.length)return;\n  const main=document.getElementById('page-top');\n  const allItems=[...document.querySelectorAll('.item')];\n  const mainItems=[...document.querySelectorAll('main#page-top>.item')];\n  const mainBands=[...document.querySelectorAll('main#page-top>.bg-band')];\n  const lookup=id=>document.getElementById('anchor-part-'+id);\n  const actionOf=root=>root.dataset.msbClickAction;\n  const targetsOf=root=>(root.dataset.msbClickTargets||'').split(',').filter(Boolean).map(lookup).filter(Boolean);\n  const collapsible=roots.filter(root=>['accordion','toggle','popup','tab'].includes(actionOf(root)));\n  const state=new Map();\n  const tabs=new Map();\n  for(const root of roots){\n    const kind=actionOf(root);\n    state.set(root,(kind==='accordion'||kind==='toggle')&&root.dataset.msbStartOpen==='true');\n    if(kind==='tab'){\n      const group=root.dataset.msbClickGroup||'default';\n      if(!tabs.has(group))tabs.set(group,[]);\n      tabs.get(group).push(root);\n    }\n  }\n  for(const group of tabs.values()){if(group.length)state.set(group[0],true);}\n  const cssOriginalVisible=new Map();\n  function refresh(){\n    // Restore authored CSS before reading current device breakpoints. Layout is\n    // recomputed from the saved baseline, never from a prior mutated position.\n    for(const node of allItems){node.style.top='';node.classList.remove('msb-action-concealed');}\n    for(const band of mainBands){band.style.top='';band.style.height='';}\n    if(main)main.style.minHeight='';\n    cssOriginalVisible.clear();\n    for(const node of allItems)cssOriginalVisible.set(node,getComputedStyle(node).display!=='none');\n    for(const group of tabs.values()){\n      const available=group.filter(root=>cssOriginalVisible.get(root));\n      const active=available.find(root=>state.get(root))||available[0];\n      if(active)for(const root of group)state.set(root,root===active);\n    }\n    const baseTop=new Map(allItems.map(node=>[node,parseFloat(getComputedStyle(node).top)||0]));\n    const baseHeight=new Map(allItems.map(node=>[node,node.offsetHeight||parseFloat(getComputedStyle(node).height)||0]));\n    const bandRects=mainBands.map(node=>({node,top:parseFloat(getComputedStyle(node).top)||0,height:parseFloat(getComputedStyle(node).height)||0}));\n    const flows=[];\n    const hidden=new Set();\n    // Declared popup parts, accordion contents, and inactive tab panes are\n    // hidden at load. Visibility from the responsive design still takes priority.\n    for(const root of collapsible){\n      if(!cssOriginalVisible.get(root))continue;\n      const kind=actionOf(root),items=targetsOf(root).filter(t=>cssOriginalVisible.get(t)&&t!==root);\n      const expanded=!!state.get(root);\n      const show=expanded;\n      const btn=root.querySelector('.msb-action-trigger');\n      if(btn){\n        if(kind==='tab')btn.setAttribute('aria-pressed',String(expanded));\n        else if(kind==='accordion'||kind==='toggle')btn.setAttribute('aria-expanded',String(expanded));\n      }\n      root.classList.toggle('msb-tab-active',kind==='tab'&&expanded);\n      if(kind==='popup'||!show)for(const t of items)hidden.add(t);\n      if(kind==='accordion'&&!expanded&&items.length){\n        const top=Math.min(...items.map(t=>baseTop.get(t)));\n        const end=Math.max(...items.map(t=>baseTop.get(t)+baseHeight.get(t)));\n        if(end>top)flows.push({top,end,height:end-top,items:new Set(items)});\n      }\n    }\n    for(const item of hidden)item.classList.add('msb-action-concealed');\n    if(flows.length){\n      for(const node of mainItems){\n        if(!cssOriginalVisible.get(node)||node.classList.contains('menu-part'))continue;\n        const y=baseTop.get(node);\n        const dy=flows.reduce((sum,flow)=>sum+(y>=flow.end-0.5&&!flow.items.has(node)?flow.height:0),0);\n        if(dy)node.style.top=(y-dy)+'px';\n      }\n      // Close the background and move subsequent sections only when an entire\n      // accordion is located inside one section. Other sections remain intact.\n      for(const band of bandRects){\n        const before=flows.reduce((sum,f)=>sum+(f.end<=band.top+0.5?f.height:0),0);\n        const inside=flows.reduce((sum,f)=>sum+(f.top>=band.top-0.5&&f.end<=band.top+band.height+0.5?f.height:0),0);\n        if(before)band.node.style.top=(band.top-before)+'px';\n        if(inside)band.node.style.height=Math.max(10,band.height-inside)+'px';\n      }\n      if(main){\n        const original=parseFloat(getComputedStyle(main).minHeight)||0;\n        const total=flows.reduce((sum,f)=>sum+f.height,0);\n        if(total)main.style.minHeight=Math.max(10,original-total)+'px';\n      }\n    }\n    window.dispatchEvent(new Event('msb:layoutchange'));\n  }\n  function toast(message,duration=2400){\n    let t=document.getElementById('msb-action-toast');\n    if(!t){t=document.createElement('div');t.id='msb-action-toast';t.setAttribute('role','status');document.body.append(t)}\n    t.textContent=message;t.classList.add('shown');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('shown'),duration);\n  }\n  async function copyText(value){\n    try{\n      if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(value);toast('コピーしました');return;}\n      const ta=document.createElement('textarea');ta.value=value;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;left:-9999px;top:0';document.body.append(ta);ta.select();const ok=document.execCommand('copy');ta.remove();if(!ok)throw Error('copy failed');toast('コピーしました');\n    }catch{toast('コピーできませんでした。ブラウザの権限をご確認ください。');}\n  }\n  function openModal(root,isZoom){\n    const overlay=document.createElement('div');overlay.className='msb-action-overlay';\n    const panel=document.createElement('section');panel.className='msb-action-dialog';panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',isZoom?'画像の拡大表示':(root.dataset.msbPopupTitle||'詳細'));\n    const close=document.createElement('button');close.type='button';close.className='msb-action-close';close.textContent='閉じる ×';\n    const dismiss=()=>{overlay.remove();document.removeEventListener('keydown',escape);root.querySelector('.msb-action-trigger')?.focus();};\n    const escape=ev=>{if(ev.key==='Escape'){ev.preventDefault();dismiss();}};\n    close.onclick=dismiss;overlay.onclick=ev=>{if(ev.target===overlay)dismiss()};\n    panel.append(close);\n    if(isZoom){\n      const img=[...root.querySelectorAll('.item-body img')].find(n=>getComputedStyle(n).display!=='none');\n      if(!img)return toast('拡大する画像がありません');\n      const larger=document.createElement('img');larger.src=img.src;larger.alt=img.alt||'';larger.className='msb-action-large-image';panel.append(larger);\n    }else{\n      const title=root.dataset.msbPopupTitle||'';\n      if(title){const heading=document.createElement('h2');heading.textContent=title;panel.append(heading);}\n      const message=root.dataset.msbPopupText||'';\n      if(message){const p=document.createElement('p');p.className='msb-action-popup-text';p.textContent=message;panel.append(p);}\n      for(const target of targetsOf(root).filter(t=>cssOriginalVisible.get(t))){\n        // The actual editable part stays in place; the dialog displays a copy.\n        const body=target.querySelector('.item-body');if(!body)continue;\n        const item=document.createElement('div');item.className='msb-action-popup-part';\n        const content=body.cloneNode(true);content.removeAttribute('href');content.removeAttribute('target');content.style.height='100%';\n        const width=Math.max(100,Math.min(target.offsetWidth||parseFloat(getComputedStyle(target).width)||500,800));\n        const height=Math.max(35,Math.min(target.offsetHeight||parseFloat(getComputedStyle(target).height)||180,600));\n        item.style.width='min(100%,'+width+'px)';item.style.height=height+'px';\n        item.append(content);panel.append(item);\n      }\n    }\n    overlay.append(panel);document.body.append(overlay);document.addEventListener('keydown',escape);close.focus();\n  }\n  function switchTab(clicked){\n    const group=tabs.get(clicked.dataset.msbClickGroup||'default')||[];\n    for(const root of group)state.set(root,root===clicked);\n  }\n\n  // Reusable, declaration-only form workflow for any SiteBuilder page.\n  // Never report a successful delivery before the destination server confirms it.\n  function msbIsVisible(el){\n    if(!el||!el.getClientRects().length)return false;\n    for(let n=el;n&&n!==document;n=n.parentElement){\n      const st=getComputedStyle(n);\n      if(st.display==='none'||st.visibility==='hidden'||st.visibility==='collapse')return false;\n      if(n.classList?.contains('msb-action-concealed'))return false;\n    }\n    return true;\n  }\n  function msbCollectFields(){\n    const groups=new Map();\n    for(const item of allItems){\n      const kind=item.dataset.msbFormKind;\n      if(!kind||!msbIsVisible(item))continue;\n      const control=[...item.querySelectorAll('.msb-form-text-control,.msb-choice-control')].filter(c=>!c.disabled&&msbIsVisible(c));\n      if(!control.length)continue;\n      const label=item.dataset.msbFormLabel?.trim()||'選択項目';\n      const groupKey=label; // Identical names across checkbox columns merge into one field.\n      let group=groups.get(groupKey);\n      const bounds=item.getBoundingClientRect();\n      if(!group){group={label,values:[],required:false,when:[],controls:[],kind,sortY:bounds.top,sortX:bounds.left};groups.set(groupKey,group);}\n      else if(bounds.top<group.sortY-1||(Math.abs(bounds.top-group.sortY)<=1&&bounds.left<group.sortX)){\n        group.sortY=bounds.top;group.sortX=bounds.left;\n      }\n      group.required ||= item.dataset.msbFormRequired==='true';\n      if(item.dataset.msbFormRequiredWhen)group.when.push({partId:item.dataset.msbFormRequiredWhenPart||'',option:item.dataset.msbFormRequiredWhen});\n      group.controls.push(...control);\n      if(kind==='formInput'||kind==='formTextarea'){\n        for(const c of control){if(c.value.trim())group.values.push(c.value.trim());}\n      }else if(kind==='choiceSelect'){\n        for(const c of control){if(c.value.trim())group.values.push(c.value.trim());}\n      }else{\n        for(const c of control){if(c.checked)group.values.push(c.value.trim());}\n      }\n    }\n    const entries=[...groups.values()].sort((a,b)=>a.sortY-b.sortY||a.sortX-b.sortX);\n    const selectedRadio=new Set();\n    const selectedRadioByPart=new Map();\n    for(const item of allItems){\n      if(item.dataset.msbFormKind!=='choiceRadio'||!msbIsVisible(item))continue;\n      const partId=item.dataset.msbFormPartId||'';\n      for(const radio of item.querySelectorAll('.msb-choice-control[type=radio]')){\n        if(!radio.checked||radio.disabled||!msbIsVisible(radio))continue;\n        selectedRadio.add(radio.value);\n        if(partId){if(!selectedRadioByPart.has(partId))selectedRadioByPart.set(partId,new Set());selectedRadioByPart.get(partId).add(radio.value);}\n      }\n    }\n    // A syntactically plausible email can still be undeliverable. Specifically\n    // catch accidental characters appended to familiar email providers.\n    const commonMailDomains=['gmail.com','yahoo.co.jp','yahoo.com','outlook.com','hotmail.com','icloud.com'];\n    function emailProblem(raw){\n      const v=raw.trim();\n      const ok=/^[a-zA-Z0-9.!#$%&'*+\\/=\\?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/.test(v);\n      if(!ok||v.length>254||v.split('@')[0].length>64||v.includes('..'))return '正しいメールアドレスを入力してください。';\n      const domain=v.split('@')[1].toLowerCase();\n      const suspect=commonMailDomains.find(known=>domain!==known&&domain.startsWith(known)&&domain.length>known.length);\n      if(suspect)return 'メールアドレスの末尾をご確認ください（'+suspect+' に余分な文字が付いている可能性があります）。';\n      return '';\n    }\n    for(const entry of entries){\n      const missing=entry.required||entry.when.some(rule=>rule.partId?(selectedRadioByPart.get(rule.partId)?.has(rule.option)===true):selectedRadio.has(rule.option));\n      if(missing&&!entry.values.length)return {error:'「'+entry.label+'」を入力または選択してください。',control:entry.controls[0]};\n      for(const c of entry.controls){\n        const value=(c.value||'').trim();\n        if(!value||c.type==='radio'||c.type==='checkbox')continue;\n        if(c.type==='email'){\n          const issue=emailProblem(value);\n          if(issue)return {error:'「'+entry.label+'」：'+issue,control:c};\n        }\n        if(c.type==='tel'){\n          const digits=value.replace(/\\D/g,'');\n          if(!/^[0-9０-９+＋()（）\\s\\-ー－]+$/.test(value)||digits.length<8||digits.length>15){\n            return {error:'「'+entry.label+'」に正しい電話番号を入力してください。',control:c};\n          }\n        }\n        const isName=/^(name|given-name|family-name)$/.test(c.getAttribute('autocomplete')||'') || c.name==='name' || /^(お名前|氏名|ご氏名)$/.test(entry.label);\n        if(isName&&[...value].length>80)return {error:'「'+entry.label+'」は80文字以内で入力してください。',control:c};\n      }\n    }\n    if(!entries.length)return {error:'このページに入力欄がありません。'};\n    return {entries};\n  }\n  function msbFormConfirm(root){\n    const result=msbCollectFields();\n    if(result.error){\n      toast(result.error,5000);\n      if(result.control){result.control.scrollIntoView({behavior:'smooth',block:'center'});result.control.focus({preventScroll:true});}\n      return;\n    }\n    // Order follows the actual visible form on the active device by default.\n    // For fixed ordering across layouts, authors may specify one field per line.\n    const preferred=(root.dataset.msbConfirmOrder||'').split(/[\\n,、，]+/).map(v=>v.trim()).filter(Boolean);\n    if(preferred.length){\n      const priority=new Map(preferred.map((label,index)=>[label,index]));\n      result.entries.sort((a,b)=>{\n        const ia=priority.has(a.label)?priority.get(a.label):Infinity;\n        const ib=priority.has(b.label)?priority.get(b.label):Infinity;\n        return ia-ib||a.sortY-b.sortY||a.sortX-b.sortX;\n      });\n    }\n    const destination=(root.dataset.msbSubmitUrl||'').trim();\n    const validDestination=destination.startsWith('https://')&&(()=>{try{return new URL(destination).protocol==='https:'}catch{return false}})();\n    const overlay=document.createElement('div');overlay.className='msb-action-overlay msb-form-confirm-overlay';\n    const dialog=document.createElement('section');dialog.className='msb-action-dialog msb-form-confirm-dialog';\n    dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label','入力内容の確認');\n    const title=document.createElement('h2');title.textContent='入力内容の確認';dialog.append(title);\n    const list=document.createElement('dl');list.className='msb-form-confirm-list';\n    const showEmpty=root.dataset.msbConfirmShowEmpty!=='false';\n    for(const entry of result.entries){\n      if(!showEmpty&&!entry.values.length)continue;\n      const row=document.createElement('div');row.className='msb-form-confirm-entry';\n      const dt=document.createElement('dt');dt.textContent=entry.label;\n      const dd=document.createElement('dd');\n      dd.textContent=entry.values.length?entry.values.join('、'):'（未入力）';\n      if(!entry.values.length)dd.classList.add('msb-form-confirm-empty');\n      row.append(dt,dd);list.append(row);\n    }\n    dialog.append(list);\n    if(!destination){const note=document.createElement('p');note.className='msb-form-confirm-note';note.textContent='確認画面の動作確認用です。送信先URLが未設定のため、送信はできません。';dialog.append(note);}\n    else if(!validDestination){const note=document.createElement('p');note.className='msb-form-confirm-note';note.textContent='送信先には有効なHTTPSのURLを設定してください。';dialog.append(note);}\n    const confirmation=document.createElement('p');confirmation.className='msb-form-confirm-question';confirmation.textContent='この内容で送信してもよろしいですか？';dialog.append(confirmation);\n    const status=document.createElement('p');status.className='msb-form-confirm-status';status.setAttribute('role','status');dialog.append(status);\n    const actions=document.createElement('div');actions.className='msb-form-confirm-actions';\n    const back=document.createElement('button');back.type='button';back.textContent='修正する';\n    const send=document.createElement('button');send.type='button';send.className='msb-form-confirm-send';send.textContent='送信する';send.disabled=!validDestination;\n    const close=()=>{overlay.remove();document.removeEventListener('keydown',onEsc);root.querySelector('.msb-action-trigger')?.focus();};\n    const onEsc=ev=>{if(ev.key==='Escape'){ev.preventDefault();close();}};\n    back.addEventListener('click',close);\n    overlay.addEventListener('click',ev=>{if(ev.target===overlay)close();});\n    send.addEventListener('click',()=>{\n      if(!validDestination||send.disabled)return;\n      // Standard form POST is compatible with Google Apps Script Web Apps.\n      // The server's response page is the authoritative success/failure message.\n      // This page deliberately does not claim that the mail was delivered.\n      const payload={format:'morhirc-site-builder-form-v1',source:location.href,title:document.title,submittedAt:new Date().toISOString(),fields:result.entries.map(g=>({name:g.label,value:g.values.join('、'),values:g.values}))};\n      const form=document.createElement('form');form.method='POST';form.action=destination;form.target='_blank';form.rel='noopener';form.style.display='none';\n      const input=document.createElement('input');input.type='hidden';input.name='payload';input.value=JSON.stringify(payload);form.append(input);\n      document.body.append(form);\n      form.submit();form.remove();\n      send.disabled=true;status.textContent='送信先を別タブで開きます。送信の成否は、表示された送信結果をご確認ください。';\n    });\n    actions.append(back,send);dialog.append(actions);overlay.append(dialog);document.body.append(overlay);\n    document.addEventListener('keydown',onEsc);back.focus();\n  }\n\n  document.addEventListener('click',ev=>{\n    const btn=ev.target.closest('.msb-action-trigger');if(!btn)return;\n    const root=btn.closest('[data-msb-click-action]');if(!root)return;\n    const kind=actionOf(root);\n    if(kind==='formConfirm'){msbFormConfirm(root);return;}\n    if(kind==='accordion'||kind==='toggle'){\n      state.set(root,!state.get(root));refresh();window.dispatchEvent(new Event('resize'));return;\n    }\n    if(kind==='tab'){switchTab(root);refresh();return;}\n    if(kind==='copy'){copyText(root.dataset.msbCopyText||root.textContent.trim());return;}\n    if(kind==='popup'){openModal(root,false);return;}\n    if(kind==='zoom'){openModal(root,true);}\n  });\n  // Re-evaluate which parts are visible after changing device breakpoint.\n  let pending=false;\n  window.addEventListener('resize',()=>{\n    if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;refresh();});\n  },{passive:true});\n  refresh();\n})();\n";
  const FX_PUBLIC_SCRIPT="(function(){\n const entrance=[...document.querySelectorAll('.fx-e-fade,.fx-e-up,.fx-e-left,.fx-e-zoom,.fx-e-blur')];\n if('IntersectionObserver' in window){\n   const watcher=new IntersectionObserver(rows=>{for(const row of rows){if(!row.isIntersecting)continue;row.target.classList.remove('fx-enter-ready');row.target.classList.add('fx-enter-show');watcher.unobserve(row.target)}},{threshold:.08});\n   for(const part of entrance){part.classList.add('fx-enter-ready');watcher.observe(part)}\n }else for(const part of entrance)part.classList.add('fx-enter-show');\n document.addEventListener('click',event=>{\n   const part=event.target.closest('.fx-c-pop,.fx-c-shake,.fx-c-flip,.fx-c-pulse');\n   if(!part)return;\n   part.classList.remove('fx-fired');void part.offsetWidth;part.classList.add('fx-fired');\n   const body=part.querySelector('.item-body');if(body)body.addEventListener('animationend',()=>part.classList.remove('fx-fired'),{once:true});\n });\n})();";
  const FX_PUBLIC_CSS="\n/* v0.40 effects: explicit user-selected effects run in editor and published HTML */\n.fx-motion-enter,.fx-motion-loop{height:100%;width:100%;position:relative}\n.fx-part>:is(.fx-motion-enter)>.fx-motion-loop>:is(.content,.item-body){transition:transform calc(.32s * var(--fx-speed,1)) ease,box-shadow calc(.32s * var(--fx-speed,1)) ease,filter calc(.32s * var(--fx-speed,1)) ease,opacity calc(.32s * var(--fx-speed,1)) ease,background-color calc(.32s * var(--fx-speed,1)) ease}\n.fx-h-lift:hover .content,.fx-h-lift:hover .item-body{transform:translateY(-6px);box-shadow:0 12px 24px #172d4d45}\n.fx-h-zoom:hover .content,.fx-h-zoom:hover .item-body{transform:scale(1.065)}\n.fx-h-shadow:hover .content,.fx-h-shadow:hover .item-body{box-shadow:0 15px 28px #182c4c70}\n.fx-h-tilt:hover .content,.fx-h-tilt:hover .item-body{transform:rotate(-3deg)}\n.fx-h-tint:hover .content,.fx-h-tint:hover .item-body{filter:brightness(1.15) saturate(1.25)}\n.fx-v-soft .content,.fx-v-soft .item-body{box-shadow:0 5px 13px #152b4933}\n.fx-v-deep .content,.fx-v-deep .item-body{box-shadow:0 12px 28px #10223f65}\n.fx-v-glow .content,.fx-v-glow .item-body{box-shadow:0 0 0 2px #5295ee91,0 0 22px #519de99e}\n.fx-v-glass .content,.fx-v-glass .item-body{backdrop-filter:blur(8px) saturate(125%);-webkit-backdrop-filter:blur(8px) saturate(125%);box-shadow:inset 0 0 0 1px #ffffff75,0 6px 20px #11254721}\n.fx-v-gray .content,.fx-v-gray .item-body{filter:grayscale(1)}\n@keyframes fxFade{from{opacity:0}to{opacity:1}}\n@keyframes fxUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}\n@keyframes fxLeft{from{opacity:0;transform:translateX(-32px)}to{opacity:1;transform:translateX(0)}}\n@keyframes fxZoom{from{opacity:0;transform:scale(.78)}to{opacity:1;transform:scale(1)}}\n@keyframes fxBlur{from{opacity:0;filter:blur(14px)}to{opacity:1;filter:blur(0)}}\n@keyframes fxPop{0%{transform:scale(1)}45%{transform:scale(1.15)}100%{transform:scale(1)}}\n@keyframes fxShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}\n@keyframes fxFlip{0%{transform:perspective(450px) rotateY(0)}50%{transform:perspective(450px) rotateY(90deg)}100%{transform:perspective(450px) rotateY(360deg)}}\n@keyframes fxTapPulse{0%{transform:scale(1)}40%{transform:scale(.91)}75%{transform:scale(1.08)}100%{transform:scale(1)}}\n@keyframes fxFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}\n@keyframes fxBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.065)}}\n@keyframes fxSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}\n@keyframes fxSway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}\n@keyframes fxGlow{0%,100%{filter:drop-shadow(0 0 0 #3685f000)}50%{filter:drop-shadow(0 0 9px #3685f0b0)}}\n.fx-e-fade.fx-enter-show>.fx-motion-enter{animation:fxFade calc(.75s * var(--fx-speed,1)) both ease-out;animation-delay:var(--fx-delay,0s)}\n.fx-e-up.fx-enter-show>.fx-motion-enter{animation:fxUp calc(.75s * var(--fx-speed,1)) both ease-out;animation-delay:var(--fx-delay,0s)}\n.fx-e-left.fx-enter-show>.fx-motion-enter{animation:fxLeft calc(.75s * var(--fx-speed,1)) both ease-out;animation-delay:var(--fx-delay,0s)}\n.fx-e-zoom.fx-enter-show>.fx-motion-enter{animation:fxZoom calc(.75s * var(--fx-speed,1)) both ease-out;animation-delay:var(--fx-delay,0s)}\n.fx-e-blur.fx-enter-show>.fx-motion-enter{animation:fxBlur calc(.8s * var(--fx-speed,1)) both ease-out;animation-delay:var(--fx-delay,0s)}\n.fx-enter-ready:not(.fx-enter-show)>.fx-motion-enter{opacity:0}\n.fx-l-float>.fx-motion-enter>.fx-motion-loop{animation:fxFloat calc(3.1s * var(--fx-speed,1)) ease-in-out infinite}\n.fx-l-pulse>.fx-motion-enter>.fx-motion-loop{animation:fxBreath calc(2.5s * var(--fx-speed,1)) ease-in-out infinite}\n.fx-l-spin>.fx-motion-enter>.fx-motion-loop{animation:fxSpin calc(6s * var(--fx-speed,1)) linear infinite}\n.fx-l-sway>.fx-motion-enter>.fx-motion-loop{animation:fxSway calc(2.5s * var(--fx-speed,1)) ease-in-out infinite}\n.fx-l-glow>.fx-motion-enter>.fx-motion-loop{animation:fxGlow calc(2.5s * var(--fx-speed,1)) ease-in-out infinite}\n.fx-c-pop.fx-fired .content,.fx-c-pop.fx-fired .item-body{animation:fxPop calc(.45s * var(--fx-speed,1)) ease-out}\n.fx-c-shake.fx-fired .content,.fx-c-shake.fx-fired .item-body{animation:fxShake calc(.55s * var(--fx-speed,1)) ease-out}\n.fx-c-flip.fx-fired .content,.fx-c-flip.fx-fired .item-body{animation:fxFlip calc(.7s * var(--fx-speed,1)) ease-in-out}\n.fx-c-pulse.fx-fired .content,.fx-c-pulse.fx-fired .item-body{animation:fxTapPulse calc(.45s * var(--fx-speed,1)) ease-out}\n\n.fx-demo-trigger.fx-h-lift .content{transform:translateY(-6px);box-shadow:0 12px 24px #172d4d45}\n.fx-demo-trigger.fx-h-zoom .content{transform:scale(1.065)}\n.fx-demo-trigger.fx-h-shadow .content{box-shadow:0 15px 28px #182c4c70}\n.fx-demo-trigger.fx-h-tilt .content{transform:rotate(-3deg)}\n.fx-demo-trigger.fx-h-tint .content{filter:brightness(1.15) saturate(1.25)}\n\n/* Live effect picker: interaction itself explains the trigger */\n.fx-settings{border:1px solid #d8e4f2;border-radius:9px;margin:16px 0;overflow:hidden;background:#fff}\n.fx-settings>summary{list-style:none;padding:12px;cursor:pointer;font-weight:750;color:#244262;background:#f0f6ff;font-size:13px}\n.fx-settings>summary::-webkit-details-marker{display:none}\n.fx-settings>summary:after{content:'⌄';float:right;color:#627b9c}\n.fx-settings[open]>summary:after{content:'⌃'}\n.fx-inner{padding:10px}\n.fx-categories{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:12px}\n.fx-category{padding:8px 3px;min-height:33px;border-radius:6px;background:#f5f7fb;border:1px solid #e0e6ef;color:#40536c;font-size:11px;font-weight:700;cursor:pointer}\n.fx-category.active{background:#dcecff;border-color:#82b3ed;color:#1156a7}\n.fx-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}\n.fx-sample{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:90px;padding:9px 5px;border:1px solid #d4dfec;border-radius:9px;background:#fff;color:#3b4e65;cursor:pointer;overflow:hidden;touch-action:manipulation}\n.fx-sample:hover{border-color:#5a9eea;background:#f7fbff}\n.fx-sample[aria-pressed=true]{border:2px solid #2479de;background:#edf5ff}\n.fx-sample .fx-demo-space{width:100%;height:40px;display:flex;justify-content:center;align-items:center;overflow:visible}\n.fx-sample .fx-demo-object{display:block;width:58px;height:30px;border-radius:8px;background:linear-gradient(130deg,#3685eb,#194e9b);box-shadow:0 3px 9px #1b477c44;transition:transform .3s ease,box-shadow .3s ease,filter .3s ease}\n.fx-sample .fx-demo-name{font-size:11px;font-weight:700;white-space:nowrap;line-height:1.2}\n.fx-demo-hover-lift:hover .fx-demo-object{transform:translateY(-5px);box-shadow:0 11px 16px #1a447c80}\n.fx-demo-hover-zoom:hover .fx-demo-object{transform:scale(1.19)}\n.fx-demo-hover-shadow:hover .fx-demo-object{box-shadow:0 12px 18px #1a447ca0}\n.fx-demo-hover-tilt:hover .fx-demo-object{transform:rotate(-8deg)}\n.fx-demo-hover-tint:hover .fx-demo-object{filter:brightness(1.4) saturate(1.6)}\n.fx-demo-enter-fade .fx-demo-object{animation:fxFade 2.4s both infinite}\n.fx-demo-enter-up .fx-demo-object{animation:fxUp 2.4s both infinite}\n.fx-demo-enter-left .fx-demo-object{animation:fxLeft 2.4s both infinite}\n.fx-demo-enter-zoom .fx-demo-object{animation:fxZoom 2.4s both infinite}\n.fx-demo-enter-blur .fx-demo-object{animation:fxBlur 2.4s both infinite}\n.fx-demo-loop-float .fx-demo-object{animation:fxFloat 2.5s infinite ease-in-out}\n.fx-demo-loop-pulse .fx-demo-object{animation:fxBreath 2.5s infinite ease-in-out}\n.fx-demo-loop-spin .fx-demo-object{animation:fxSpin 3.5s infinite linear}\n.fx-demo-loop-sway .fx-demo-object{animation:fxSway 2.5s infinite ease-in-out}\n.fx-demo-loop-glow .fx-demo-object{animation:fxGlow 2.5s infinite ease-in-out}\n.fx-demo-visual-soft .fx-demo-object{box-shadow:0 5px 13px #142e574d}\n.fx-demo-visual-deep .fx-demo-object{box-shadow:0 12px 20px #102844a3}\n.fx-demo-visual-glow .fx-demo-object{box-shadow:0 0 0 2px #519de99e,0 0 17px #3e92eaca}\n.fx-demo-visual-glass .fx-demo-object{opacity:.62;backdrop-filter:blur(8px);box-shadow:inset 0 0 0 2px #fff8,0 7px 14px #193f6a77}\n.fx-demo-visual-gray .fx-demo-object{filter:grayscale(1)}\n.fx-demo-click-pop.fx-demo-playing .fx-demo-object{animation:fxPop .45s}\n.fx-demo-click-shake.fx-demo-playing .fx-demo-object{animation:fxShake .5s}\n.fx-demo-click-flip.fx-demo-playing .fx-demo-object{animation:fxFlip .65s}\n.fx-demo-click-pulse.fx-demo-playing .fx-demo-object{animation:fxTapPulse .45s}\n.fx-params{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:13px;padding-top:11px;border-top:1px solid #e6ecf5}\n.fx-params label{font-size:11px;color:#62778d;font-weight:700;display:block;margin-bottom:4px}\n.fx-params select{width:100%;border:1px solid #cbd7e6;border-radius:6px;padding:6px 4px;color:#23364d;background:#fff;font-size:12px}\n.fx-test{width:100%;min-height:34px;margin-top:11px;border:1px solid #a7c9f2;border-radius:7px;color:#17579f;background:#eff6ff;font-weight:700;font-size:12px}\n.fx-tip-field{margin-top:12px}\n.fx-tip-field>label{display:block;color:#65778b;font-size:11px;font-weight:700;margin-bottom:4px}\n.fx-tip-field input{width:100%;font-size:12px;border:1px solid #cbd7e6;border-radius:6px;padding:8px}\n@media print{.fx-part,.fx-part *{animation:none!important;transition:none!important;transform:none!important}.fx-enter-ready>.fx-motion-enter{opacity:1!important}}\n";
  // エディターだけの表示設定。編集データ・書き出しHTMLには混ぜません。
  const EDITOR_VIEW_STORAGE='morhirc-site-builder-editor-view-v019';
- let dockOpen=true,dockMode='tools',editorZoomMode='fit',editorZoom=1;
+ let dockOpen=true,dockMode='tools',editorZoomMode='fit',editorZoom=1,editorSnapStep=5;
+ // Shared editor preference: applies to all devices, parts, options and sections.
+ const editorSnapSteps=[1,5,10,20];
+ const snapEditorPx=(value,bypass=false)=>bypass?value:Math.round(value/editorSnapStep)*editorSnapStep;
  try{const view=JSON.parse(localStorage.getItem(EDITOR_VIEW_STORAGE)||'{}');
    if(typeof view.dockOpen==='boolean')dockOpen=view.dockOpen;
    if(['tools','pages','layout','props','site'].includes(view.dockMode))dockMode=view.dockMode;
    if(['fit','published'].includes(view.zoom)||(Number.isFinite(Number(view.zoom))&&Number(view.zoom)>=.2&&Number(view.zoom)<=4))editorZoomMode=String(view.zoom);
+   if(editorSnapSteps.includes(Number(view.snapStep)))editorSnapStep=Number(view.snapStep);
  }catch{}
- function persistEditorView(){try{localStorage.setItem(EDITOR_VIEW_STORAGE,JSON.stringify({dockOpen,dockMode,zoom:editorZoomMode,gridShown:grid}))}catch{}}
+ function persistEditorView(){try{localStorage.setItem(EDITOR_VIEW_STORAGE,JSON.stringify({dockOpen,dockMode,zoom:editorZoomMode,gridShown:grid,snapStep:editorSnapStep}))}catch{}}
  // パーツを選んでも、閉じたパネルを勝手に再表示しません。
  // 右パネルが開いているときだけ「設定」タブへ自動で切り替えます。
  function openDock(mode='props'){
@@ -2329,7 +2351,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
      }
       // v1.14: freeze the legacy shared text on every screen before editing.
       // Existing box captions already separated in prior versions are retained.
-      for(const item of [...p.elements,...['top','left','right','bottom'].flatMap(key=>p.regionElements?.[key]||[])])seedDeviceTexts(item);
+      for(const item of [...p.elements,...['top','left','right','bottom'].flatMap(key=>p.regionElements?.[key]||[])]){seedDeviceTexts(item);seedDeviceDisplay(item);}
      // v1.00: freeze existing box caption alignment for all device views.
      for(const item of [...p.elements,...['top','left','right','bottom'].flatMap(key=>p.regionElements?.[key]||[])]){
        if(item.type!=='box')continue;
@@ -2505,6 +2527,8 @@ html,body{height:100%;min-height:0;overflow:hidden}
    if(e.type==='video')return {w,h:Math.max(120,Math.round(w*9/16))};
    if(e.type==='pdf')return {w,h:Math.max(380*k,Math.min(650*k,Math.round(natural*.80)))};
    if(e.type==='form')return {w,h:Math.max(520*k,Math.min(800*k,Math.round(natural*.82)))};
+   if(CHOICE_TYPES.has(e.type))return {w,h:Math.max(e.type==='choiceSelect'?80*k:120*k,Math.round(natural*.9))};
+   if(FORM_INPUT_TYPES.has(e.type))return {w,h:Math.max(e.type==='formTextarea'?130*k:45*k,Math.round(natural*.9))};
    if(e.type==='line')return {w,h:Math.min(16*k,Math.max(4,Math.round(natural*.8)))};
    if(e.type==='box')return {w,h:Math.max(24,Math.round(natural*.76))};
    return {w,h:Math.max(e.type==='button'?44*k:35,estimatedTextHeight(fontE,w),Math.min(170*k,Math.round(natural*.7)))};
@@ -2607,7 +2631,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    // v0.96: rendering (including switching devices) must never write JSON.
    // Legacy projects are normalized explicitly on load instead.
  }
- function rectMobileBase(e){return {h:e.type==='heading'?Math.max(80,Math.min(180,e.h)):e.type==='text'?Math.max(98,Math.min(260,e.h)):e.type==='image'?220:e.type==='video'?215:e.type==='pdf'?480:e.type==='form'?680:e.type==='button'?Math.max(48,Math.min(86,e.h)):e.type==='line'?16:Math.max(100,Math.min(250,e.h))}}
+ function rectMobileBase(e){return {h:CHOICE_TYPES.has(e.type)?Math.max(90,Math.min(450,e.h)):FORM_INPUT_TYPES.has(e.type)?Math.max(e.type==='formTextarea'?100:42,Math.min(600,e.h)):e.type==='heading'?Math.max(80,Math.min(180,e.h)):e.type==='text'?Math.max(98,Math.min(260,e.h)):e.type==='image'?220:e.type==='video'?215:e.type==='pdf'?480:e.type==='form'?680:e.type==='button'?Math.max(48,Math.min(86,e.h)):e.type==='line'?16:Math.max(100,Math.min(250,e.h))}}
  function pageHeight(dev=device,p=page()){
    const sectionEnd=sectionTotalHeight(p,dev);
    // 背景セクションがある場合は、その終端をそのままページの終端にする。
@@ -2622,7 +2646,9 @@ html,body{height:100%;min-height:0;overflow:hidden}
  }
  // 位置・サイズだけでなく書式も端末別に保持します。旧JSONはPCの書式として扱います。
  const GRADIENT_STYLE_KEYS=['gradientMode','gradientColor1','gradientColor2','gradientAngle','gradientDuration'];
- const DEVICE_STYLE_KEYS=['fontSize','fontFamily','color','background','align','radius','bold','boxTextVertical','shadow','textShadowLevel','textShadowColor','textOutlineWidth','textOutlineColor','borderWidth','borderColor','insetPadding','opacity','imageFit','lineWidth','colorMarks','sizeMarks','fontMarks','underlineMarks','boldMarks',...GRADIENT_STYLE_KEYS];
+ const CHOICE_STYLE_KEYS=['choiceOptionFontSize','choiceOptionColor','choiceOptionBold','choiceLetterSpacing','choiceLineHeight','choiceRowGap','choiceColumnGap','choiceLayout','choiceColumns','choiceSnapStep','choiceControlSize','choiceAccentColor','choiceCheckmarkColor','choiceFieldBg','choiceFieldBorderColor','choiceFieldBorderWidth','choiceFieldRadius','choiceFieldPadding','choiceSelectHeight','choiceLabelGap'];
+ const FORM_STYLE_KEYS=['formPlaceholderColor'];
+ const DEVICE_STYLE_KEYS=['fontSize','fontFamily','color','background','align','radius','bold','boxTextVertical','shadow','textShadowLevel','textShadowColor','textOutlineWidth','textOutlineColor','borderWidth','borderColor','insetPadding','opacity','imageFit','lineWidth','colorMarks','sizeMarks','fontMarks','underlineMarks','boldMarks',...GRADIENT_STYLE_KEYS,...CHOICE_STYLE_KEYS,...FORM_STYLE_KEYS];
  const STYLE_MARK_KEYS=['colorMarks','sizeMarks','fontMarks','underlineMarks','boldMarks'];
  function cloneDeviceStyle(e){
    const copy={};for(const k of DEVICE_STYLE_KEYS){
@@ -2651,12 +2677,21 @@ html,body{height:100%;min-height:0;overflow:hidden}
    textOutlineWidth:0,textOutlineColor:'#1f2937',
    textShadowLevel:0,textShadowColor:'#000000'
  });
+ // Independently edited devices must not silently inherit newly introduced PC form styles.
+ const FORM_STYLE_DEFAULTS=Object.freeze({formPlaceholderColor:'#b8bbc2'});
+ const CHOICE_STYLE_DEFAULTS=Object.freeze({
+   choiceOptionFontSize:0,choiceOptionColor:'',choiceOptionBold:false,
+   choiceLetterSpacing:0,choiceLineHeight:1.55,choiceRowGap:0,choiceColumnGap:12,choiceLayout:'vertical',choiceColumns:3,choiceSnapStep:10,choiceControlSize:17,
+   choiceAccentColor:'#276fe1',choiceCheckmarkColor:'#ffffff',choiceFieldBg:'#ffffff',choiceFieldBorderColor:'#b7c2d1',
+   choiceFieldBorderWidth:null,choiceFieldRadius:6,choiceFieldPadding:null,
+   choiceSelectHeight:40,choiceLabelGap:8
+ });
  function styleSource(e,dev=device,p=page()){
    if(dev==='desktop')return e;
    // The legacy automatic responsive mode intentionally follows PC styling.
    if(isAutoMode(p,dev))return {...e,text:partText(e,dev)};
    // Manual device styles are independent, even when older JSON has no text effect keys.
-   return {...e,...TEXT_EFFECT_DEFAULTS,...(e.deviceStyles?.[dev]||{}),text:partText(e,dev)};
+   return {...e,...TEXT_EFFECT_DEFAULTS,...CHOICE_STYLE_DEFAULTS,...FORM_STYLE_DEFAULTS,...(e.deviceStyles?.[dev]||{}),text:partText(e,dev)};
  }
  function editableDeviceStyle(e,dev=device){
    if(dev==='desktop')return e;
@@ -2714,6 +2749,194 @@ html,body{height:100%;min-height:0;overflow:hidden}
    if(isAutoTextSize(e,device))fitTextBox(e,device);
  }
 
+   // Native form selection controls. These are standalone form parts; send/collect is connected separately.
+   const CHOICE_TYPES = new Set(['choiceRadio','choiceCheckbox','choiceSelect']);
+   // Visible form content is independent per viewport. Logical form identifiers,
+   // validation rules, submission target and input type remain shared.
+   const DEVICE_DISPLAY_KEYS=['choiceLabel','choiceOptions','choicePositions','formPlaceholder','formShowLabel','hideRequiredBadge'];
+   const displayValue=(e,key,dev=device)=>
+     dev!=='desktop'&&Object.prototype.hasOwnProperty.call(e.deviceDisplay?.[dev]||{},key)
+       ? e.deviceDisplay[dev][key] : e[key];
+   function seedDeviceDisplay(e){
+     if(!CHOICE_TYPES.has(e.type)&&!FORM_INPUT_TYPES.has(e.type))return;
+     e.deviceDisplay=e.deviceDisplay||{};
+     const keys=CHOICE_TYPES.has(e.type)?['choiceLabel','choiceOptions','choicePositions','hideRequiredBadge']:['formPlaceholder','formShowLabel','hideRequiredBadge'];
+     for(const dev of ['tablet','tabletLandscape','mobile']){
+       const dest=e.deviceDisplay[dev]=e.deviceDisplay[dev]||{};
+       for(const k of keys)if(!Object.prototype.hasOwnProperty.call(dest,k))
+         dest[k]=k==='hideRequiredBadge'?(e.hideRequiredBadge===true):(Array.isArray(e[k])?clone(e[k]):e[k]);
+     }
+   }
+   function setDisplayValue(e,key,value,dev=device){
+     if(dev==='desktop'){e[key]=Array.isArray(value)?clone(value):value;return;}
+     seedDeviceDisplay(e);
+     e.deviceDisplay[dev][key]=Array.isArray(value)?clone(value):value;
+   }
+   const choiceOptions = (e,dev=device) => {
+     const values=displayValue(e,'choiceOptions',dev);
+     // Preserve option indices while an inspector text input is being edited.
+     // Filtering temporary blanks here removed the active option on Backspace,
+     // shifted every following index and made added entries appear to vanish.
+     return (Array.isArray(values)?values:[]).slice(0,40)
+       .map(v=>String(v??'').slice(0,100));
+   };
+   // Coordinates are percentages of the options area (not the page). Each
+   // viewport stores its own positions, preserving independence and JSON roundtrips.
+   const choiceLayoutMode=st=>['horizontal','grid','free'].includes(st?.choiceLayout)?st.choiceLayout:'vertical';
+   const choiceColumnCount=st=>Math.round(clamp(num(st?.choiceColumns,3),1,6));
+   function choiceSuggestedPosition(e,dev,index,count,p=page()){
+     const columns=Math.max(1,Math.min(choiceColumnCount(styleSource(e,dev,p)),Math.max(1,count)));
+     const rows=Math.max(1,Math.ceil(count/columns));
+     return {x:Math.round(index%columns*100/columns*100)/100,y:Math.round(Math.floor(index/columns)*100/rows*100)/100};
+   }
+   function choicePositions(e,dev=device,p=page()){
+     const values=displayValue(e,'choicePositions',dev);
+     return Array.isArray(values)?values.slice(0,40).map((pos,i)=>({
+       x:clamp(num(pos?.x,choiceSuggestedPosition(e,dev,i,choiceOptions(e,dev).length,p).x),0,100),
+       y:clamp(num(pos?.y,choiceSuggestedPosition(e,dev,i,choiceOptions(e,dev).length,p).y),0,100)
+     })):[];
+   }
+   // Convert current automatic visual positions into editable free-layout coordinates.
+   // This retains existing row/column spacing when a user first switches modes.
+   function captureChoicePositions(e,dev=device,p=page()){
+     const saved=choicePositions(e,dev,p),count=choiceOptions(e,dev).length;
+     if(saved.length===count&&saved.length)return saved;
+     const el=[...document.querySelectorAll('#paper .element[data-id]')].find(n=>n.dataset.id===e.id);
+     const group=el?.querySelector('[data-msb-choice-rows]');
+     const bounds=group?.getBoundingClientRect();
+     const freeRoot=el?.querySelector('.msb-choice-part');
+     const freeHead=freeRoot?.firstElementChild;
+     const rootStyle=freeRoot?getComputedStyle(freeRoot):null;
+     const headStyle=freeHead?getComputedStyle(freeHead):null;
+     const futureFreeHeight=Math.max(35,(freeRoot?.getBoundingClientRect().height||0)
+       -(parseFloat(rootStyle?.paddingTop)||0)-(parseFloat(rootStyle?.paddingBottom)||0)
+       -(freeHead?.getBoundingClientRect().height||0)-(parseFloat(headStyle?.marginBottom)||0));
+     const canMeasure=!!(bounds&&bounds.width>0&&bounds.height>0);
+     return Array.from({length:count},(_,i)=>{
+       if(saved[i])return saved[i];
+       const row=group?.querySelector(`[data-choice-index="${i}"]`);
+       if(canMeasure&&row){const box=row.getBoundingClientRect();return {
+         x:Math.round(clamp((box.left-bounds.left)/bounds.width*100,0,100)*100)/100,
+         y:Math.round(clamp((box.top-bounds.top)/futureFreeHeight*100,0,100)*100)/100
+       };}
+       return choiceSuggestedPosition(e,dev,i,count,p);
+     });
+   }
+   function choicePartMarkup(e,dev,editor=false,p=page()){
+     const type=e.type,opts=choiceOptions(e,dev),label=String(displayValue(e,'choiceLabel',dev)||'選択項目').slice(0,100);
+     const st=styleSource(e,dev,p),t=typography(e,dev,p),name='msb-choice-'+e.id+'-'+dev,id='msb-label-'+e.id+'-'+dev;
+     const required=e.choiceRequired===true,scale=autoScale(p,dev);
+     const fontSize=(num(st.choiceOptionFontSize,0)>0?clamp(num(st.choiceOptionFontSize),6,72)*scale:Math.max(11,t.fontSize));
+     const textColor=/^#[0-9a-f]{6}$/i.test(String(st.choiceOptionColor||''))?st.choiceOptionColor:validColor(t.color);
+     const letterSpacing=clamp(num(st.choiceLetterSpacing,0),-2,15);
+     const lineHeight=clamp(num(st.choiceLineHeight,1.55),1,3);
+     const rowGap=clamp(num(st.choiceRowGap,0),0,60);
+     const controlSize=clamp(num(st.choiceControlSize,17),8,40);
+     const choiceLayout=choiceLayoutMode(st),columns=choiceColumnCount(st);
+     const columnGap=clamp(num(st.choiceColumnGap,12),0,60);
+     const accent=validColor(st.choiceAccentColor||'#276fe1');
+     const mark=validColor(st.choiceCheckmarkColor||'#ffffff');
+     const bg=validColor(st.choiceFieldBg||'#ffffff');
+     const borderColor=validColor(st.choiceFieldBorderColor||'#b7c2d1');
+     const borderWidth=st.choiceFieldBorderWidth==null?(type==='choiceSelect'?1:0):clamp(num(st.choiceFieldBorderWidth),0,8);
+     const radius=clamp(num(st.choiceFieldRadius,6),0,36);
+     const fieldPadding=st.choiceFieldPadding==null?(type==='choiceSelect'?10:0):clamp(num(st.choiceFieldPadding),0,36);
+     const selectHeight=clamp(num(st.choiceSelectHeight,40),32,100);
+     const labelGap=clamp(num(st.choiceLabelGap,8),0,50);
+     const rootStyle=`width:100%;height:100%;box-sizing:border-box;padding:9px 12px;overflow:auto;white-space:normal;font-family:${t.fontFamily};font-size:${Math.max(11,t.fontSize)}px;color:${validColor(t.color)};line-height:1.55;${choiceLayout==='free'?'display:flex;flex-direction:column;':''}`;
+     const head=`<div id="${attr(id)}" style="font-weight:700;margin-bottom:${labelGap}px;overflow-wrap:anywhere">${htmlEscape(label)}${required&&displayValue(e,'hideRequiredBadge',dev)!==true?'<span style="color:#bf2645;font-size:.78em;margin-left:.65em">必須</span>':''}</div>`;
+     const disabled=editor?' disabled':'';
+     const owner=editor?'':` form="${attr(autofillOwnerId(dev))}"`;
+     const choiceTextStyle=`color:${textColor};font-size:${fontSize}px;line-height:${lineHeight};letter-spacing:${letterSpacing}px;font-weight:${st.choiceOptionBold?'700':'400'};`;
+     const fieldStyle=`background:${bg};border:${borderWidth}px solid ${borderColor};border-radius:${radius}px;box-sizing:border-box;`;
+     if(type==='choiceSelect'){
+       const options=opts.map(v=>`<option value="${attr(v)}">${htmlEscape(v)}</option>`).join('');
+       return `<div class="msb-choice-part" style="${attr(rootStyle)}">${head}<select class="msb-choice-control" name="${attr(name)}"${owner} aria-labelledby="${attr(id)}"${disabled}${required?' required':''} style="display:block;width:100%;max-width:100%;min-height:${selectHeight}px;padding:6px ${fieldPadding}px;${fieldStyle}${choiceTextStyle}font-family:inherit;appearance:auto;"><option value="" selected${required?' disabled':''}>選択してください</option>${options}</select></div>`;
+     }
+     const inputType=type==='choiceRadio'?'radio':'checkbox';
+     const optionStyle=`display:inline-flex;flex:0 1 auto;align-items:center;gap:9px;min-width:0;margin:0;padding:3px 2px;min-height:${Math.max(18,controlSize+6)}px;cursor:pointer;overflow-wrap:anywhere;`;
+     const inputStyle=`width:${controlSize}px;height:${controlSize}px;min-width:${controlSize}px;min-height:${controlSize}px;margin:0;padding:0;flex:0 0 ${controlSize}px;accent-color:${accent};--msb-checked-bg:${accent};--msb-checkmark-color:${mark};--msb-checkmark-stroke:${Math.max(1,Math.min(3,Math.round(controlSize*.12)))}px;`;
+     const saved=choicePositions(e,dev,p);
+     const rows=opts.map((v,i)=>{
+       const pos=saved[i]||choiceSuggestedPosition(e,dev,i,opts.length,p);
+       const freeStyle=choiceLayout==='free'?`position:absolute;box-sizing:border-box;left:${pos.x}%;top:${pos.y}%;width:calc(${(100/Math.max(1,Math.min(columns,opts.length))).toFixed(4)}% - ${columnGap}px);max-width:calc(100% - ${pos.x}%);`:' ';
+       return `<label class="msb-choice-option${editor&&choiceLayout==='free'?' msb-choice-editor-draggable':''}" data-choice-index="${i}" style="${optionStyle}${freeStyle}"><input class="msb-choice-control${type==='choiceCheckbox'?' msb-check-appearance':''}" type="${inputType}" name="${attr(name)}"${owner} value="${attr(v)}"${disabled}${type==='choiceRadio'&&required&&i===0?' required':''} style="${inputStyle}"><span style="${choiceTextStyle}">${htmlEscape(v)}</span></label>`;
+     }).join('');
+     const groupLayout=choiceLayout==='free'?'position:relative;display:block;flex:1 1 auto;min-height:35px;':choiceLayout==='grid'?`display:grid;grid-template-columns:repeat(${columns},minmax(0,1fr));`:`display:flex;flex-direction:${choiceLayout==='horizontal'?'row':'column'};flex-wrap:${choiceLayout==='horizontal'?'wrap':'nowrap'};`;
+     return `${FORM_WIDGET_CSS}<div class="msb-choice-part" style="${attr(rootStyle)}">${head}<div data-msb-choice-rows="" role="group" aria-labelledby="${attr(id)}" style="${fieldStyle}padding:0px ${fieldPadding}px;${groupLayout}row-gap:${rowGap}px;column-gap:${columnGap}px;align-content:flex-start;">${rows||'<span style="color:#8b98a8">選択肢を追加してください</span>'}</div></div>`;
+   }
+   // Static styles are repeated inside the control markup so standalone exported
+   // HTML and the editor implement identical native input/checkbox behavior.
+   const FORM_WIDGET_CSS=`<style>
+.msb-form-widget .msb-form-text-control::placeholder{color:var(--msb-placeholder-color,#b8bbc2);opacity:1}
+.msb-form-widget .msb-form-text-control:focus-visible{outline:2px solid #6194e6;outline-offset:1px}
+.msb-choice-part .msb-check-appearance{-webkit-appearance:none;appearance:none;display:inline-grid;place-items:center;border:1px solid #a9adb3;border-radius:3px;background:#fff;cursor:pointer;box-sizing:border-box}
+.msb-choice-part .msb-check-appearance:checked{background:var(--msb-checked-bg,#276fe1);border-color:var(--msb-checked-bg,#276fe1)}
+.msb-choice-part .msb-check-appearance:checked::after{content:"";width:25%;height:53%;border-right:var(--msb-checkmark-stroke,2px) solid var(--msb-checkmark-color,#fff);border-bottom:var(--msb-checkmark-stroke,2px) solid var(--msb-checkmark-color,#fff);transform:translateY(-10%) rotate(45deg)}
+.msb-choice-part .msb-check-appearance:focus-visible{outline:2px solid #6194e6;outline-offset:2px}
+.msb-choice-part .msb-check-appearance:disabled{cursor:default}
+.msb-choice-part .msb-choice-editor-draggable{cursor:grab!important;touch-action:none;user-select:none;outline:1px dashed transparent;outline-offset:1px}
+.msb-choice-part .msb-choice-editor-draggable:hover{outline-color:#3a7bd5;background:#e8f1ff55}
+.msb-choice-part .msb-choice-editor-draggable:active{cursor:grabbing!important;outline-color:#3a7bd5}
+</style>`;
+   const FORM_INPUT_TYPES=new Set(['formInput','formTextarea']);
+   const FORM_AUTOCOMPLETE_TOKENS=new Set(['auto','name','given-name','family-name','email','tel','off']);
+   function formAutocompleteToken(e){
+     // Semantic hints, not a request to read the visitor's Google account.
+     // Missing data in legacy JSON continues to work with sensible defaults.
+     const configured=FORM_AUTOCOMPLETE_TOKENS.has(e.formAutocomplete)?e.formAutocomplete:'auto';
+     if(configured==='off')return 'off';
+     if(configured!=='auto')return configured;
+     if(e.formInputMode==='email')return 'email';
+     if(e.formInputMode==='tel')return 'tel';
+     const title=String(e.formLabel||'').replace(/[\s　]+/g,'');
+     if(/^(お名前|氏名|名前|フルネーム|おなまえ)(（必須）)?$/.test(title))return 'name';
+     return 'on';
+   }
+   // Each published device profile owns a separate real HTML form. The visual
+   // parts stay as direct children of the layout canvas (so their coordinates
+   // and click actions are not altered). The HTML `form` attribute associates
+   // controls with their form even when they are elsewhere in the DOM.
+   function autofillOwnerId(dev){return 'msb-autofill-'+dev;}
+   function formFieldName(e){
+     const token=formAutocompleteToken(e);
+     if(token==='name')return 'name';
+     if(token==='given-name')return 'given-name';
+     if(token==='family-name')return 'family-name';
+     if(token==='email')return 'email';
+     if(token==='tel')return 'tel';
+     if(e.type==='formTextarea')return 'message';
+     // Keep stable unique names on unrelated fields, avoiding collisions.
+     return 'field-'+e.id;
+   }
+   function formInputMarkup(e,dev,editor=false,p=page()){
+     const st=styleSource(e,dev,p),t=typography(e,dev,p);
+     const type=e.type==='formTextarea'?'textarea':(['text','email','tel'].includes(e.formInputMode)?e.formInputMode:'text');
+     const label=String(e.formLabel||'入力項目').slice(0,100),placeholder=String(displayValue(e,'formPlaceholder',dev)||'').slice(0,180);
+     const inputId='msb-form-'+e.id+'-'+dev,name=formFieldName(e);
+     const owner=editor?'':` form="${attr(autofillOwnerId(dev))}"`;
+     const scale=autoScale(p,dev),fontSize=num(st.choiceOptionFontSize,0)>0?clamp(num(st.choiceOptionFontSize),6,72)*scale:Math.max(11,t.fontSize);
+     const textColor=/^#[0-9a-f]{6}$/i.test(String(st.choiceOptionColor||''))?st.choiceOptionColor:validColor(t.color);
+     const bg=validColor(st.choiceFieldBg||'#ffffff'),bc=validColor(st.choiceFieldBorderColor||'#b7c2d1');
+     const borderWidth=st.choiceFieldBorderWidth==null?1:clamp(num(st.choiceFieldBorderWidth),0,8);
+     const radius=clamp(num(st.choiceFieldRadius,6),0,36);
+     const padding=st.choiceFieldPadding==null?14:clamp(num(st.choiceFieldPadding),0,36);
+     const placeholderColor=validColor(st.formPlaceholderColor||'#b8bbc2');
+     const showLabel=displayValue(e,'formShowLabel',dev)===true;
+     const head=showLabel?`<label for="${attr(inputId)}" style="font-weight:700;color:${validColor(t.color)};font-size:${Math.max(11,t.fontSize)}px;margin-bottom:${clamp(num(st.choiceLabelGap,8),0,50)}px">${htmlEscape(label)}${e.formRequired&&displayValue(e,'hideRequiredBadge',dev)!==true?'<span style="color:#bf2645;font-size:.78em;margin-left:.65em">必須</span>':''}</label>`
+       // Real associated label helps browser recognition without changing the
+       // author's design when the visible label is deliberately disabled.
+       :`<label for="${attr(inputId)}" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">${htmlEscape(label)}</label>`;
+     const style=`display:block;width:100%;min-width:0;height:100%;min-height:0;flex:1;box-sizing:border-box;padding:8px ${padding}px;border:${borderWidth}px solid ${bc};border-radius:${radius}px;background:${bg};color:${textColor};font-size:${fontSize}px;line-height:${clamp(num(st.choiceLineHeight,1.55),1,3)};letter-spacing:${clamp(num(st.choiceLetterSpacing,0),-2,15)}px;font-family:inherit;--msb-placeholder-color:${placeholderColor};resize:none;`;
+     const required=e.formRequired===true?' required':'',disabled=editor?' disabled':'';
+     const maxlength=clamp(num(e.formMaxLength,type==='textarea'?5000:250),1,type==='textarea'?10000:500);
+     const aria=showLabel?'':` aria-label="${attr(label)}"`;
+     const ctrl=type==='textarea'
+       ?`<textarea id="${attr(inputId)}" class="msb-form-text-control" name="${attr(name)}"${owner} autocomplete="off" placeholder="${attr(placeholder)}" maxlength="${maxlength}"${required}${disabled}${aria} style="${attr(style)}"></textarea>`
+       :`<input id="${attr(inputId)}" class="msb-form-text-control" type="${type}" name="${attr(name)}"${owner} autocomplete="${attr(formAutocompleteToken(e))}"${type==='email'?' autocapitalize="off" spellcheck="false"':''} placeholder="${attr(placeholder)}" maxlength="${maxlength}"${required}${disabled}${aria} style="${attr(style)}">`;
+     return `${FORM_WIDGET_CSS}<div class="msb-form-widget" style="width:100%;height:100%;display:flex;flex-direction:column;box-sizing:border-box;font-family:${t.fontFamily};">${head}${ctrl}</div>`;
+   }
+
    // v0.36: presets extend the existing element types; old JSON and publishing remain compatible.
    const presetMap={
      'preset-card':{type:'text',style:{text:'カードのタイトル\n説明文を入力',w:310,h:155,fontSize:16,color:'#24364c',background:'#ffffff',radius:14,align:'left',bold:false,autoTextSize:false,insetPadding:18,borderWidth:1,borderColor:'#d9e2ed',shadow:2}},
@@ -2724,7 +2947,8 @@ html,body{height:100%;min-height:0;overflow:hidden}
      'preset-rounded':{type:'box',style:{w:260,h:140,background:'#dbeafe',radius:24}},
      'preset-pill-button':{type:'button',style:{text:'Text',w:130,h:38,fontSize:12,color:'#ffffff',background:'#276fe1',radius:99,bold:true}},
      'preset-outline-button':{type:'button',style:{text:'Text',w:140,h:38,fontSize:12,color:'#276fe1',background:'#ffffff',radius:8,bold:true,borderWidth:2,borderColor:'#276fe1'}},
-     'preset-divider':{type:'line',style:{w:340,h:16,color:'#cbd5e1'}}
+     'preset-divider':{type:'line',style:{w:340,h:16,color:'#cbd5e1'}},
+      'preset-form-confirm-button':{type:'button',style:{text:'入力内容を確認',w:300,h:45,fontSize:15,color:'#ffffff',background:'#276fe1',radius:8,bold:true,align:'center',clickAction:'formConfirm'}}
    };
  function createElement(type,coords={}){
    const preset=presetMap[type];const baseType=preset?.type||type;
@@ -2738,16 +2962,29 @@ html,body{height:100%;min-height:0;overflow:hidden}
      video:{text:'動画',w:480,h:270,color:'#ffffff',background:'#101d2e',radius:8,videoUrl:''},
      pdf:{text:'PDF',w:650,h:680,background:'#ffffff',radius:6,embedUrl:''},
      form:{text:'Googleフォーム',w:650,h:800,background:'#ffffff',radius:6,embedUrl:''},
+     choiceRadio:{text:'連絡方法',w:445,h:155,fontSize:16,color:'#26364c'},
+     choiceCheckbox:{text:'ご相談内容',w:445,h:235,fontSize:16,color:'#26364c'},
+     choiceSelect:{text:'ご相談内容',w:445,h:100,fontSize:16,color:'#26364c'},
+     formInput:{text:'お名前',w:445,h:60,fontSize:17,color:'#26364c'},
+     formTextarea:{text:'お問い合わせ内容',w:445,h:160,fontSize:17,color:'#26364c'},
      html:{text:'HTML埋め込み',w:720,h:500,background:'#ffffff',radius:4,htmlCode:hybridDefaultSource()},
      menu:{text:'メニュー',w:170,h:48,background:'#1c3556',color:'#ffffff',radius:8},sidebar:{text:'サイドバー',w:95,h:100,background:'#1c3556',color:'#ffffff',radius:8}
    };
    let maxY=45;for(const e of page().elements){maxY=Math.max(maxY,num(e.y)+num(e.h)+22)}
    const t=templates[baseType]||templates.text;
    const e={id:uid(),type:baseType,x:coords.x??70,y:coords.y??maxY,w:t.w,h:t.h,fontSize:t.fontSize||12,color:t.color||'#202936',background:t.background||'transparent',radius:t.radius||0,bold:!!t.bold,align:'left',text:t.text||'',colorMarks:[],sizeMarks:[],fontMarks:[],underlineMarks:[],boldMarks:[],fontFamily:'system',src:t.src||'',htmlCode:t.htmlCode||'',href:t.href||'',linkType:'none',linkPageId:'',linkAnchorTarget:'top',newTab:false,hoverText:'',hoverLift:false,fxHover:'none',fxEnter:'none',fxClick:'none',fxLoop:'none',fxVisual:'none',menuMode:'click',menuSide:'left',menuEdgePlacement:'overlay',menuItems:'ホーム | index.html\nサービス | services.html\nお問い合わせ | #contact',menuBg:'#ffffff',menuTextColor:'#24364a',menuFontFamily:'system',menuFontSize:14,menuLineHeight:1.5,menuKeepVisible:true,menuCollapsedWidth:60,menuButtonBg:'#1c3556',menuButtonColor:'#ffffff',menuDrawerWidth:280,menuDrawerHeight:320,menuDrawerRadius:12,menuDrawerPadding:12,menuItemGap:3,menuButtonRadius:8,menuButtonFontSize:14,menuButtonFontFamily:'system',menuEdgeTop:40,menuEdgeHandleWidth:36,menuEdgeHandleHeight:110,fxSpeed:1,fxDelay:0,gradientMode:'none',gradientColor1:'#1d70d5',gradientColor2:'#bc39b6',gradientAngle:'horizontal',gradientDuration:5,hoverSwapEnabled:false,hoverAltText:'',hoverAltImage:'',hoverAltBg:'#8ebbef',videoUrl:t.videoUrl||'',embedUrl:t.embedUrl||'',printHide:false,autoTextSize:['text','heading'].includes(baseType),autoTextSizeByDevice:{},layouts:{},deviceStyles:{}};
+   if(CHOICE_TYPES.has(baseType)){
+     e.choiceLabel=t.text;
+     e.choiceRequired=true;
+     e.choiceOptions=baseType==='choiceRadio'?['メールでの連絡を希望','電話での連絡を希望']:
+       ['PCの設定','ネットワーク','スマホ','料金について','その他'];
+   }
+   if(FORM_INPUT_TYPES.has(baseType)){e.formLabel=t.text;e.formShowLabel=false;e.formRequired=false;e.formInputMode='text';e.formAutocomplete='auto';e.formPlaceholder=baseType==='formTextarea'?'内容を入力してください':'入力してください';e.formMaxLength=baseType==='formTextarea'?5000:250;e.choiceFieldBg='#ffffff';e.choiceFieldBorderColor='#c7d1dd';e.choiceFieldBorderWidth=1;e.choiceFieldRadius=9;e.choiceFieldPadding=14;for(const dev of ['tablet','tabletLandscape','mobile'])e.deviceStyles[dev]={choiceFieldBg:'#ffffff',choiceFieldBorderColor:'#c7d1dd',choiceFieldBorderWidth:1,choiceFieldRadius:9,choiceFieldPadding:14};}
    if(baseType==='sidebar'){e.menuMode='edge';e.menuSide='left';e.menuDrawerHeight=100;e.menuDrawerRadius=0;e.menuCollapsedWidth=60;e.menuBg='#202020';e.menuTextColor='#f4f4f4';}
    if(baseType==='box'){e.align='center';e.fontSize=18;e.color='#202936';e.insetPadding=12;e.boxTextVertical='middle';for(const dev of ['tablet','tabletLandscape','mobile'])e.deviceStyles[dev]={boxTextVertical:'middle'};}
    if(preset)Object.assign(e,preset.style);
    seedDeviceTexts(e);
+   seedDeviceDisplay(e);
    return e;
  }
  // Placement uses the real visible part of the paper, not the last element's Y.
@@ -2758,9 +2995,9 @@ html,body{height:100%;min-height:0;overflow:hidden}
    if(device==='tabletLandscape')return {w:Math.min(WIDTH.tabletLandscape,Math.max(32,Math.round(e.w*1.024))),h:Math.round(e.h*1.024)};
    return {w:Math.min(WIDTH.desktop,e.w),h:e.h};
  }
- function normalizedPlacement(type,x,y){
+ function normalizedPlacement(type,x,y,bypass=false){
    const size=placementSize(type),width=editorCanvasWidth();size.w=Math.min(size.w,Math.max(32,width));
-   return {x:clamp(Math.round(x/5)*5,0,Math.max(0,width-size.w)),y:Math.max(0,Math.round(y/5)*5),w:size.w,h:size.h};
+   return {x:clamp(snapEditorPx(x,bypass),0,Math.max(0,width-size.w)),y:Math.max(0,snapEditorPx(y,bypass)),w:size.w,h:size.h};
  }
  function positionInView(type){
    const paperRect=$('paper').getBoundingClientRect(),view=$('workarea').getBoundingClientRect();
@@ -2783,7 +3020,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    layer.addEventListener('pointerdown',ev=>{
      if(ev.button!==0)return;ev.preventDefault();ev.stopPropagation();
      const r=paper.getBoundingClientRect(),type=pendingPlacementType;
-     const at=normalizedPlacement(type,(ev.clientX-r.left)/editorZoom,(ev.clientY-r.top)/editorZoom);
+     const at=normalizedPlacement(type,(ev.clientX-r.left)/editorZoom,(ev.clientY-r.top)/editorZoom,ev.shiftKey);
      pendingPlacementType=null;addElement(type,at);
    });
    paper.append(layer);
@@ -3110,17 +3347,38 @@ html,body{height:100%;min-height:0;overflow:hidden}
    let prefix=0;while(prefix<Math.min(prev.length,next.length)&&prev[prefix]===next[prefix])prefix++;
    let suffix=0;while(suffix<Math.min(prev.length,next.length)-prefix&&prev[prev.length-1-suffix]===next[next.length-1-suffix])suffix++;
    const oldEnd=prev.length-suffix,delta=next.length-prev.length;
-   // Changing content shifts rich-text mark offsets on the edited device only.
-   // Foreign device marks must not be recalculated against this device's text.
+   const insertedEnd=next.length-suffix;
+   // An edited substring inherits its original formatting when a mark covers
+   // the replaced span.  This includes pasting over all text in a duplicated
+   // part: its color/size/font/bold/underline must not silently reset.
+   // Preserve unchanged prefix/suffix offsets and isolate every device's marks.
    const targets=[device==='desktop'?e:editableDeviceStyle(e,device)];
+   const markValueKey={colorMarks:'color',sizeMarks:'fontSize',fontMarks:'fontFamily',underlineMarks:'underline',boldMarks:'bold'};
    for(const target of targets){
      for(const key of STYLE_MARK_KEYS){
+       const original=Array.isArray(target[key])?target[key]:[];
        const marks=[];
-       for(const m of (Array.isArray(target[key])?target[key]:[])){
+       for(const m of original){
          if(m.start<prefix){const z=Math.min(m.end,prefix);if(z>m.start)marks.push({...m,end:z})}
          if(m.end>oldEnd){const a=Math.max(m.start,oldEnd)+delta,b=m.end+delta;if(b>a)marks.push({...m,start:a,end:b})}
        }
-       target[key]=marks;
+       if(insertedEnd>prefix){
+         // Only inherit an unambiguous style: the same rich-text span must
+         // contain the complete replaced text. Insertion within a styled run
+         // (or at either end of an entirely styled part) inherits that style.
+         const inherited=original.findLast(m=>oldEnd>prefix
+           ?m.start<=prefix&&m.end>=oldEnd
+           :m.start<=prefix&&m.end>=prefix&&(m.start<prefix||m.end>prefix||prev.length===0));
+         if(inherited)marks.push({...inherited,start:prefix,end:insertedEnd});
+       }
+       const property=markValueKey[key];
+       marks.sort((a,b)=>a.start-b.start||a.end-b.end);
+       target[key]=marks.reduce((out,m)=>{
+         const last=out[out.length-1];
+         if(last&&last.end===m.start&&last[property]===m[property])last.end=m.end;
+         else out.push({...m});
+         return out;
+       },[]);
      }
    }
    if(DEVICE_TEXT_TYPES.has(e.type)&&device!=='desktop')e.deviceTexts[device]=next;
@@ -3231,27 +3489,30 @@ html,body{height:100%;min-height:0;overflow:hidden}
  }
  function syncInspectorTextFormatting(){
    const e=selected();if(!e||!['text','heading','button','box'].includes(e.type))return;
-   const st=styleSource(e,device),range=activeRichSelection(e.id),cur=formatAtSelection(st,range);
-   const state=$('inspectorTextMode');if(state){state.textContent=range?'選択範囲の書式を編集中':'文字全体の書式';state.classList.toggle('is-partial',!!range)}
-   for(const [id,partial,whole] of [['fontFamily','選択範囲のフォント','フォント'],['fontSize','選択範囲のサイズ（px）','サイズ（px）'],['color','選択範囲の色','文字色'],['bold','選択範囲を太字','太字'],['underline','選択範囲に下線','下線']]){
-     const label=$('inspector')?.querySelector(`label[for="${id==='color'?'field-color-trigger':'field-'+id}"]`);if(label)label.textContent=range?partial:whole;
-   }
+   // Inspector fields always edit the WHOLE part; selecting text must not
+   // rename labels, replace values, or move the editor panel. Range-only
+   // formatting is available in the independent floating selection toolbar.
+   const st=styleSource(e,device),cur=formatAtSelection(st,null);
    const changeValue=(id,value)=>{const el=$('field-'+id);if(!el||el===document.activeElement)return;if(el.type==='checkbox')el.checked=!!value;else el.value=value;};
    changeValue('fontFamily',validFont(cur.font));changeValue('fontSize',cur.size);changeValue('color',validColor(cur.color));changeValue('bold',cur.bold);changeValue('underline',cur.underline);
    if($('field-color')!==document.activeElement&&colorPickerId!=='field-color')updateColorTrigger('field-color');
  }
  function showQuickToolbar(){const e=selected(),bar=$('quickTextToolbar');
    if(groupParts().length>1){hideQuickToolbar();return}
-   if(partDetailOpen||!e||!['text','heading'].includes(e.type)&&!(['button','box'].includes(e.type)&&editingId===e.id)){hideQuickToolbar();return}
-   const isPartial=!!(editingId===e.id&&textSelection&&textSelection.id===e.id&&textSelection.end>textSelection.start);
-   const st=styleSource(e,device),at=isPartial?textSelection.start:0;
+   if(!e||!['text','heading'].includes(e.type)&&!(['button','box'].includes(e.type)&&editingId===e.id)){hideQuickToolbar();return}
+   const selection=activeRichSelection(e.id);
+   if(partDetailOpen&&!selection){hideQuickToolbar();return}
+   const isPartial=!!selection;
+   bar.classList.toggle('msb-partial-tools',!!(partDetailOpen&&isPartial));
+   bar.querySelector('.msb-toolbar-internals')?.setAttribute('aria-hidden',String(!(partDetailOpen&&isPartial)));
+   const st=styleSource(e,device),at=isPartial?selection.start:0;
    const sizeMark=isPartial?validatedMarks(st,'sizeMarks').findLast(m=>m.start<=at&&m.end>at):null;
    const colorMark=isPartial?validatedMarks(st,'colorMarks').findLast(m=>m.start<=at&&m.end>at):null;
    const fontMark=isPartial?validatedMarks(st,'fontMarks').findLast(m=>m.start<=at&&m.end>at):null;
    $('quickToolbarMode').textContent=isPartial?'選択文字':partLabel(e);
    $('quickToolbarHint').textContent=isPartial?'選択部分のみ変更':'パーツ全体の文字を変更';$('quickTextBg').value=validColor(st.background==='transparent'?'#ffffff':(st.background||'#ffffff'));
-   $('quickUnderline').setAttribute('aria-pressed',String(isPartial?isRangeUnderlined(st,textSelection.start,textSelection.end):!!st.text&&isRangeUnderlined(st,0,partText(e,device).length)));
-   $('quickBold').setAttribute('aria-pressed',String(isPartial?isRangeBold(st,textSelection.start,textSelection.end):!!st.bold));
+   $('quickUnderline').setAttribute('aria-pressed',String(isPartial?isRangeUnderlined(st,selection.start,selection.end):!!st.text&&isRangeUnderlined(st,0,partText(e,device).length)));
+   $('quickBold').setAttribute('aria-pressed',String(isPartial?isRangeBold(st,selection.start,selection.end):!!st.bold));
    if(document.activeElement!==$('quickFontSize'))$('quickFontSize').value=sizeMark?.fontSize||st.fontSize||12;
    if(document.activeElement!==$('quickFontFamily'))$('quickFontFamily').value=validFont(fontMark?.fontFamily||st.fontFamily);
    if(document.activeElement!==$('quickTextColor')){$('quickTextColor').value=validColor(colorMark?.color||st.color||'#202936');updateColorTrigger('quickTextColor');}
@@ -3287,9 +3548,9 @@ html,body{height:100%;min-height:0;overflow:hidden}
    }
    renderCanvas();refreshTextSelectionInfo();
  }
- function applyQuickFormat(kind,value){
+ function applyQuickFormat(kind,value,options={}){
    const e=selected();if(!e||!['text','heading','button','box'].includes(e.type))return;
-   const id=e.id,sel=activeRichSelection(id);
+   const id=e.id,sel=options.whole?null:activeRichSelection(id);
    const editor=editingId===id?[...document.querySelectorAll('.element')].find(n=>n.dataset.id===id)?.querySelector('.content [contenteditable="true"],.content[contenteditable="true"]'):null;
    const currentText=editor?.innerText.replace(/\r/g,'');
    if(editor)editor.onblur=null;
@@ -3319,7 +3580,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    });
    // Keep the rich text bar active after the first format action.
    // In particular, box/button bars require inline edit mode and otherwise vanished.
-   if(partDetailOpen){syncInspectorTextFormatting();}
+   if(partDetailOpen){syncInspectorTextFormatting();showQuickToolbar();}
    else if(sel)enableInlineEdit(id,{start:sel.start,end:sel.end});
    else if(editor)enableInlineEdit(id);
    else showQuickToolbar();
@@ -3386,7 +3647,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
        if(ev.button!==0)return;ev.stopPropagation();ev.preventDefault();
        const y=ev.clientY,start=clamp(num(hd.height,62),36,160),zoom=editorZoom||1;
        grip.setPointerCapture(ev.pointerId);
-       function move(e){const h=clamp(Math.round(start+(e.clientY-y)/zoom),36,160);node.style.height=`calc(${h}px * var(--header-inv-zoom, 1))`;measure.textContent=`${regionLayout().mode==='single'?'幅 '+WIDTH[device]+'px':'レイアウト全幅'} / 高さ ${h}px`;grip.dataset.nextHeight=String(h)}
+       function move(e){const h=clamp(Math.round(snapEditorPx(start+(e.clientY-y)/zoom,e.shiftKey)*100)/100,36,160);node.style.height=`calc(${h}px * var(--header-inv-zoom, 1))`;measure.textContent=`${regionLayout().mode==='single'?'幅 '+WIDTH[device]+'px':'レイアウト全幅'} / 高さ ${h}px`;grip.dataset.nextHeight=String(h)}
        function finish(){grip.removeEventListener('pointermove',move);grip.removeEventListener('pointerup',finish);grip.removeEventListener('pointercancel',finish);const h=Number(grip.dataset.nextHeight||start);if(h!==start)mutate(()=>{hd.height=h});}
        grip.addEventListener('pointermove',move);grip.addEventListener('pointerup',finish,{once:true});grip.addEventListener('pointercancel',finish,{once:true});
      });
@@ -3399,7 +3660,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
  function hidePartToolbar(){$('quickPartToolbar').classList.add('hidden')}
  let partToolbarManualPos=null,partToolbarDragPointer=null;
  function partDragGrip(){return '<button type="button" class="quick-part-drag" title="バーを移動（ダブルクリックで元の位置）" aria-label="ツールバーを移動">⠿</button>'}
- function partLabel(e){return ({image:'画像',button:'ボタン',box:'図形',line:'線',text:'文章',heading:'見出し',video:'動画',pdf:'PDF',form:'フォーム',menu:'ボタンメニュー',sidebar:'画面端サイドバー',html:'HTML埋め込み'})[e?.type]||'パーツ'}
+ function partLabel(e){return ({image:'画像',button:'ボタン',box:'図形',line:'線',text:'文章',heading:'見出し',video:'動画',pdf:'PDF',form:'フォーム',choiceRadio:'ラジオボタン',choiceCheckbox:'チェックボックス',choiceSelect:'プルダウン',formInput:'1行入力欄',formTextarea:'複数行入力欄',menu:'ボタンメニュー',sidebar:'画面端サイドバー',html:'HTML埋め込み'})[e?.type]||'パーツ'}
  function propertyControl(name,prop,v,options=null){
    const pid=`data-quick-prop="${prop}"`;
    if(options)return `<label>${name}<select ${pid}>${options.map(([val,text])=>`<option value="${val}"${String(v)===String(val)?' selected':''}>${text}</option>`).join('')}</select></label>`;
@@ -3493,6 +3754,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    if(focus==='effects'){fxPanelOpen=true;fxActiveCategory='hover'}
    renderInspector();
    positionPartDetails();
+   showQuickToolbar(); // Only appears when a text range was explicitly selected.
    requestAnimationFrame(()=>{
      const panel=$('inspector');if(!partDetailOpen)return;
      const target=focus==='effects'?$('fxSettings'):focus==='link'?$('field-linkType'):focus==='media'?$('field-videoUrl')||$('field-embedUrl'):focus==='decoration'?panel.querySelector('.decoration-settings'):focus==='gradient'?$('gradientSettings'):focus==='hoverContent'?$('hoverContentSettings'):focus==='clickAction'?$('msbClickSettings'):null;
@@ -3761,6 +4023,11 @@ html,body{height:100%;min-height:0;overflow:hidden}
      if(e.type==='image'){
        if(e.src){const img=document.createElement('img');img.src=e.src;img.alt=e.text||'';img.style.objectFit=typography(e,device).imageFit;content.append(img)}
        else {const ph=document.createElement('div');ph.className='placeholder-image';ph.textContent='画像を選択してください';content.append(ph)}
+     } else if(FORM_INPUT_TYPES.has(e.type)){
+       content.innerHTML=formInputMarkup(e,device,true,p);
+     } else if(CHOICE_TYPES.has(e.type)){
+       // Preview and published pages are interactive; editor leaves controls disabled so parts remain draggable.
+       content.innerHTML=choicePartMarkup(e,device,true,p);
      } else if(e.type==='html'){
        const box=document.createElement('div');box.className='hybrid-code-part-placeholder';box.innerHTML='<strong>&lt;/&gt; HTML埋め込み</strong><span>選択して［詳細］にコードを貼り付け<br>実際の動作は［プレビュー］で確認</span>';content.append(box);
      } else if(e.type==='video'){
@@ -3803,6 +4070,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
        el.addEventListener('pointerleave',()=>el.classList.remove('editor-hover-active'));
      }
      el.addEventListener('pointerdown',ev=>startDrag(ev,e.id,ev.target===resize));
+     if(CHOICE_TYPES.has(e.type))wireChoiceEditorDrag(el,e);
      el.addEventListener('dblclick',ev=>{if(['heading','text','button','box'].includes(e.type))enableInlineEdit(e.id)});
      paper.append(el)
    });
@@ -3816,6 +4084,52 @@ html,body{height:100%;min-height:0;overflow:hidden}
    if(!editingId){showQuickToolbar();showPartToolbar();}
    restoreEditorScroll(scroll);
    $('stageNote').textContent=device==='desktop'?'PC：自由に配置できます。':device==='mobile'?'スマホ：個別編集です。必要なときだけPCから取得できます。':device==='tablet'?'タブレット縦：個別編集です。必要なときだけPCから取得できます。':'タブレット横：個別編集です。必要なときだけPCから取得できます。';
+ }
+ function wireChoiceEditorDrag(el,e){
+   if(!['choiceRadio','choiceCheckbox'].includes(e.type)||choiceLayoutMode(styleSource(e,device))!=='free')return;
+   const group=el.querySelector('[data-msb-choice-rows]');if(!group)return;
+   for(const row of group.querySelectorAll('[data-choice-index]')){
+     row.addEventListener('pointerdown',ev=>{
+       if(ev.button!==0||ev.ctrlKey||ev.metaKey)return;
+       ev.stopPropagation();ev.preventDefault();
+       const index=Number(row.dataset.choiceIndex),all=choicePositions(e,device);
+       if(!Number.isInteger(index)||index<0||index>=choiceOptions(e).length)return;
+       const start=all[index]||choiceSuggestedPosition(e,device,index,choiceOptions(e).length);
+       const bounds=group.getBoundingClientRect(),initial={x:ev.clientX,y:ev.clientY};
+       // Snap in CSS pixels, not pointer/screen pixels, so zoom does not
+       // change the spacing. Positions remain percentages for responsive HTML.
+       const cssW=Math.max(1,group.clientWidth),cssH=Math.max(1,group.clientHeight);
+       const maxXPx=Math.max(0,cssW-row.offsetWidth),maxYPx=Math.max(0,cssH-row.offsetHeight);
+       let active=start,moved=false;
+       if(selectedId!==e.id){clearMultiSelection();selectedId=e.id;selectedSectionId=null;headerSelected=false;renderSections();renderInspector();refreshPartSelectionVisual();}
+       row.setPointerCapture(ev.pointerId);
+       const move=event=>{
+         if(event.pointerId!==ev.pointerId)return;
+         if(!moved&&Math.abs(event.clientX-initial.x)+Math.abs(event.clientY-initial.y)<3)return;
+         moved=true;
+         const rawX=start.x/100*cssW+(event.clientX-initial.x)*cssW/Math.max(1,bounds.width);
+         const rawY=start.y/100*cssH+(event.clientY-initial.y)*cssH/Math.max(1,bounds.height);
+         // Shared editor grid: Shift disables snapping while held.
+         const pxX=clamp(snapEditorPx(rawX,event.shiftKey),0,maxXPx);
+         const pxY=clamp(snapEditorPx(rawY,event.shiftKey),0,maxYPx);
+         active={x:Math.round(pxX/cssW*10000)/100,y:Math.round(pxY/cssH*10000)/100};
+         row.style.left=active.x+'%';row.style.top=active.y+'%';row.style.maxWidth=`calc(100% - ${active.x}%)`;
+       };
+       const end=event=>{
+         if(event.pointerId!==ev.pointerId)return;
+         row.removeEventListener('pointermove',move);
+         row.removeEventListener('pointerup',end);
+         row.removeEventListener('pointercancel',end);
+         if(moved&&event.type==='pointerup')mutate(()=>{
+           const positions=Array.from({length:choiceOptions(e).length},(_,i)=>all[i]||choiceSuggestedPosition(e,device,i,choiceOptions(e).length));
+           positions[index]=active;setDisplayValue(e,'choicePositions',positions);
+         });
+       };
+       row.addEventListener('pointermove',move);
+       row.addEventListener('pointerup',end);
+       row.addEventListener('pointercancel',end);
+     });
+   }
  }
  function startDrag(ev,id,resizing){
    if(ev.button!==0)return;
@@ -3857,8 +4171,8 @@ html,body{height:100%;min-height:0;overflow:hidden}
      const arr=p.groupRects.map(([,rect])=>rect);
      const minX=Math.min(...arr.map(x=>x.x)),minY=Math.min(...arr.map(x=>x.y));
      const maxX=Math.max(...arr.map(x=>x.x+x.w));
-     let shiftX=ev.shiftKey?dx:Math.round(dx/5)*5;
-     let shiftY=ev.shiftKey?dy:Math.round(dy/5)*5;
+     let shiftX=snapEditorPx(dx,ev.shiftKey);
+     let shiftY=snapEditorPx(dy,ev.shiftKey);
      shiftX=clamp(shiftX,-minX,Math.max(-minX,editorCanvasWidth()-maxX));
      shiftY=Math.max(-minY,shiftY);
      const live=new Map();for(const [id,base] of p.groupRects){
@@ -3870,7 +4184,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
      p.liveRects=live;p.changed=!!(shiftX||shiftY);return;
    }
    let n=p.mode==='move'?{...r,x:Math.max(0,r.x+dx),y:Math.max(0,r.y+dy)}:{...r,w:Math.max(32,r.w+dx),h:Math.max(16,r.h+dy)};
-   if(!ev.shiftKey){n.x=Math.round(n.x/5)*5;n.y=Math.round(n.y/5)*5;n.w=Math.round(n.w/5)*5;n.h=Math.round(n.h/5)*5}
+   if(!ev.shiftKey){n.x=snapEditorPx(n.x);n.y=snapEditorPx(n.y);n.w=snapEditorPx(n.w);n.h=snapEditorPx(n.h)}
    n.w=Math.max(32,Math.min(n.w,editorCanvasWidth()-n.x));
    const el=ev.currentTarget;el.style.left=n.x+'px';el.style.top=n.y+'px';el.style.width=n.w+'px';el.style.height=n.h+'px';
    p.liveRect=n;p.changed=true;
@@ -3932,8 +4246,8 @@ html,body{height:100%;min-height:0;overflow:hidden}
      const destination=at||{x:partClipboard.at.x+25,y:partClipboard.at.y+25};
      const pastedWidth=Math.min(editorCanvasWidth(),Math.max(32,num(source?.w,copied.w)));
      const pastedHeight=Math.max(16,num(source?.h,copied.h));
-     const placed={x:clamp(Math.round(destination.x/5)*5,0,Math.max(0,editorCanvasWidth()-pastedWidth)),
-       y:Math.max(0,Math.round(destination.y/5)*5),w:pastedWidth,h:pastedHeight};
+     const placed={x:clamp(snapEditorPx(destination.x),0,Math.max(0,editorCanvasWidth()-pastedWidth)),
+       y:Math.max(0,snapEditorPx(destination.y)),w:pastedWidth,h:pastedHeight};
      // The desktop position is independent of clicks made on mobile/tablet.
      const pc=sources.desktop||{x:copied.x,y:copied.y,w:copied.w,h:copied.h};
      const pcW=Math.min(WIDTH.desktop,Math.max(32,Math.round(num(pc.w,120))));
@@ -3988,7 +4302,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    renderInspector();renderSections();document.querySelectorAll('.bg-section').forEach(n=>n.classList.toggle('selected',n.dataset.sectionId===id));
  }
  function moveSectionResize(ev){if(!sectionPointer)return;const dy=(ev.clientY-sectionPointer.startY)/editorZoom;
-   let h=Math.max(MIN_SECTION_HEIGHT,sectionPointer.initial+dy);if(!ev.shiftKey)h=Math.max(MIN_SECTION_HEIGHT,Math.round(h/10)*10);
+   let h=Math.max(MIN_SECTION_HEIGHT,snapEditorPx(sectionPointer.initial+dy,ev.shiftKey));
    sectionPointer.liveHeight=h;sectionPointer.changed=true;
    const bands=[...document.querySelectorAll('.bg-section')],idx=bands.findIndex(n=>n.dataset.sectionId===sectionPointer.id);
    if(idx<0)return;const delta=h-sectionPointer.initial;
@@ -4023,15 +4337,49 @@ html,body{height:100%;min-height:0;overflow:hidden}
    else if(type==='select')input=`<select id="${id}">${options.map(o=>`<option value="${attr(o)}" ${String(o)===String(value)?'selected':''}>${htmlEscape(o)}</option>`).join('')}</select>`;
    else if(type==='checkbox')input=`<input id="${id}" type="checkbox" ${value?'checked':''} style="width:auto">`;
    else if(type==='color')input=colorPickerHtml(id,value);
-   else input=`<input id="${id}" type="${type}" value="${attr(value)}" ${type==='number'?'step="'+(['menuLineHeight','textOutlineWidth'].includes(key)?'0.1':'1')+'"':''} class="${type==='color'?'color':''}">`;
+   else input=`<input id="${id}" type="${type}" value="${attr(value)}" ${type==='number'?'step="'+(['menuLineHeight','textOutlineWidth','choiceLineHeight','choiceLetterSpacing'].includes(key)?'0.1':'1')+'"':''} class="${type==='color'?'color':''}">`;
    return `<div class="field"><label for="${type==='color'?id+'-trigger':id}">${htmlEscape(title)}</label>${input}</div>`
+ }
+ // Link conditional requirements to a specific radio part and one of its options.
+ // This avoids unrelated radio parts with the same caption activating the rule.
+ function conditionalRequiredPicker(p,e,dev=device){
+   const options=[];
+   for(const part of (p.elements||[])){
+     if(part.type!=='choiceRadio'||part.id===e.id)continue;
+     const source=String(displayValue(part,'choiceLabel',dev)||part.choiceLabel||part.text||'ラジオボタン');
+     for(const caption of choiceOptions(part,dev)){
+       if(!caption.trim())continue;
+       const value=JSON.stringify([part.id,caption]);
+       options.push({value,partId:part.id,caption,display:source+' ／ '+caption});
+     }
+   }
+   const currentPart=String(e.formRequiredWhenPartId||'');
+   const currentOption=String(e.formRequiredWhenOption||'');
+   const selected=JSON.stringify([currentPart,currentOption]);
+   const hasSelected=options.some(o=>o.value===selected);
+   let html='<option value="">指定しない（通常の必須設定に従う）</option>';
+   if(currentOption&&!hasSelected){
+     const label=currentPart?'別の端末で設定済み：'+currentOption:'以前の条件：'+currentOption;
+     html+='<option value="'+attr(selected)+'" selected>'+htmlEscape(label)+'</option>';
+   }
+   html+=options.map(o=>'<option value="'+attr(o.value)+'"'+(selected===o.value?' selected':'')+'>'+htmlEscape(o.display)+'</option>').join('');
+   return '<div class="field"><label for="field-formRequiredWhenOption">条件付き必須（他のラジオボタンが選ばれたとき）</label>'+ 
+     '<select id="field-formRequiredWhenOption">'+html+'</select>'+ 
+     '<p class="note">例：連絡方法 ／ 電話での連絡を希望。条件指定時は「必須項目にする」を自動解除します。必須条件は全端末共通です。</p></div>';
+ }
+ function setConditionalRequired(e,value){
+   if(!value){e.formRequiredWhenPartId='';e.formRequiredWhenOption='';return;}
+   let selected;
+   try{selected=JSON.parse(value);}catch{return;}
+   if(!Array.isArray(selected)||selected.length!==2)return;
+   e.formRequiredWhenPartId=String(selected[0]||'').slice(0,100);
+   e.formRequiredWhenOption=String(selected[1]||'').slice(0,100);
+   if(e.formRequiredWhenOption){e.choiceRequired=false;e.formRequired=false;}
  }
  function handleField(key,fn,evt='change'){$('field-'+key)?.addEventListener(evt,ev=>{
    const target=ev.currentTarget,v=target.type==='checkbox'?target.checked:target.type==='number'?Number(target.value):target.value;
-   // The right-hand property controls apply character marks when a range is active.
-   if(['fontFamily','fontSize','color','bold'].includes(key)&&target.closest('#inspector')&&activeRichSelection(selectedId)){
-     applyQuickFormat(key,v);return;
-   }
+   // Detailed properties always apply to the part as a whole.
+   // Selected-character formatting uses the separate compact toolbar.
    mutate(()=>fn(v));
  })}
  function linkFields(e){
@@ -4058,13 +4406,13 @@ html,body{height:100%;min-height:0;overflow:hidden}
  // v1.03.1: actions are declarative, like links, and do not modify part geometry.
  // The action is intentionally a shared semantic property; responsive positions
  // and each device's hidden flags continue to be handled separately.
- const CLICK_ACTION_TYPES=['none','accordion','toggle','popup','copy','zoom','tab'];
+ const CLICK_ACTION_TYPES=['none','accordion','toggle','popup','copy','zoom','tab','formConfirm'];
  const clickActionType=e=>CLICK_ACTION_TYPES.includes(e.clickAction)?e.clickAction:'none';
  const clickTargetIds=e=>Array.isArray(e.clickTargets)?e.clickTargets.filter(v=>typeof v==='string'):[];
  function clickActionFields(e,p){
    if(!['button','heading','text','box','image'].includes(e.type))return '';
    const kind=clickActionType(e),available=(p.elements||[]).filter(part=>part.id!==e.id&&!['sidebar','menu','video','pdf','form'].includes(part.type));
-   const labels={none:'設定しない（通常のリンク）',accordion:'アコーディオン（開閉＋下のパーツを移動）',toggle:'指定パーツを表示・非表示',popup:'ポップアップ（説明・画像）',copy:'文字列をクリップボードにコピー',zoom:'画像を拡大表示',tab:'タブ切り替え'};
+   const labels={none:'設定しない（通常のリンク）',accordion:'アコーディオン（開閉＋下のパーツを移動）',toggle:'指定パーツを表示・非表示',popup:'ポップアップ（説明・画像）',copy:'文字列をクリップボードにコピー',zoom:'画像を拡大表示',tab:'タブ切り替え',formConfirm:'フォーム内容を確認（入力チェック・送信）'};
    const options=CLICK_ACTION_TYPES.filter(k=>k!=='zoom'||e.type==='image').map(k=>`<option value="${k}"${kind===k?' selected':''}>${labels[k]}</option>`).join('');
    const targets=['accordion','toggle','popup','tab'].includes(kind);
    const selected=new Set(clickTargetIds(e));
@@ -4114,6 +4462,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
      ${kind==='copy'?field('コピーする文字列',e.clickCopyText||'','clickCopyText','textarea'):''}
      ${kind==='popup'?field('見出し',e.clickPopupTitle||'','clickPopupTitle')+field('説明文',e.clickPopupText||'','clickPopupText','textarea'):''}
      ${kind==='tab'?field('タブのグループ名（同じ名前でまとめる）',e.clickTabGroup||'default','clickTabGroup'):''}
+     ${kind==='formConfirm'?field('確認画面の表示順（1行に1項目・空欄なら画面の配置順）',e.clickConfirmOrder||'','clickConfirmOrder','textarea')+field('未入力の任意項目も確認画面に表示する',e.clickConfirmShowEmpty!==false,'clickConfirmShowEmpty','checkbox')+field('GASの公開URL（https://・未設定なら確認のみ）',e.clickSubmitUrl||'','clickSubmitUrl')+'<p class="note">表示順は画面の配置に合わせます。未入力項目は「（未入力）」と表示できます。入力内容を確認後、「送信する」で確定します。</p>':''}
      ${kind!=='none'?'<p class="note">動作は公開HTMLとプレビューで有効です。通常のリンク先が設定されていても、この動作が優先されます。設定は各端末で共通です。</p>':''}
      <button type="button" id="msbClickPreview" class="small-btn fullbtn">プレビューで確認</button>
      </div></details>`;
@@ -4203,7 +4552,8 @@ html,body{height:100%;min-height:0;overflow:hidden}
  function wireClickActionFields(e){
    if(!$('field-clickAction'))return;
    handleField('clickAction',v=>{e.clickAction=CLICK_ACTION_TYPES.includes(v)?v:'none';if(e.clickAction==='zoom'&&e.type!=='image')e.clickAction='none';});
-   for(const k of ['clickCopyText','clickPopupTitle','clickPopupText','clickTabGroup'])handleField(k,v=>e[k]=String(v||''));
+   for(const k of ['clickCopyText','clickPopupTitle','clickPopupText','clickTabGroup','clickConfirmOrder','clickSubmitUrl'])handleField(k,v=>e[k]=String(v||''));
+   handleField('clickConfirmShowEmpty',v=>e.clickConfirmShowEmpty=!!v);
    handleField('clickStartOpen',v=>e.clickStartOpen=!!v);
    $('msbActionTargetSearch')?.addEventListener('input',ev=>{
      const term=String(ev.currentTarget.value||'').trim().toLowerCase();
@@ -4452,7 +4802,79 @@ html,body{height:100%;min-height:0;overflow:hidden}
    }
    const st=styleSource(e,device);
    const r=rect(e),rectInput=field('X',r.x,'x','number')+field('Y',r.y,'y','number')+field('幅',r.w,'w','number')+field('高さ',r.h,'h','number');
-   const names={heading:'見出し',text:'文章',image:'画像',button:'ボタン',box:'図形',line:'線',video:'動画',pdf:'PDF表示',form:'Googleフォーム',menu:'ボタンメニュー',sidebar:'画面端サイドバー',html:'HTML埋め込み'};
+   const names={heading:'見出し',text:'文章',image:'画像',button:'ボタン',box:'図形',line:'線',video:'動画',pdf:'PDF表示',form:'Googleフォーム',choiceRadio:'ラジオボタン',choiceCheckbox:'チェックボックス',choiceSelect:'プルダウン',formInput:'1行入力欄',formTextarea:'複数行入力欄',menu:'ボタンメニュー',sidebar:'画面端サイドバー',html:'HTML埋め込み'};
+   const formInputSection=FORM_INPUT_TYPES.has(e.type)?`<div class="section-head">入力欄の設定</div>
+     ${field('項目名（送信時の識別用・全端末共通）',e.formLabel||'','formLabel')}
+     ${field('項目名を入力欄の上に表示（この端末のみ）',!!displayValue(e,'formShowLabel'),'formShowLabel','checkbox')}
+     ${e.type==='formInput'?`<div class="field"><label for="field-formInputMode">入力形式</label><select id="field-formInputMode"><option value="text"${(!e.formInputMode||e.formInputMode==='text')?' selected':''}>通常の文字</option><option value="email"${e.formInputMode==='email'?' selected':''}>メールアドレス</option><option value="tel"${e.formInputMode==='tel'?' selected':''}>電話番号</option></select></div>
+     <div class="field"><label for="field-formAutocomplete">ブラウザの自動入力</label><select id="field-formAutocomplete">${[['auto','自動判定（推奨）'],['name','氏名'],['given-name','名'],['family-name','姓'],['email','メールアドレス'],['tel','電話番号'],['off','使用しない']].map(([value,label])=>`<option value="${value}"${(e.formAutocomplete||'auto')===value?' selected':''}>${label}</option>`).join('')}</select></div><p class="note">お客様のブラウザに情報が保存されている場合に、入力候補を表示できます。</p>`:''}
+     ${field('入力欄内の案内文（この端末のみ）',displayValue(e,'formPlaceholder')||'','formPlaceholder')}
+     ${field('必須項目にする',!!e.formRequired,'formRequired','checkbox')}
+     ${field('「必須」の文字を非表示（この端末のみ）',displayValue(e,'hideRequiredBadge')===true,'hideRequiredBadge','checkbox')}
+     ${conditionalRequiredPicker(p,e)}
+     ${field('最大入力文字数',num(e.formMaxLength,e.type==='formTextarea'?5000:250),'formMaxLength','number')}
+     <details class="style-feature" id="formInputAppearanceSettings"><summary>文字・色・枠線（この端末のみ）</summary>
+       <div class="style-fields">
+         <div class="field"><label for="field-fontFamily">フォント</label><select id="field-fontFamily">${fontOptions(st.fontFamily||'system')}</select></div>
+         ${field('項目名の文字サイズ（px）',num(st.fontSize,17),'fontSize','number')}
+         ${field('項目名の文字色',st.color||'#26364c','color','color')}
+         ${field('入力文字のサイズ（px・0で項目名と同じ）',num(st.choiceOptionFontSize,0),'choiceOptionFontSize','number')}
+         ${field('入力文字の色',st.choiceOptionColor||st.color||'#26364c','choiceOptionColor','color')}
+         ${field('案内文の色',st.formPlaceholderColor||'#b8bbc2','formPlaceholderColor','color')}
+         ${field('文字間隔（px）',num(st.choiceLetterSpacing,0),'choiceLetterSpacing','number')}
+         ${field('行の高さ（倍率）',num(st.choiceLineHeight,1.55),'choiceLineHeight','number')}
+         ${field('背景色',st.choiceFieldBg||'#ffffff','choiceFieldBg','color')}
+         ${field('枠線の色',st.choiceFieldBorderColor||'#c7d1dd','choiceFieldBorderColor','color')}
+         ${field('枠線の太さ（px）',st.choiceFieldBorderWidth??1,'choiceFieldBorderWidth','number')}
+         ${field('角丸（px）',num(st.choiceFieldRadius,9),'choiceFieldRadius','number')}
+         ${field('内側の左右余白（px）',st.choiceFieldPadding??14,'choiceFieldPadding','number')}
+         ${field('項目名と入力欄の間隔（px）',num(st.choiceLabelGap,8),'choiceLabelGap','number')}
+       </div>
+     </details>
+     <p class="note">編集画面では入力を無効にしています。公開プレビューで実際の入力を確認できます。メール送信への接続は別途必要です。</p>`:'';
+   const choiceSection=CHOICE_TYPES.has(e.type)?`<div class="section-head">選択項目の設定</div>
+     ${field('画面に表示する項目名（この端末のみ）',displayValue(e,'choiceLabel')||'','choiceLabel')}
+     ${field('確認・送信時の項目名（全端末共通・複数列は同じ名前）',e.choiceSubmitLabel||'','choiceSubmitLabel')}
+     ${field('必須項目にする',e.choiceRequired===true,'choiceRequired','checkbox')}
+     ${conditionalRequiredPicker(p,e)}
+     ${field('「必須」の文字を非表示（この端末のみ）',displayValue(e,'hideRequiredBadge')===true,'hideRequiredBadge','checkbox')}
+     ${e.type!=='choiceSelect'?`<div class="field"><label for="field-choiceLayout">選択肢の配置（この端末のみ）</label><select id="field-choiceLayout"><option value="vertical"${choiceLayoutMode(st)==='vertical'?' selected':''}>縦並び</option><option value="horizontal"${choiceLayoutMode(st)==='horizontal'?' selected':''}>横並び・折り返し</option><option value="grid"${choiceLayoutMode(st)==='grid'?' selected':''}>複数列に自動整列</option><option value="free"${choiceLayoutMode(st)==='free'?' selected':''}>自由配置（ドラッグ）</option></select></div>
+     ${['grid','free'].includes(choiceLayoutMode(st))?field('列数（1～6列・この端末のみ）',choiceColumnCount(st),'choiceColumns','number'):''}
+     ${choiceLayoutMode(st)==='free'?`<button type="button" class="small-btn fullbtn" id="resetChoicePositions">選択肢を整列位置に戻す</button><p class="note">選択肢も全パーツ共通の移動単位を使用します。設定は［サイト設定 → 全体 → 編集時の操作］で変更できます。Shift＋ドラッグで吸着を解除します。項目名をドラッグするとパーツ全体が移動します。</p>`:''}
+     `:''}
+     <details class="style-feature" id="choiceSettings" open><summary>選択肢の編集（この端末のみ／上下移動可能）</summary>
+     <div class="msb-group-content">
+       ${choiceOptions(e).map((v,i)=>`<div style="display:flex;align-items:center;gap:4px;margin:7px 0" data-choice-row="${i}"><input type="text" data-choice-text="${i}" maxlength="100" value="${attr(v)}" aria-label="選択肢 ${i+1}" style="width:0;min-width:0;flex:1;padding:7px 6px;border:1px solid #c3cfdd;border-radius:5px"><button class="small-btn" type="button" data-choice-action="up" data-choice-index="${i}" title="上へ"${i===0?' disabled':''}>↑</button><button class="small-btn" type="button" data-choice-action="down" data-choice-index="${i}" title="下へ"${i===choiceOptions(e).length-1?' disabled':''}>↓</button><button class="small-btn danger" type="button" data-choice-action="delete" data-choice-index="${i}" title="削除"${choiceOptions(e).length<=1?' disabled':''}>×</button></div>`).join('')}
+       <button type="button" class="small-btn fullbtn" id="addChoiceOption"${choiceOptions(e).length>=40?' disabled':''}>＋ 選択肢を追加</button>
+       <p class="note">文字の入力中も編集画面に反映します。選択肢の内容・順序は端末ごとに保存します。</p>
+     </div></details>
+     <details class="style-feature" id="choiceAppearanceSettings"><summary>文字・間隔・色・枠線（この端末のみ）</summary>
+       <div class="style-fields">
+         <div class="section-head">文字の設定</div>
+         <div class="field"><label for="field-fontFamily">フォント</label><select id="field-fontFamily">${fontOptions(st.fontFamily||'system')}</select></div>
+         ${field('項目名の文字サイズ（px）',num(st.fontSize,16),'fontSize','number')}
+         ${field('項目名の文字色',st.color||'#26364c','color','color')}
+         ${field('選択肢の文字サイズ（px・6～72、0で項目名と同じ）',num(st.choiceOptionFontSize,0),'choiceOptionFontSize','number')}
+         ${field('選択肢の文字色',st.choiceOptionColor||st.color||'#26364c','choiceOptionColor','color')}
+         ${field('選択肢を太字にする',!!st.choiceOptionBold,'choiceOptionBold','checkbox')}
+         ${field('選択肢の文字間隔（px）',num(st.choiceLetterSpacing,0),'choiceLetterSpacing','number')}
+         ${field('選択肢の行の高さ（倍率）',num(st.choiceLineHeight,1.55),'choiceLineHeight','number')}
+         ${field('項目名と選択欄の間隔（px）',num(st.choiceLabelGap,8),'choiceLabelGap','number')}
+         ${e.type==='choiceSelect'?field('プルダウンの高さ（px）',num(st.choiceSelectHeight,40),'choiceSelectHeight','number'):
+           `${field('上下の間隔（px）',num(st.choiceRowGap,0),'choiceRowGap','number')}
+            ${field('左右の間隔（px）',num(st.choiceColumnGap,12),'choiceColumnGap','number')}
+            ${field('丸・チェック枠のサイズ（px・文字とは独立）',num(st.choiceControlSize,17),'choiceControlSize','number')}
+            ${field('丸・チェック枠の選択色',st.choiceAccentColor||'#276fe1','choiceAccentColor','color')}
+            ${e.type==='choiceCheckbox'?field('チェックマークの色',st.choiceCheckmarkColor||'#ffffff','choiceCheckmarkColor','color'):''}`}
+         <div class="section-head">入力欄の見た目</div>
+         ${field('背景色',st.choiceFieldBg||'#ffffff','choiceFieldBg','color')}
+         ${field('枠線の色',st.choiceFieldBorderColor||'#b7c2d1','choiceFieldBorderColor','color')}
+         ${field('枠線の太さ（px・0でなし）',st.choiceFieldBorderWidth??(e.type==='choiceSelect'?1:0),'choiceFieldBorderWidth','number')}
+         ${field('角丸（px）',num(st.choiceFieldRadius,6),'choiceFieldRadius','number')}
+         ${field('内側の左右余白（px）',st.choiceFieldPadding??(e.type==='choiceSelect'?10:0),'choiceFieldPadding','number')}
+         <p class="note">設定はPC・タブレット・スマホごとに保存されます。プルダウンを開いたときの選択肢一覧はOSによって見た目が異なります。</p>
+       </div></details>
+     <p class="note">画面用の文言は端末別、確認・送信時の項目名と必須条件は共通です。</p>`:'';
    const textSection=['heading','text','button','box'].includes(e.type)?field(e.type==='box'?'図形内の文字（この端末のみ）':'テキスト（この端末のみ）',partText(e,device),'text','textarea')+(['text','heading'].includes(e.type)?field('文字量に合わせて枠を自動調整',isAutoTextSize(e),'autoTextSize','checkbox')+'<p class="note">文字数・改行・書式に合わせて幅と高さを調整します。既存パーツもチェックを入れるとフィットします。枠を手動変更すると、その端末の自動調整を解除します。</p>':''):'';
    const isNavMenu=['menu','sidebar'].includes(e.type);
    const isEdgeMenu=e.type==='sidebar';
@@ -4508,7 +4930,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    const embedSection=e.type==='pdf'||e.type==='form'?field(e.type==='pdf'?'Google Drive共有リンク / PDF URL':'GoogleフォームのURL',e.embedUrl||'','embedUrl','textarea')+
      `<div class="embed-status${!embedding?' invalid':''}">${embedding?'URLを認識しました。プレビューで表示を確認してください。':e.embedUrl?'このURLは認識できません。':'共有URLを入力してください。'}</div>`+
      (e.type==='pdf'?'<p class="embed-help">Google Driveの「共有 → リンクをコピー」で取得したURL、または https://.../sample.pdf を貼り付けます。共有設定は「リンクを知っている全員・閲覧者」にしてください。閲覧者がPDFを開けるか公開後に確認してください。</p>':'<p class="embed-help">Googleフォームの「公開済みフォームのリンク」を貼り付けます。forms.gle短縮URLではなく docs.google.com/forms/.../viewform の完全なURLを使用してください。フォームはGoogle側で公開されている必要があります。</p>'):'';
-   const fontSection=['heading','text','button','box'].includes(e.type)?`<div id="inspectorTextMode" class="note inspector-text-mode" role="status"></div><div class="field"><label for="field-fontFamily">フォント</label><select id="field-fontFamily">${fontOptions(st.fontFamily)}</select></div>`+field('サイズ（px）',st.fontSize||18,'fontSize','number'):'';
+   const fontSection=['heading','text','button','box'].includes(e.type)?`<div class="field"><label for="field-fontFamily">フォント</label><select id="field-fontFamily">${fontOptions(st.fontFamily)}</select></div>`+field('サイズ（px）',st.fontSize||18,'fontSize','number'):'';
    const colorSection=['heading','text','button','box','line'].includes(e.type)?field(e.type==='line'?'線の色':'文字色',st.color||'#202936','color','color'):'';
    const bgSection=['box','heading','text','button'].includes(e.type)?field('背景色',st.background==='transparent'?'#ffffff':(st.background||'#ffffff'),'bg','color'):'';
    const alignSection=['heading','text','button','box'].includes(e.type)?field('文字揃え',st.align||(e.type==='box'?'center':'left'),'align','select',['left','center','right'])+(e.type==='box'?field('文字の縦位置',st.boxTextVertical||'middle','boxTextVertical','select',['top','middle','bottom']):''):'';
@@ -4524,7 +4946,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    const disclosureScope=[p.id,activeLayoutRegion,device,e.id].join('|');
    const disclosureSnapshot=captureInspectorDisclosure(panel,disclosureScope);
    const positionSizeWasOpen=disclosureSnapshot?.expanded.get('id:msbPositionSize')??false;
-   panel.innerHTML=`<div class="section-head">パーツの設定 <button id="closeProps" class="small-btn">戻る</button></div>${ownerLink}<p class="muted">${htmlEscape(names[e.type]||'パーツ')}を編集中です。${device!=='desktop'?'位置・サイズ・文字の見た目はこの端末だけに反映されます。':''}</p>${textSection}${fontSection}${colorSection}${bgSection}${alignSection}${radiusSection}${boldSection}${decorativeSection}${gradientSection}${hoverSection}${menuSection}${imageSection}${e.type==='line'?field('線の太さ（px）',num(st.lineWidth,2),'lineWidth','number'):''}${videoSection}${embedSection}${htmlEmbedSection}${['video','pdf','form','menu','html'].includes(e.type)?'':linkFields(e)}${clickActionFields(e,p)}${fxPanelHTML(e)}<details id="msbPositionSize" class="style-feature msb-group"${positionSizeWasOpen?' open':''}><summary>位置・サイズ（${deviceLabel}）</summary><div class="msb-group-content"><div class="twocol">${rectInput}</div>${field('印刷時に非表示',e.printHide,'printHide','checkbox')}</div></details>${hideThisDevice?'<button class="small-btn fullbtn" id="hideOnThisDevice" type="button">この端末では非表示</button>':''}<div class="twocol"><button class="small-btn" id="duplicate">複製</button><button class="small-btn danger" id="deleteElement">この端末から削除</button></div>`;
+   panel.innerHTML=`<div class="section-head">パーツの設定 <button id="closeProps" class="small-btn">戻る</button></div>${ownerLink}<p class="muted">${htmlEscape(names[e.type]||'パーツ')}を編集中です。${device!=='desktop'?'位置・サイズ・文字の見た目はこの端末だけに反映されます。':''}</p>${textSection}${choiceSection}${formInputSection}${fontSection}${colorSection}${bgSection}${alignSection}${radiusSection}${boldSection}${decorativeSection}${gradientSection}${hoverSection}${menuSection}${imageSection}${e.type==='line'?field('線の太さ（px）',num(st.lineWidth,2),'lineWidth','number'):''}${videoSection}${embedSection}${htmlEmbedSection}${['video','pdf','form','menu','html'].includes(e.type)||CHOICE_TYPES.has(e.type)||FORM_INPUT_TYPES.has(e.type)?'':linkFields(e)}${clickActionFields(e,p)}${fxPanelHTML(e)}<details id="msbPositionSize" class="style-feature msb-group"${positionSizeWasOpen?' open':''}><summary>位置・サイズ（${deviceLabel}）</summary><div class="msb-group-content"><div class="twocol">${rectInput}</div>${field('印刷時に非表示',e.printHide,'printHide','checkbox')}</div></details>${hideThisDevice?'<button class="small-btn fullbtn" id="hideOnThisDevice" type="button">この端末では非表示</button>':''}<div class="twocol"><button class="small-btn" id="duplicate">複製</button><button class="small-btn danger" id="deleteElement">この端末から削除</button></div>`;
    panel.dataset.msbActivePartId=e.id;
    panel.dataset.msbDisclosureScope=disclosureScope;
    restoreInspectorDisclosure(panel,disclosureSnapshot);
@@ -4536,6 +4958,88 @@ html,body{height:100%;min-height:0;overflow:hidden}
    };
    wireFxPanel(e);
    wireClickActionFields(e);
+   if(CHOICE_TYPES.has(e.type)||FORM_INPUT_TYPES.has(e.type)){
+     handleField('hideRequiredBadge',v=>{setDisplayValue(e,'hideRequiredBadge',!!v)});
+      if(FORM_INPUT_TYPES.has(e.type)){
+       handleField('formLabel',v=>{e.formLabel=String(v||'').slice(0,100)});
+       handleField('formShowLabel',v=>{setDisplayValue(e,'formShowLabel',!!v)});
+       handleField('formRequired',v=>{e.formRequired=!!v;if(v){e.formRequiredWhenPartId='';e.formRequiredWhenOption='';}});
+       handleField('formInputMode',v=>{e.formInputMode=['text','email','tel'].includes(v)?v:'text'});
+       handleField('formAutocomplete',v=>{e.formAutocomplete=FORM_AUTOCOMPLETE_TOKENS.has(v)?v:'auto'});
+       handleField('formPlaceholder',v=>{setDisplayValue(e,'formPlaceholder',String(v||'').slice(0,180))});
+       handleField('formMaxLength',v=>{e.formMaxLength=clamp(num(v,250),1,e.type==='formTextarea'?10000:500)});
+       handleField('formPlaceholderColor',v=>{if(device!=='desktop')freezeDeviceLayout(p,device);editableDeviceStyle(e,device).formPlaceholderColor=validColor(v)});
+     }
+     handleField('choiceLabel',v=>{setDisplayValue(e,'choiceLabel',String(v||'').slice(0,100))});
+      handleField('choiceSubmitLabel',v=>{e.choiceSubmitLabel=String(v||'').slice(0,100)});
+     handleField('choiceRequired',v=>{e.choiceRequired=!!v;if(v){e.formRequiredWhenPartId='';e.formRequiredWhenOption='';}});
+     handleField('formRequiredWhenOption',v=>setConditionalRequired(e,v));
+     const choiceValueBounds={choiceOptionFontSize:[0,72],choiceLetterSpacing:[-2,15],choiceLineHeight:[1,3],choiceRowGap:[0,60],choiceColumnGap:[0,60],choiceColumns:[1,6],choiceControlSize:[8,40],choiceFieldBorderWidth:[0,8],choiceFieldRadius:[0,36],choiceFieldPadding:[0,36],choiceSelectHeight:[32,100],choiceLabelGap:[0,50]};
+     const choiceColorKeys=new Set(['choiceOptionColor','choiceAccentColor','choiceCheckmarkColor','choiceFieldBg','choiceFieldBorderColor']);
+     for(const key of CHOICE_STYLE_KEYS){
+       handleField(key,v=>{
+         if(device!=='desktop')freezeDeviceLayout(p,device);
+         const target=editableDeviceStyle(e,device);
+         if(key==='choiceOptionBold')target[key]=!!v;
+         else if(key==='choiceLayout'){
+           if(v==='free'&&choiceLayoutMode(styleSource(e,device,p))!=='free')setDisplayValue(e,'choicePositions',captureChoicePositions(e,device,p));
+           target[key]=['horizontal','grid','free'].includes(v)?v:'vertical';
+         }
+         else if(choiceColorKeys.has(key))target[key]=validColor(v);
+         else if(choiceValueBounds[key]){
+           const [min,max]=choiceValueBounds[key];target[key]=key==='choiceOptionFontSize'?(num(v,0)<=0?0:clamp(num(v),6,max)):clamp(num(v,min),min,max);
+         }
+       });
+     }
+     $('resetChoicePositions')?.addEventListener('click',()=>mutate(()=>{
+       // A deterministic grid ensures all entries are visible again without deleting text.
+       const count=choiceOptions(e).length;
+       setDisplayValue(e,'choicePositions',Array.from({length:count},(_,i)=>choiceSuggestedPosition(e,device,i,count,p)));
+     }));
+     const optRoot=panel.querySelector('#choiceSettings');
+     optRoot?.querySelectorAll('[data-choice-text]').forEach(input=>{
+       const i=Number(input.dataset.choiceText);
+       input.addEventListener('focus',()=>record());
+       input.addEventListener('input',()=>{
+         const current=choiceOptions(e);if(i<0||i>=current.length)return;
+         current[i]=input.value.slice(0,100);setDisplayValue(e,'choiceOptions',current);
+         // Update just the corresponding editor option without rebuilding the
+         // inspector (which would discard focus/caret during typing).
+         const owner=Array.from(document.querySelectorAll('#paper .element[data-id]')).find(n=>n.dataset.id===e.id);
+         const row=owner?.querySelectorAll('.msb-choice-part [role="group"] > label')[i];
+         if(row){const caption=row.querySelector('span');if(caption)caption.textContent=current[i];
+           const control=row.querySelector('input');if(control)control.value=current[i];}
+         const dropdown=owner?.querySelector('.msb-choice-part select');
+         if(dropdown&&dropdown.options[i+1]){dropdown.options[i+1].textContent=current[i];dropdown.options[i+1].value=current[i];}
+         saveLocal();
+       });
+       input.addEventListener('blur',()=>{
+         const current=choiceOptions(e);if(i<0||i>=current.length)return;
+         const value=String(current[i]||'').trim();
+         current[i]=value||`選択肢 ${i+1}`;
+         setDisplayValue(e,'choiceOptions',current);
+         input.value=current[i];saveLocal();renderCanvas();
+       });
+     });
+     optRoot?.querySelectorAll('[data-choice-action]').forEach(btn=>btn.addEventListener('click',()=>{
+       const action=btn.dataset.choiceAction,i=Number(btn.dataset.choiceIndex),opts=choiceOptions(e);
+       if(!Number.isInteger(i)||i<0||i>=opts.length)return;
+       if(action==='delete'&&opts.length<=1)return notify('選択肢は1件以上必要です。');
+       if(action==='up'&&i===0||action==='down'&&i===opts.length-1)return;
+       mutate(()=>{
+         const copy=choiceOptions(e);
+         const positions=choicePositions(e),kept=Array.from({length:copy.length},(_,j)=>positions[j]||choiceSuggestedPosition(e,device,j,copy.length));
+         if(action==='delete'){copy.splice(i,1);kept.splice(i,1);}
+         else {const next=i+(action==='up'?-1:1);[copy[i],copy[next]]=[copy[next],copy[i]];[kept[i],kept[next]]=[kept[next],kept[i]];}
+         setDisplayValue(e,'choiceOptions',copy);
+         if(positions.length)setDisplayValue(e,'choicePositions',kept);
+       });
+     }));
+     $('addChoiceOption')?.addEventListener('click',()=>{
+       const opts=choiceOptions(e);if(opts.length>=40)return notify('選択肢は最大40件です。');
+       mutate(()=>{setDisplayValue(e,'choiceOptions',[...opts,`選択肢 ${opts.length+1}`])});
+     });
+   }
    if(e.type==='html'){handleField('htmlCode',v=>e.htmlCode=String(v||''));handleField('htmlTrusted',v=>e.htmlTrusted=!!v);$('hybridPartFile')?.addEventListener('click',()=>{hybridUploadTarget={kind:'part',pageId:pageId,id:e.id};$('hybridHtmlFile').click()});}
    $('msbReturnToAction')?.addEventListener('click',()=>{
      if(!contentOwner)return;
@@ -4580,7 +5084,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
    if($('field-underline'))$('field-underline').addEventListener('change',ev=>{
      const range=activeRichSelection(e.id),current=styleSource(e,device);
      const was=range?isRangeUnderlined(current,range.start,range.end):isRangeUnderlined(current,0,partText(e,device).length);
-     if(ev.currentTarget.checked!==was)applyQuickFormat('underline','toggle');
+     if(ev.currentTarget.checked!==was)applyQuickFormat('underline','toggle',{whole:true});
    });
    if(['text','heading'].includes(e.type))handleField('autoTextSize',v=>{setAutoTextSize(e,v);if(v)fitTextBox(e,device)});
    handleField('linkType',v=>{
@@ -4803,6 +5307,9 @@ html,body{height:100%;min-height:0;overflow:hidden}
        <p class="note">公開URLはsitemap.xmlと各ページのcanonicalの自動生成に使用します。</p>
        <div class="field"><label for="siteCreationMode">制作モード</label><select id="siteCreationMode"><option value="new"${project.creationMode!=='migration'?' selected':''}>新規サイト</option><option value="migration"${project.creationMode==='migration'?' selected':''}>既存サイトから移行</option></select></div>
        <p class="note">既存サイトを作り直す場合は「既存サイトから移行」を選び、旧URLを登録してください。既存の編集内容は維持されます。</p>
+       <hr class="hr"><div class="section-head">編集時の操作</div>
+       <div class="field"><label for="siteEditorSnapStep">共通の移動・サイズ変更単位</label><select id="siteEditorSnapStep">${[[1,'1px（細かい）'],[5,'5px（標準）'],[10,'10px（大きめ）'],[20,'20px（大きい）']].map(([v,label])=>`<option value="${v}"${editorSnapStep===v?' selected':''}>${label}</option>`).join('')}</select></div>
+       <p class="note">全パーツの移動・サイズ変更、選択肢の自由配置、背景セクションやヘッダーの高さ変更に共通です。Shiftを押しながらドラッグすると吸着を解除します。設定はこのブラウザに保存され、公開HTMLやJSONの配置データは変更しません。</p>
        <hr class="hr"><div class="section-head">文字表示の統一</div>
        <div class="field"><label for="siteUnifiedTextFont">プレビューとiPad・PCで日本語の文字幅を揃える</label><select id="siteUnifiedTextFont"><option value="on"${unifiedTextFont()?' selected':''}>共通Webフォントを使用（推奨）</option><option value="off"${!unifiedTextFont()?' selected':''}>従来の端末別標準フォント</option></select></div>
        <p class="note">「標準（システム）」の文字だけにNoto Sans JPを使用します。端末ごとの文字幅・改行位置の差を減らします。初回表示にはインターネット接続が必要です。既存の座標・文字サイズ・セクション高さは変更しません。</p>
@@ -4862,6 +5369,7 @@ html,body{height:100%;min-height:0;overflow:hidden}
        project.siteUrl=value;
      });
      $('siteCreationMode').onchange=ev=>{mutate(()=>{project.creationMode=ev.target.value==='migration'?'migration':'new'});if(project.creationMode==='migration'){siteSettingsView='migration';renderSiteSettingsPanel();}};
+     $('siteEditorSnapStep').onchange=ev=>{const step=Number(ev.target.value);if(editorSnapSteps.includes(step)){editorSnapStep=step;persistEditorView();renderSiteSettingsPanel()}};
      $('siteUnifiedTextFont').onchange=ev=>mutate(()=>{project.unifiedTextFont=ev.target.value!=='off'});
      $('siteChooseFavicon').onclick=()=>$('faviconFile').click();
      $('siteClearFavicon').onclick=()=>mutate(()=>{project.favicon=''});
@@ -5253,6 +5761,37 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
   const root=document.documentElement;
   const known=['desktop','tablet','tabletLandscape','mobile'];
   const forced=root.getAttribute('data-msb-preview-device');
+  // Browser page zoom changes CSS viewport dimensions. A width-only fit() would
+  // undo the user's Chrome/Edge zoom. Recover the window width at 100% using
+  // the browser frame, which stays physically fixed across page-zoom changes.
+  // Embedded (preview) iframes and mobile pinch zoom use their own viewport.
+  const initialInner=Math.max(1,Number(window.innerWidth)||1);
+  const initialOuter=Math.max(1,Number(window.outerWidth)||initialInner);
+  const initialRatio=initialOuter/initialInner;
+  const frameTrim=initialRatio>=.93&&initialRatio<=1.07?initialRatio:1;
+  const initialDpr=Math.max(.01,Number(window.devicePixelRatio)||1);
+  function browserZoom(){
+    // Published pages embedded elsewhere retain their normal responsive fit.
+    // Only the SiteBuilder preview frame inherits the host browser zoom.
+    try{
+      if(window.self!==window.top){
+        const hostZoom=window.parent.__msbPreviewBrowserZoom;
+        if(typeof hostZoom==='function'){
+          const value=Number(hostZoom());
+          if(Number.isFinite(value)&&value>=.2&&value<=5)return value;
+        }
+        return 1;
+      }
+    }catch{return 1;}
+    if(/iPad|iPhone|iPod|Android/i.test(navigator.userAgent))return 1;
+    const inner=Math.max(1,Number(window.innerWidth)||1);
+    const outer=Number(window.outerWidth)||0;
+    const byFrame=outer/inner/frameTrim;
+    if(Number.isFinite(byFrame)&&byFrame>=.2&&byFrame<=5)return byFrame;
+    const byDpr=(Number(window.devicePixelRatio)||initialDpr)/initialDpr;
+    return Number.isFinite(byDpr)&&byDpr>=.2&&byDpr<=5?byDpr:1;
+  }
+  window.__msbBrowserZoom=browserZoom;
   function landscape(){
     // iPad Safari can retain a stale screen.orientation.type after rotation.
     // Prefer the physical screen dimensions / iOS legacy angle over the webpage
@@ -5272,7 +5811,9 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
   }
   function mode(){
     if(known.includes(forced))return forced;
-    const w=Math.max(0,document.documentElement.clientWidth||innerWidth);
+    const cssWidth=Math.max(0,document.documentElement.clientWidth||innerWidth);
+    // Page zoom must not switch a desktop project into tablet/mobile layout.
+    const w=cssWidth*browserZoom();
     const touch=matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>1;
     const screenW=Number(window.screen?.width)||0,screenH=Number(window.screen?.height)||0;
     // In iPad Safari split view the available webpage may become narrower than
@@ -5430,6 +5971,8 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
      const variants=render=>['desktop','tablet','tabletLandscape','mobile'].map(render).join('');
      const id=attr(e.id);let body='';
      if(['menu','sidebar'].includes(e.type))body=menuMarkup(e);
+     else if(FORM_INPUT_TYPES.has(e.type))body=variants(dev=>`<div class="view-${dev}" style="display:block;width:100%;height:100%">${formInputMarkup(e,dev,false,p)}</div>`);
+     else if(CHOICE_TYPES.has(e.type))body=variants(dev=>`<div class="view-${dev}" style="display:block;width:100%;height:100%">${choicePartMarkup(e,dev,false,p)}</div>`);
      else if(e.type==='image')body=e.src?variants(dev=>{const t=typography(e,dev,p);return `<img class="view-${dev}" src="${attr(e.src)}" alt="${attr(e.text||'')}" style="width:100%;height:100%;object-fit:${t.imageFit};opacity:${t.opacity/100};border-radius:${t.radius}px">`}):'';
      else if(e.type==='heading'||e.type==='text'||e.type==='button')body=variants(dev=>`<span class="txt view-${dev}${e.type==='button'?' btn':''}" style="${attr(styled(dev))}">${renderGradientRich(e,dev,p)}</span>`);
      else if(e.type==='box')body=variants(dev=>`<span class="shape view-${dev}${partText(e,dev)?' has-caption':''}" style="${attr(styled(dev))};${partText(e,dev)?'justify-content:'+(({top:'flex-start',middle:'center',bottom:'flex-end'})[styleSource(e,dev,p).boxTextVertical]||'center')+';':''}">${partText(e,dev)?`<span class="shape-caption">${renderGradientRich(e,dev,p)}</span>`:''}</span>`);
@@ -5462,12 +6005,16 @@ if(new URLSearchParams(location.search).get('msb_diag')==='1'){
        clickable&&!['video','pdf','form'].includes(e.type)?`<a class="item-body linked" href="${attr(href)}"${e.newTab?' target="_blank" rel="noopener noreferrer"':''}>${body}</a>`:`<div class="item-body">${body}</div>`;
      const contents=`<div class="fx-motion-enter"><div class="fx-motion-loop">${inner}</div></div>`;
      const tooltip=e.hoverText?`<span class="hover-bubble" role="tooltip">${h(e.hoverText)}</span>`:'';
-     const clickAttrs=actionEnabled?` data-msb-click-action="${attr(action)}" data-msb-click-targets="${attr(clickTargetIds(e).join(','))}" data-msb-copy-text="${attr(e.clickCopyText||'')}" data-msb-popup-title="${attr(e.clickPopupTitle||'')}" data-msb-popup-text="${attr(e.clickPopupText||'')}" data-msb-click-group="${attr(e.clickTabGroup||'default')}" data-msb-start-open="${e.clickStartOpen===true?'true':'false'}"`:'';
-     return `<div id="anchor-part-${id}"${clickAttrs} class="item item-${id}${e.printHide?' no-print':''}${['menu','sidebar'].includes(e.type)?' menu-part':''} ${fxClassList(e)}${hasHoverContent(e)?' has-hover-swap':''}" style="${attr(fxVariables(e))}" aria-label="${attr(e.type)}">${contents}${tooltip}</div>`;
+     const formKind=FORM_INPUT_TYPES.has(e.type)?e.type:CHOICE_TYPES.has(e.type)?e.type:'';
+      const sendLabel=FORM_INPUT_TYPES.has(e.type)?String(e.formLabel||e.text||'入力項目'):String(e.choiceSubmitLabel||e.choiceLabel||e.text||'選択項目');
+      const formAttrs=formKind?` data-msb-form-kind="${attr(formKind)}" data-msb-form-label="${attr(sendLabel)}" data-msb-form-required="${e.formRequired===true||e.choiceRequired===true?'true':'false'}" data-msb-form-part-id="${attr(e.id)}" data-msb-form-required-when="${attr(e.formRequiredWhenOption||'')}" data-msb-form-required-when-part="${attr(e.formRequiredWhenPartId||'')}"`: '';
+      const clickAttrs=actionEnabled?` data-msb-click-action="${attr(action)}" data-msb-click-targets="${attr(clickTargetIds(e).join(','))}" data-msb-copy-text="${attr(e.clickCopyText||'')}" data-msb-popup-title="${attr(e.clickPopupTitle||'')}" data-msb-popup-text="${attr(e.clickPopupText||'')}" data-msb-click-group="${attr(e.clickTabGroup||'default')}" data-msb-start-open="${e.clickStartOpen===true?'true':'false'}" data-msb-submit-url="${attr(e.clickSubmitUrl||'')}" data-msb-confirm-order="${attr(e.clickConfirmOrder||'')}" data-msb-confirm-show-empty="${e.clickConfirmShowEmpty===false?'false':'true'}"`:'';
+     return `<div id="anchor-part-${id}"${clickAttrs}${formAttrs} class="item item-${id}${e.printHide?' no-print':''}${['menu','sidebar'].includes(e.type)?' menu-part':''} ${fxClassList(e)}${hasHoverContent(e)?' has-hover-swap':''}" style="${attr(fxVariables(e))}" aria-label="${attr(e.type)}">${contents}${tooltip}</div>`;
    }).join('\n');
    const codePage=hybridCodePage(p);
    const codeHost=codePage?`<div class="msb-code-host"><iframe title="${attr(p.title)}" referrerpolicy="no-referrer" sandbox="${attr(hybridSandbox(p))}" srcdoc="${attr(hybridSrc(p)||hybridDefaultSource())}"></iframe></div>`:'';
    const blocks=codePage?codeHost:exportBlocks(p.elements);
+   const autofillOwners=PART_DEVICES.map(dev=>`<form id="${autofillOwnerId(dev)}" name="contact-${dev}" autocomplete="on" novalidate onsubmit="return false" style="display:contents"></form>`).join('');
    const regionBlocks=Object.fromEntries(REGION_KEYS.map(key=>[key,exportBlocks(regionPartList(p,key))]));
    const screen=exportedRegionLayout(p,headerHTML,regionBlocks);
    const pushRails=p.elements.filter(e=>e.type==='sidebar'&&menuEdgePlacement(e)==='push');
@@ -5653,7 +6200,7 @@ ${bleedBackgroundCSS('desktop')}
 </style><style data-msb-profile="tablet" media="not all">${bleedBackgroundCSS('tablet')}</style>
 <style data-msb-profile="tabletLandscape" media="not all">${bleedBackgroundCSS('tabletLandscape')}</style>
 <style data-msb-profile="mobile" media="not all">${bleedBackgroundCSS('mobile')}
-</style>\n</head>\n<body>${screen.start}${screen.css?'':headerHTML}${stretchOnExport?`<div class="site-bleed" aria-hidden="true">${bands}</div>`:''}<main id="page-top">\n${anchoredBands}\n${blocks}\n</main>${screen.end}${stretchOnExport?`<script>(function(){const site=document.querySelector('main'),backdrop=document.querySelector('.site-bleed');function placeBackdropBands(){
+</style>\n</head>\n<body>${autofillOwners}${screen.start}${screen.css?'':headerHTML}${stretchOnExport?`<div class="site-bleed" aria-hidden="true">${bands}</div>`:''}<main id="page-top">\n${anchoredBands}\n${blocks}\n</main>${screen.end}${stretchOnExport?`<script>(function(){const site=document.querySelector('main'),backdrop=document.querySelector('.site-bleed');function placeBackdropBands(){
  if(!backdrop)return;
  const inside=[...site.querySelectorAll('.bg-band')],outside=[...backdrop.querySelectorAll('.bg-band')];
  // Align the full-bleed background with the *painted* foreground.
@@ -5689,17 +6236,32 @@ ${bleedBackgroundCSS('desktop')}
   const w=Math.max(240,(document.querySelector('.msb-region-main')?.clientWidth||document.querySelector('.msb-site-scrollport')?.clientWidth||document.documentElement.clientWidth)-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--msb-column-left'))||0)-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--msb-column-right'))||0));
   const active=document.documentElement.dataset.msbActive||'desktop';
   const base=({desktop:1000,tablet:720,tabletLandscape:1024,mobile:390})[active]||1000;
-  const ratio=Math.max(.1,w/base);
+  const zoom=Math.max(.2,Math.min(5,Number(window.__msbBrowserZoom?.())||1));
+  // Compute the scale from the *unzoomed* viewport, not its CSS pixel width.
+  // Otherwise, Chrome's 25% / 200% zoom is cancelled by fit().
+  const ratio=Math.max(.1,w*zoom/base);
   // A CSS zoom reflows text differently in Safari/WebKit and Chromium.
   // Transform scales the *painted* canvas but preserves the authored CSS
   // widths and therefore its line breaks. Reserve the scaled flow height.
   site.style.zoom='1';
-  site.style.marginLeft='0';site.style.marginRight='0';
+  // transform:scale() does not participate in CSS centering. Reserve the
+  // actual painted width and center that width, rather than the unscaled box.
+  // This is particularly important when Chrome is zoomed out to 25%-75%.
+  const paintedWidth=base*ratio;
+  site.style.marginLeft=Math.max(0,(w-paintedWidth)/2)+'px';
+  site.style.marginRight='0';
   site.style.transformOrigin='top left';
   site.style.transform='scale('+ratio+')';
   site.dataset.msbScale=String(ratio);
   site.style.setProperty('--msb-embedded-inv-zoom','1');
   site.style.marginBottom=((ratio-1)*site.offsetHeight)+'px';
+  // Full-bleed sections must cover the available viewport at every browser
+  // zoom level. Multiplying CSS viewport width by zoom shrank and clipped
+  // the background, leaving only the left portion painted.
+  if(backdrop)backdrop.style.width='100%';
+  // When zooming in, allow horizontal scrolling to see the enlarged page.
+  if(zoom>1.03)document.body.style.setProperty('overflow-x','auto','important');
+  else document.body.style.removeProperty('overflow-x');
    // The absolute background used to end at body's unscaled layout height.
    // Transform enlarges the painted main without enlarging that background.
    // Size the background to the same painted bottom before positioning bands.
@@ -5752,6 +6314,20 @@ ${bleedBackgroundCSS('desktop')}
 <script>
 const pages=${data},initialPage=${JSON.stringify(activeFile)},initialView=${JSON.stringify(activeView)};
 const frame=document.getElementById('site'),tabs=document.getElementById('tabs'),viewport=document.getElementById('viewport'),choice=document.getElementById('viewMode'),note=document.getElementById('sizeNote'),tabletWidth=document.getElementById('tabletWidth'),tabletWidthBox=document.getElementById('tabletWidthBox');
+// Desktop preview fills the browser viewport. Without its zoom factor, the
+// published page's auto-fit cancels Chrome/Edge Ctrl +/- zoom inside srcdoc.
+// Fixed-size tablet/mobile previews already scale with browser zoom.
+const previewInitialInner=Math.max(1,Number(window.innerWidth)||1);
+const previewInitialOuter=Math.max(1,Number(window.outerWidth)||previewInitialInner);
+const previewInitialRatio=previewInitialOuter/previewInitialInner;
+const previewFrameTrim=previewInitialRatio>=.93&&previewInitialRatio<=1.07?previewInitialRatio:1;
+window.__msbPreviewBrowserZoom=()=>{
+  if(choice.value!=='desktop')return 1;
+  const inner=Math.max(1,Number(window.innerWidth)||1);
+  const outer=Math.max(1,Number(window.outerWidth)||inner);
+  const ratio=outer/inner/previewFrameTrim;
+  return Number.isFinite(ratio)?Math.max(.2,Math.min(5,ratio)):1;
+};
 let activeFile=initialPage;
 const widths={desktop:'100%',tablet:'768px',tabletLandscape:'1024px',mobile:'390px'};
 function emulatedHTML(p){
@@ -5833,7 +6409,7 @@ setView(initialView);
  function openModal(html){$('modalContent').innerHTML=html;$('modal').classList.remove('hidden')}
  function closeModal(){$('modal').classList.add('hidden')}
  $('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});
- $('helpBtn').onclick=()=>openModal(`<h2>morhirc Site Builder v1.22</h2><p>ビジュアル編集とHTMLコード編集を組み合わせたHybrid版です。ページ欄の⠿を上下にドラッグすると、ページ一覧・共通ヘッダー・プレビューの表示順を変更できます。ページ名やファイル名は変更されません。ページ欄の［＋ HTML］で完成済みHTMLを貼り付けるページを作成し、通常のページにはパーツの［HTML埋め込み］を配置できます。外部ファイルに依存するHTMLは単体コピーだけでは完全に動かない場合があります。ヘッダーは先頭で透明・スクロール時に背景色付きへ切り替えでき、サイト名とメニューのフォントを個別設定できます。</p><p><b>共通ヘッダー</b><br>「レイアウト」→「共通ヘッダー」から追加・編集できます。設定パネルを閉じていても、このボタンから開き直せます。編集画面では階層メニューの開閉とページ選択ができ、検索はプレビューまたは公開HTMLで利用できます。ファビコンは歯車（サイト設定）から変更できます。全ページ共通のロゴ・サイト名・階層メニュー・サイト内検索を設定できます。スクロール時の固定、スマホ用メニューも対応します。階層構成は各ページの設定で親ページを選択します。フッターは未実装です。<br><b>SEO設定</b><br>歯車（サイト設定）→「SEO」でページを選び、検索結果用タイトル・説明文（description）・正規URL（canonical）を設定できます。タイトルは空欄ならページ名とサイト名から自動生成します。canonicalは公開URLが入力されていれば自動生成され、必要な場合だけ個別URLを指定できます。サイト設定（⚙）の「公開URL」を設定すると、サイト一式の書き出し時にsitemap.xmlとrobots.txtも生成されます。</p><p><b>既存サイトから移行</b><br>歯車→全体→制作モードで「既存サイトから移行」を選び、移行タブで旧URLを登録できます。現在のファイル名に合わせれば既存URLを維持できます。URLを変更した場合は通常パーツのリンクを更新し、公開前チェックと移行用対応表を作成します。Apache / Xserver向け301ルール案は手動で既存.htaccessに追記する必要があります。GitHub Pagesではサーバー側301を設定できません。</p><p><b>表示の調整</b><br>上部バーの［パネルを開く／閉じる］で右側のパーツ・ページ・レイアウト・サイト設定を切り替えます。［表示倍率］の「画面に収める」はキャンバスを編集領域へ収め、「公開サイズ（仕上がり）」は現在のブラウザ幅で公開HTMLで表示した際の文字・画像の大きさに近づけます。50〜200%の倍率も選択できます。これは表示だけの設定で、保存する座標や公開HTMLの大きさは変更しません。<br><b>基本操作</b><br>右のパーツタブでは基本機能をコンパクトな2列表示にし、追加機能を「レイアウト」「デザイン・図形」「メディア・埋め込み」「サイト共通」に分類しています。カテゴリーを開くとカード・囲み枠・装飾ボタンなども追加できます。影・枠線・余白は各パーツの「装飾」から調整できます。<br>① 右側の「パーツ」タブからパーツを追加します。追加位置は「今見えている場所」「クリックして指定」から選べます。クリック指定はEscで中止できます。<br>② ドラッグで移動、右下でサイズ変更します。<br>③ 文章・見出し・ボタン・四角形の文字はダブルクリックで直接編集します。図形は文字が空欄なら従来どおり図形のみ表示されます。図形内の文字は右の設定でも変更できます。<br>④ 文字編集ツールバー左端の⠿をドラッグすると位置を移動でき、ダブルクリックで自動位置に戻せます。文字をダブルクリックして一部分を範囲選択すると、［詳細］の設定パネルで色・サイズ・フォント・太字・下線を個別に変更できます。色は基本色をワンクリックで選択でき、独自の色は「ユーザー設定の色」の［＋登録］で保存・再利用できます。［削除］を押すと登録色を削除できます。背景や図形の色も同じ方法です。太字と下線は［詳細］から切り替えます。<br>⑤ 背景画像はパーツ未選択の［ページ設定］から画像を選びます。<br>背景セクションを選択すると［コピー］［すぐ下に複製］［貼り付け］が利用できます。背景と中のパーツをまとめてコピーでき、別ページへも貼り付けられます。<br>⑥ 1ページ内で複数の背景を使う場合は「ページ」タブでページ名の矢印を開き、［背景セクション ＋追加］を押し、色・画像・高さを設定します。セクションの下端のハンドルで高さを10pxまで縮められます。<br>⑥ セクションの高さ変更では、下に続く背景セクションとその中のパーツが一緒に移動します。現在の端末だけに反映され、編集中のセクション内のパーツ配置は維持します。新規の文章・見出しパーツは文字量に合わせて自動サイズ調整できます。既存の見出し・文章は右側の「文字量に合わせて枠を自動調整」をオンにするとフィットします。手動で幅・高さを変更すると、その端末だけ自動調整が解除されます。<br>⑦ 右の設定の「動き・効果」では、ホバー・登場・クリック・常時・見た目の各効果をサンプルから選べます。ボタン・文章・図形・画像の「クリック時の動作」でアコーディオン、表示切替、ポップアップ、コピー、画像拡大、タブ切替を設定できます。アコーディオンなどは［この動作用の内容を作成］から新しい文章・ボタン・画像・図形を追加でき、入力欄に文章を貼り付けるか、右クリックでコピーしたパーツを追加することもできます。クリックの演出はプレビュー・公開HTMLで確認できます。<br>⑤ 動画はYouTube・Vimeoの共有URLまたは動画ファイルのURLを指定します。<br>⑥ PDF表示はGoogle Driveの共有URLか直接PDF URLを貼り付けます。<br>⑦ Googleフォームは公開用の完全なURLを貼り付けます。<br>⑧ タブレット・スマホはPCとは独立した配置です。編集時に他端末の配置を自動調整しません。必要なときだけ［PCから取得］を実行すると、その端末だけ配置を上書きします。文章・見出し・ボタン・図形内の文字内容（改行を含む）と文字装飾は端末ごとに独立します。画像とリンク先は全端末共通です。端末ごとの位置・サイズも個別に保存します。非表示のパーツは上部の［非表示］から配置できます。</p><p><b>保存の違い</b><br>［プレビュー］を押すと編集中の文字を確定して、現在のページから表示します。［編集保存］は後から編集を続けられるJSONです。歯車（サイト設定）→「公開・保存」の［サイト一式を書き出す］は全ページとサイトマップを含むHTML一式のZIPです。 ［iPad・スマホ実機プレビュー］では公開前のHTMLをWindows PCから一時配信して、実機のSafariで確認できます。ページ間リンクを利用する場合はZIPの全ファイルを同じ場所に公開してください。</p><p><b>注意</b><br>編集内容はブラウザにも自動保存しますが、画像が多い場合は容量に注意してください。PDFやGoogleフォームは公開先の共有設定とブラウザ制限によっては埋め込み表示できない場合があります。その際は「別タブで開く」を利用してください。サイトのHTML書き出しだけでは問い合わせを受信できず、Googleフォーム側で収集します。GitHub公開はサイトの公開URLがMOA工房に一致した場合に利用できます。</p><button onclick="document.getElementById('modal').classList.add('hidden')">閉じる</button>`);
+ $('helpBtn').onclick=()=>openModal(`<h2>morhirc Site Builder v1.22</h2><p>ビジュアル編集とHTMLコード編集を組み合わせたHybrid版です。ページ欄の⠿を上下にドラッグすると、ページ一覧・共通ヘッダー・プレビューの表示順を変更できます。ページ名やファイル名は変更されません。ページ欄の［＋ HTML］で完成済みHTMLを貼り付けるページを作成し、通常のページにはパーツの［HTML埋め込み］を配置できます。外部ファイルに依存するHTMLは単体コピーだけでは完全に動かない場合があります。ヘッダーは先頭で透明・スクロール時に背景色付きへ切り替えでき、サイト名とメニューのフォントを個別設定できます。</p><p><b>共通ヘッダー</b><br>「レイアウト」→「共通ヘッダー」から追加・編集できます。設定パネルを閉じていても、このボタンから開き直せます。編集画面では階層メニューの開閉とページ選択ができ、検索はプレビューまたは公開HTMLで利用できます。ファビコンは歯車（サイト設定）から変更できます。全ページ共通のロゴ・サイト名・階層メニュー・サイト内検索を設定できます。スクロール時の固定、スマホ用メニューも対応します。階層構成は各ページの設定で親ページを選択します。フッターは未実装です。<br><b>SEO設定</b><br>歯車（サイト設定）→「SEO」でページを選び、検索結果用タイトル・説明文（description）・正規URL（canonical）を設定できます。タイトルは空欄ならページ名とサイト名から自動生成します。canonicalは公開URLが入力されていれば自動生成され、必要な場合だけ個別URLを指定できます。サイト設定（⚙）の「公開URL」を設定すると、サイト一式の書き出し時にsitemap.xmlとrobots.txtも生成されます。</p><p><b>既存サイトから移行</b><br>歯車→全体→制作モードで「既存サイトから移行」を選び、移行タブで旧URLを登録できます。現在のファイル名に合わせれば既存URLを維持できます。URLを変更した場合は通常パーツのリンクを更新し、公開前チェックと移行用対応表を作成します。Apache / Xserver向け301ルール案は手動で既存.htaccessに追記する必要があります。GitHub Pagesではサーバー側301を設定できません。</p><p><b>表示の調整</b><br>上部バーの［パネルを開く／閉じる］で右側のパーツ・ページ・レイアウト・サイト設定を切り替えます。［表示倍率］の「画面に収める」はキャンバスを編集領域へ収め、「公開サイズ（仕上がり）」は現在のブラウザ幅で公開HTMLで表示した際の文字・画像の大きさに近づけます。50〜200%の倍率も選択できます。これは表示だけの設定で、保存する座標や公開HTMLの大きさは変更しません。<br><b>基本操作</b><br>右のパーツタブでは基本機能をコンパクトな2列表示にし、追加機能を「レイアウト」「デザイン・図形」「メディア・埋め込み」「サイト共通」に分類しています。カテゴリーを開くとカード・囲み枠・装飾ボタンなども追加できます。影・枠線・余白は各パーツの「装飾」から調整できます。<br>① 右側の「パーツ」タブからパーツを追加します。追加位置は「今見えている場所」「クリックして指定」から選べます。クリック指定はEscで中止できます。<br>② ドラッグで移動、右下でサイズ変更します。<br>③ 文章・見出し・ボタン・四角形の文字はダブルクリックで直接編集します。図形は文字が空欄なら従来どおり図形のみ表示されます。図形内の文字は右の設定でも変更できます。<br>④ 文字編集ツールバー左端の⠿をドラッグすると位置を移動でき、ダブルクリックで自動位置に戻せます。文字をダブルクリックして一部分を範囲選択すると、［詳細］の設定パネルで色・サイズ・フォント・太字・下線を個別に変更できます。色は基本色をワンクリックで選択でき、独自の色は「ユーザー設定の色」の［＋登録］で保存・再利用できます。［削除］を押すと登録色を削除できます。背景や図形の色も同じ方法です。太字と下線は［詳細］から切り替えます。<br>⑤ 背景画像はパーツ未選択の［ページ設定］から画像を選びます。<br>背景セクションを選択すると［コピー］［すぐ下に複製］［貼り付け］が利用できます。背景と中のパーツをまとめてコピーでき、別ページへも貼り付けられます。<br>⑥ 1ページ内で複数の背景を使う場合は「ページ」タブでページ名の矢印を開き、［背景セクション ＋追加］を押し、色・画像・高さを設定します。セクションの下端のハンドルで高さを10pxまで縮められます。<br>⑥ セクションの高さ変更では、下に続く背景セクションとその中のパーツが一緒に移動します。現在の端末だけに反映され、編集中のセクション内のパーツ配置は維持します。新規の文章・見出しパーツは文字量に合わせて自動サイズ調整できます。既存の見出し・文章は右側の「文字量に合わせて枠を自動調整」をオンにするとフィットします。手動で幅・高さを変更すると、その端末だけ自動調整が解除されます。<br>⑦ 右の設定の「動き・効果」では、ホバー・登場・クリック・常時・見た目の各効果をサンプルから選べます。ボタン・文章・図形・画像の「クリック時の動作」でアコーディオン、表示切替、ポップアップ、コピー、画像拡大、タブ切替を設定できます。アコーディオンなどは［この動作用の内容を作成］から新しい文章・ボタン・画像・図形を追加でき、入力欄に文章を貼り付けるか、右クリックでコピーしたパーツを追加することもできます。クリックの演出はプレビュー・公開HTMLで確認できます。<br>⑤ 動画はYouTube・Vimeoの共有URLまたは動画ファイルのURLを指定します。<br>⑥ PDF表示はGoogle Driveの共有URLか直接PDF URLを貼り付けます。<br>⑦ Googleフォームは公開用の完全なURLを貼り付けます。<br>⑧ タブレット・スマホはPCとは独立した配置です。編集時に他端末の配置を自動調整しません。必要なときだけ［PCから取得］を実行すると、その端末だけ配置を上書きします。文章・見出し・ボタン・図形内の文字内容（改行を含む）と文字装飾は端末ごとに独立します。画像とリンク先は全端末共通です。端末ごとの位置・サイズも個別に保存します。非表示のパーツは上部の［非表示］から配置できます。</p><p><b>保存の違い</b><br>［プレビュー］を押すと編集中の文字を確定して、現在のページから表示します。［編集保存］は後から編集を続けられるJSONです。歯車（サイト設定）→「公開・保存」の［サイト一式を書き出す］は全ページとサイトマップを含むHTML一式のZIPです。 ［iPad・スマホ実機プレビュー］では公開前のHTMLをWindows PCから一時配信して、実機のSafariで確認できます。ページ間リンクを利用する場合はZIPの全ファイルを同じ場所に公開してください。</p><p><b>注意</b><br>編集内容はブラウザにも自動保存しますが、画像が多い場合は容量に注意してください。PDFやGoogleフォームは公開先の共有設定とブラウザ制限によっては埋め込み表示できない場合があります。その際は「別タブで開く」を利用してください。標準の「入力内容を確認」ボタンで入力チェック・確認画面を利用できます。受信にはクリック時の動作で送信先（Webアプリ等）の設定が必要です。GitHub公開はサイトの公開URLがMOA工房に一致した場合に利用できます。</p><button onclick="document.getElementById('modal').classList.add('hidden')">閉じる</button>`);
  $('newBtn').onclick=()=>{cancelPlacement();openModal(`<h2>サイトの作成方法</h2><p>新規作成か、既存URLを引き継ぐリニューアルかを選択してください。現在の編集内容は置き換わります。</p><button id="msbNewFresh" type="button">新規サイトを作成</button> <button id="msbNewMigration" type="button">既存サイトから移行</button> <button id="msbNewCancel" type="button" style="background:#65758d">キャンセル</button>`);
    $('msbNewCancel').onclick=closeModal;
    for(const [id,mode] of [['msbNewFresh','new'],['msbNewMigration','migration']])$(id).onclick=()=>{
@@ -5883,7 +6459,7 @@ setView(initialView);
      <div class="field"><label>間隔（px）</label><input id="autoCfgGap" type="number" min="0" max="120" value="${conf.gapPx}"></div></div>
      <div class="field"><label>左右余白（px）</label><input id="autoCfgMargin" type="number" min="0" max="80" value="${conf.marginPx}"></div>
      ${targetDevice==='tablet'?'<p class="note">タブレット縦のみ倍率の上限は200％です。拡大時は、画面幅に収まるようパーツ幅が制限される場合があります。</p>':''}
-     <p class="note">この端末の配置・サイズ・文字書式を上書きします。取得後はPCから独立します。操作は「元に戻す」で取り消せます。</p>
+     <p class="note">この端末の配置・サイズ・文字書式・フォーム選択肢を上書きします。取得後はPCから独立します。操作は「元に戻す」で取り消せます。</p>
      <div class="twocol"><button id="pcImportApply" type="button" class="action">この端末に取得</button><button id="pcImportCancel" type="button" class="small-btn">キャンセル</button></div>`);
    $('pcImportCancel').onclick=closeModal;
    $('pcImportApply').onclick=()=>{
@@ -5911,6 +6487,10 @@ setView(initialView);
        const suggestion=suggestResponsive(target,targetDevice);
        const factor=nextCfg.sizePct/100*(nextCfg.layout==='preserve'?WIDTH[targetDevice]/WIDTH.desktop:1);
        for(const e of target.elements||[]){
+         if(CHOICE_TYPES.has(e.type)||FORM_INPUT_TYPES.has(e.type)){
+           const keys=CHOICE_TYPES.has(e.type)?['choiceLabel','choiceOptions','choicePositions','hideRequiredBadge']:['formPlaceholder','formShowLabel','hideRequiredBadge'];
+           for(const key of keys)setDisplayValue(e,key,displayValue(e,key,'desktop'),targetDevice);
+         }
          if(!partVisibleOnDevice(e,target,targetDevice))continue;
          const r=suggestion.rects.get(e.id);if(!r)continue;
          e.layouts=e.layouts||{};e.layouts[targetDevice]={...r};
